@@ -1,0 +1,13 @@
+
+{
+  "soundEffects": [
+    {
+      "name": "HINT_UNLOCK",
+      "filepath": "sounds/hint_unlock.wav"
+    },
+    {
+      "name": "PUZZLE_SOLVED", 
+      "filepath": "sounds/puzzle_solved.wav"
+    }
+  ]
+}
