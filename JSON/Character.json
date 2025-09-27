@@ -1,0 +1,43 @@
+{
+  "uuid": "4a3444b8-db36-43a5-85e6-5e99e227bd3c",
+  "class": "Character",
+  "attributes": {
+    "name": "String",
+    "avatar": "String",
+    "currentLevel": "Int",
+    "inventory": "Inventory",
+    "hints":"HashMap<Integer, ArrayList<Hint>>"
+  },
+  "constructor": [
+    {
+      "name": "Character",
+      "parameters": [
+        { "name": "name", "type": "String" },
+        { "name": "avatar", "type": "String" }
+      ],
+      "returnType": "void"
+    }
+
+  ],
+  "methods": [
+    {
+      "name": "unlockNextHint",
+      "parameters": [
+        { "name": "level", "type": "Int" }
+      ],
+      "returnType": "void"
+    },
+    {
+      "name": "getAllHintsForLevel",
+      "parameters": [
+        { "name": "level", "type": "Int" }
+      ],
+      "returnType": "ArrayList<Hint>"
+    },
+    {
+      "name": "toString",
+      "parameters": [],
+      "returnType": "String"
+    }
+  ]
+}
