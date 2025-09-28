@@ -1,0 +1,23 @@
+{
+  "Timer": {
+    "constants": {
+      "INTERVAL": 1000
+    },
+    "properties": {
+      "duration": 0,
+      "timeRemaining": 0,
+      "isRunning": false
+    },
+    "methods": {
+      "constructor": "Timer(int duration)",
+      "getTimeRemaining": "int",
+      "start": "void",
+      "pause": "void",
+      "resume": "void",
+      "addTime": "void",
+      "removeTime": "void",
+      "addObserver": "void"
+    },
+    "observers": ["TimeObserver"]
+  }
+}
