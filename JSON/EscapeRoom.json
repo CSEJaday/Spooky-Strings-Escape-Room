@@ -1,0 +1,26 @@
+{
+  "roomName": "",
+  "description": "",
+  "isSolved": false,
+  "currentPuzzleIndex": 0,
+  "puzzle": [
+    {
+      "id": 1,
+      "question": "",
+      "answer": "",
+      "isSolved": false
+    },
+    {
+      "id": 2,
+      "question": "",
+      "answer": "",
+      "isSolved": false
+    },
+    {
+      "id": 3,
+      "question": "",
+      "answer": "",
+      "isSolved": false
+    }
+  ]
+}
