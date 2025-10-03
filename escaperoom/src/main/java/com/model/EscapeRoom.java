@@ -1,7 +1,6 @@
 package com.model;
 
 public class EscapeRoom {
-
     private String name;
     private String description;
     private boolean isSolved;
