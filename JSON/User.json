@@ -1,0 +1,47 @@
+{
+"uuid": "fa70cf1c-3f9a-4df5-9f55-64fb3d2e131f",
+  "class": "User",
+  "attributes": {
+    "username": "String",
+    "password": "String",
+    "id": "UUID",
+    "character": "ArrayList<Character>",
+    "settings":"HashMap<String, Settings>"
+  },
+  "constructor": [
+    {
+      "name": "User",
+      "parameters": [
+        { "name": "username", "type": "String" },
+        { "name": "password", "type": "String" },
+        { "name": "id", "type": "UUID"}
+      ],
+      "returnType": "void"
+    }
+
+  ],
+  "methods": [
+    {
+      "name": "addCharacter",
+      "parameters": [
+        { "name": "character", "type": "Character" }
+      ],
+      "returnType": "void"
+    },
+    {
+      "name": "deleteCharacter",
+      "parameters": [
+        { "name": "name", "type": "String" },
+        { "name": "avatar", "type": "String" }
+      ],
+      "returnType": "void"
+    },
+    {
+      "name": "updateSettings",
+      "parameters": [
+        { "name": "category", "type": "String" }
+      ],
+      "returnType": "void"
+    }
+  ]
+}
