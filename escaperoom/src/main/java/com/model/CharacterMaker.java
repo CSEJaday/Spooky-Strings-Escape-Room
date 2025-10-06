@@ -1,8 +1,16 @@
 package com.model;
 
+/**
+ * 
+ */
 public class CharacterMaker {
-    public Character createCharacter(String name, String avatar)
-    {
-        return null;
-    }
-}
+    /**
+     * 
+     * @param name
+     * @param avatar
+     * @return
+     */
+    public Character createCharacter(String name, String avatar) {
+        return new Character(name, avatar);
+    }//end createCharacter()
+}//ened CharacterMaker

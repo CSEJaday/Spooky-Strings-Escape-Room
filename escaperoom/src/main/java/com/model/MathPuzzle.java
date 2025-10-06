@@ -1,23 +1,37 @@
 package com.model;
+import java.lang.String;
 
+
+/**
+ * 
+ */
 public class MathPuzzle extends Puzzle{
     private String equation;
     private int answer;
 
-    public MathPuzzle(String question, int answer, Difficulty difficulty)
-    {
+    /**
+     * 
+     * @param question
+     * @param answer
+     * @param difficulty
+     */
+    public MathPuzzle(String question, int answer, Difficulty difficulty) {
         super(question, difficulty);
         this.equation = question;
         this.answer = answer;
-    }
+    }//end constructor
 
-    public void generateEquation()
-    {
+    /**
+     * is the question different form the equation
+     */
+    public void generateEquation() {
         return;
-    }
+    }//end generateEquation()
 
-    public boolean checkAnswer(String userAnswer)
-    {
-        return false;
-    }
-}
+    /**
+     * 
+     */
+    public boolean checkAnswer(String userAnswer) {
+        return userAnswer.equalsIgnoreCase(this.answer);
+    }//end checkAnswer()
+}//end MathPuzzle
