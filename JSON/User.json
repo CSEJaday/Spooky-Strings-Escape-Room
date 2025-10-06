@@ -1,0 +1,27 @@
+[
+    {
+        "username": "ThunderFury",
+        "password": "IloveEscaperooms",
+        "id": "d202faed-8388-4fb1-a1a3-7c4cf5b560e2",
+        "characters": ["Stormcaller", "Windblade"]
+        
+    },
+    {
+        "username": "NightBlade",
+        "password": "EscapeRoomNerd",
+        "id": "f9bb02ef-d177-4458-91b7-b48e08f7cd73",
+        "characters": ["Shadowstrike","Moonfang"]
+    },
+    {
+        "username": "DarkKnight",
+        "password": "IneedToescape",
+        "id": "4c9d5c95-33c1-4780-a001-01d45edf469f",
+        "characters": ["Gloom","Silent Saber"]
+    },
+    {
+        "username": "DragonFire",
+        "password": "dragonsAregreat",
+        "id": "016b1ff5-08e9-47de-a5bc-49ff37462751",
+        "character": ["Blazewing","Smartone"]
+    }
+]
