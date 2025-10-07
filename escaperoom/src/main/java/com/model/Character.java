@@ -11,15 +11,18 @@ public class Character {
     private Inventory inventory;
     private HashMap<Integer, ArrayList<Hint>> hints;
 
-    public Character(String name, String avatar) {
+    public Character(String name, String avatar) 
+    {
 
     }
 
-    public void unlockNextHint(int level) {
+    public void unlockNextHint(int level) 
+    {
 
     }
 
-    public ArrayList<Hint> getAllHintsForLevel(int level) {
+    public ArrayList<Hint> getAllHintsForLevel(int level) 
+    {
 
         return null;
     }
