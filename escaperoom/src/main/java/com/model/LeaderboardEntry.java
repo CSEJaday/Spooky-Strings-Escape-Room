@@ -1,10 +1,10 @@
 package com.model;
 
-public class LeaderBoardEntry {
+public class LeaderboardEntry {
     private String playerName;
     private int score;
 
-    public LeaderBoardEntry(String playerName, int score) {
+    public LeaderboardEntry(String playerName, int score) {
         this.playerName = playerName;
         this.score = score;
     }//end constructor
@@ -19,19 +19,9 @@ public class LeaderBoardEntry {
         return score;
     }
 
-    public int compareTo(LeaderBoardEntry other)
+    public int compareTo(LeaderboardEntry other)
     {
-        if (this.score > other.getScore()) {
-            return 1;
-            //does 1 mean this user is higher than the other one
-        }
-        else if (this.score == other.getScore()) {
-            return 0;
-            //indicates that theyre tied
-        }
-        else {
-            return -1;
-            //indicates this player has a lower score
-        }
+        return Integer.compare(other.score, this.score);
     }
+
 }
