@@ -1,47 +1,27 @@
-{
-"uuid": "fa70cf1c-3f9a-4df5-9f55-64fb3d2e131f",
-  "class": "User",
-  "attributes": {
-    "username": "String",
-    "password": "String",
-    "id": "UUID",
-    "character": "ArrayList<Character>",
-    "settings":"HashMap<String, Settings>"
-  },
-  "constructor": [
+[
     {
-      "name": "User",
-      "parameters": [
-        { "name": "username", "type": "String" },
-        { "name": "password", "type": "String" },
-        { "name": "id", "type": "UUID"}
-      ],
-      "returnType": "void"
-    }
-
-  ],
-  "methods": [
-    {
-      "name": "addCharacter",
-      "parameters": [
-        { "name": "character", "type": "Character" }
-      ],
-      "returnType": "void"
+        "username": "ThunderFury",
+        "password": "IloveEscaperooms",
+        "id": "d202faed-8388-4fb1-a1a3-7c4cf5b560e2",
+        "characters": ["Stormcaller", "Windblade"]
+        
     },
     {
-      "name": "deleteCharacter",
-      "parameters": [
-        { "name": "name", "type": "String" },
-        { "name": "avatar", "type": "String" }
-      ],
-      "returnType": "void"
+        "username": "NightBlade",
+        "password": "EscapeRoomNerd",
+        "id": "f9bb02ef-d177-4458-91b7-b48e08f7cd73",
+        "characters": ["Shadowstrike","Moonfang"]
     },
     {
-      "name": "updateSettings",
-      "parameters": [
-        { "name": "category", "type": "String" }
-      ],
-      "returnType": "void"
+        "username": "DarkKnight",
+        "password": "IneedToescape",
+        "id": "4c9d5c95-33c1-4780-a001-01d45edf469f",
+        "characters": ["Gloom","Silent Saber"]
+    },
+    {
+        "username": "DragonFire",
+        "password": "dragonsAregreat",
+        "id": "016b1ff5-08e9-47de-a5bc-49ff37462751",
+        "character": ["Blazewing","Smartone"]
     }
-  ]
-}
+]
