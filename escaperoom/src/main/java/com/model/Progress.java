@@ -1,41 +1,63 @@
 package com.model;
 
+/**
+ * 
+ * @author
+ */
 public class Progress {
     private int currentLevel;
-    private int hintsUsed;
-    private int puzzlesSolved;
-    private String timeElapsed;
+    private ArrayList<String> completedPuzzles;
+    private int totalScore;
+    private long timeSpent;
+    private String playerName;
+    private int score;
 
-    public Progress() {  
-    }
+    public Progress() {
 
-    public void resetProgress() {
-    }
+    }//end constructor
+
+    public void addCompletedPuzzle(String puzzleName) {
+
+    }//end addCompletedPuzzle()
+
+    public void increaseScore(int points) {
+        totalScore = totalScore + points;
+    }//end increaseScore()
 
     public void advanceLevel() {
-    }
 
-    public void updateTime(String time) {
-    }
+    }//end advanceLevel()
+
+    public void addTime(long seconds) {
+
+    }//end addTime()
 
     public int getCurrentLevel() {
         return currentLevel;
-    }
+    }//end getCurrentLevel()
 
-    public int getPuzzlesSolved() {
-        return puzzlesSolved;
-    }
+    public ArrayList<String> getCompletedPuzzles() {
+        return completedPuzzles;
+    }//end getCompletedPuzzles()
 
-    public int getHintsUsed() {
-        return hintsUsed;
-    }
+    public int getTotalScore() {
+        return totalScore;
+    }//end getTotalScore()
 
-    public String getTimeElapsed() {
-        return timeElapsed;
-    }
+    public long getTimeSpent() {
+        return timeSpent;
+    }//end getTimeSpent()
 
-    @Override
-    public String toString() {
-        return "";
-    }
-}
+    public String getPlayerName() {
+        return playerName;
+    }//end getPlayerName()
+
+    public int getScore() {
+        return score;
+    }//end getScore()
+
+    public int compareTo(other) {
+        return other;
+    }//end compareTo()
+    
+}//end Progress

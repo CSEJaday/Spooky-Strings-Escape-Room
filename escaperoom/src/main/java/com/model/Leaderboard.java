@@ -8,13 +8,14 @@ import java.util.ArrayList;
  */
 public class Leaderboard {
     private static Leaderboard leaderboard;
-    private ArrayList<LeaderboardEntry> entries;
+    private ArrayList<User> entries;
 
     /**
      * Private constructor that builds the leaderboard from data stored in a JSON file
      */
     private Leaderboard() {
         //build ArrayList of users
+        
     }//end constructor
 
     /**
