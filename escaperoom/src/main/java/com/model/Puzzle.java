@@ -1,6 +1,6 @@
 package com.model;
 
-public class Puzzle {
+public abstract class Puzzle {
     private String question;
     private Difficulty difficulty;
 
@@ -20,8 +20,7 @@ public class Puzzle {
         return difficulty;
     }
 
-    public abstract boolean checkAnswer(String userAnswer)
-    {
-        return false;
-    }
+    public abstract boolean checkAnswer(String userAnswer);
+   
+
 }

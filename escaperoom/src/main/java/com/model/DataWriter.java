@@ -5,13 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
-public class DataWriter extends DataConstants {
+public class DataWriter extends DataConstants{
 
     public static void savePlayers() 
     {
-        Users users = Users.getInstance();
-        ArrayList<User> userList = users.getUsers();
+        UserList users = UserList.getInstance();
+        ArrayList<User> userList = users.getAllUsers();
 
         JSONArray jsonUsers = new JSONArray();
 
@@ -20,7 +21,7 @@ public class DataWriter extends DataConstants {
             jsonUsers.add(getUserJSON(user));
         }
 
-        try (FileWriter file = new FileWriter(USER_DATA_FILE)) 
+        try (FileWriter file = new FileWriter(USER_DATA_FILE_TEST)) 
         {
             file.write(jsonUsers.toJSONString());
             file.flush();
@@ -38,10 +39,10 @@ public class DataWriter extends DataConstants {
     {
         JSONObject userDetails = new JSONObject();
 
-        userDetails.put(KEY_USERNAME, safeString(user.getUserName()));
-        userDetails.put(KEY_PASSWORD, safeString(user.getPassWord()));
+        userDetails.put(KEY_USERNAME, safeString(user.getUsername()));
+        userDetails.put(KEY_PASSWORD, safeString(user.getPassword()));
         userDetails.put(KEY_ID, user.getId() != null ? user.getId().toString() : "null");
-
+ /* 
         JSONArray charactersArray = new JSONArray();
 
         if (user.getCharacters() != null) 
@@ -50,6 +51,7 @@ public class DataWriter extends DataConstants {
             {
                 if (character == null) continue;
                 JSONObject charObj = new JSONObject();
+                charObj.put("avatar", safeString(character.getAvatar()));
                 charObj.put("name", safeString(character.getName()));
                 charObj.put("level", character.getLevel()); // assuming level is int
                 // Add more fields if needed
@@ -58,6 +60,7 @@ public class DataWriter extends DataConstants {
         }
 
         userDetails.put(KEY_CHARACTERS, charactersArray);
+        */
         // Optionally: add settings, etc. here if needed
         return userDetails;
     }
@@ -70,7 +73,7 @@ public class DataWriter extends DataConstants {
     public static void logQuit() {
         System.out.println("Logging out...");
         savePlayers();
-        Users.getInstance().clearUsers();
+        UserLoader.getInstance().clearUsers();
         System.out.println("Logged out.");
     }
 
