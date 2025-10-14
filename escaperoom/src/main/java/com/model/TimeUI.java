@@ -1,5 +1,6 @@
 package com.model;
 
+<<<<<<< HEAD
 public class TimeUI implements TimeObserver {
     public TimeUI() {
 
@@ -16,3 +17,19 @@ public class TimeUI implements TimeObserver {
     }
     
 }
+=======
+public class TimeUI {
+    
+    public TimeUI() {
+        System.out.println("This is the timerUI");
+    }//end constructor
+
+    public void onTick(int timeRemaining) {
+
+    }//end timRemaining()
+
+    public void onTimeUp() {
+
+    }//end onTimeUp()
+}//end TimeUI
+>>>>>>> 7f605275ee5fc170cb1f8050f73c2eedf9251cc7

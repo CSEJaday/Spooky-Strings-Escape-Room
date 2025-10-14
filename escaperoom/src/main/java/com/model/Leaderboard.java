@@ -6,15 +6,16 @@ import java.util.ArrayList;
  * Singleton class that maintains a listing of players and their current scores relative to each other.
  * @author
  */
-public class LeaderBoard {
+public class Leaderboard {
     private static Leaderboard leaderboard;
-    private ArrayList<LeaderBoardEntry> entries;
+    private ArrayList<User> entries;
 
     /**
      * Private constructor that builds the leaderboard from data stored in a JSON file
      */
-    private LeaderBoard() {
+    private Leaderboard() {
         //build ArrayList of users
+        
     }//end constructor
 
     /**
@@ -25,7 +26,7 @@ public class LeaderBoard {
      */
     public static Leaderboard getInstance() {
         if (leaderboard == null) {
-          leaderboard = new LeaderBoard();  
+          leaderboard = new Leaderboard();  
         } 
         return leaderboard;
     }//end getInstance()
@@ -36,7 +37,7 @@ public class LeaderBoard {
      * @param score
      */
     public void addEntry(String name, int score) {
-        LeaderBoardEntry entry = new LeaderBoardEntry(name, score);
+        LeaderboardEntry entry = new LeaderboardEntry(name, score);
         entries.add(entry);
     }//end addEntry()
 
@@ -45,7 +46,7 @@ public class LeaderBoard {
      * @param limit
      * @return
      */
-    public ArrayList<LeaderBoardEntry> getTopEntries(int limit) {
+    public ArrayList<LeaderboardEntry> getTopEntries(int limit) {
         return entries;
     }//end getTopEntries()
 

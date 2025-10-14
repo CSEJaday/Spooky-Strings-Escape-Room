@@ -1,5 +1,6 @@
 package com.model;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class HintList {
@@ -26,6 +27,7 @@ public class HintList {
         hintsMap.putIfAbsent(level, new LinkedList<>());
         hintsMap.get(level).offer(hint);
     }
+    
 
     public Hint getNextHint(int level)
     {
@@ -36,5 +38,5 @@ public class HintList {
         }
         return null;
     }
-
 }
+
