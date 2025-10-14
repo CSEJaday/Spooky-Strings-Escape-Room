@@ -14,8 +14,12 @@ public class Leaderboard {
      * Private constructor that builds the leaderboard from data stored in a JSON file
      */
     private Leaderboard() {
-        //build ArrayList of users
-        
+        //build ArrayList of users from JSON file
+        //Retrieve the data for a user in the JSON file and create a User object.
+        User user = new User(name, password, UUID, characterList, settings, progress);
+        //add the user to the entries ArrayList
+        entries.add(user);
+
     }//end constructor
 
     /**
@@ -32,13 +36,14 @@ public class Leaderboard {
     }//end getInstance()
 
     /**
-     * Creates a new LeaderBoardEntry with the data provided and adds it to the ArrayList of players
+     * Creates a new User entry with the data provided and adds it to the ArrayList of players
      * @param name
      * @param score
      */
-    public void addEntry(String name, int score) {
-        LeaderboardEntry entry = new LeaderboardEntry(name, score);
-        entries.add(entry);
+    public void addEntry(String name, int score) {  //should we use UUID to identify the user?
+        // retrieve the user information from the JSON file and update with the new score and level.
+        User user = new User(name, score);
+        entries.add(user);
     }//end addEntry()
 
     /**
@@ -46,7 +51,7 @@ public class Leaderboard {
      * @param limit
      * @return
      */
-    public ArrayList<LeaderboardEntry> getTopEntries(int limit) {
+    public ArrayList<User> getTopEntries(int limit) {
         return entries;
     }//end getTopEntries()
 

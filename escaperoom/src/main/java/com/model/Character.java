@@ -12,6 +12,8 @@ public class Character {
     private HashMap<Integer, ArrayList<Hint>> hints;
 
     public Character(String name, String avatar) {
+        this.name = name;
+        this.avatar = avatar;
 
     }
 
@@ -26,6 +28,6 @@ public class Character {
 
     public String toString() {
         
-        return null;
+        return (name + " with Avatar " + avatar + " is on level " + currentLevel);
     }
 }
