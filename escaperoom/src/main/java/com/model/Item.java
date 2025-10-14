@@ -1,16 +1,16 @@
 package com.model;
 
 public class Item {
-    private String itemName;
+    private ItemName itemName;
     private String iconFilePath; //icon??
 
-    public Item(String name, String iconFilePath) 
+    public Item(ItemName name, String iconFilePath) 
     {
         this.itemName = name;
         this.iconFilePath = iconFilePath;
     }
 
-    public String getName() 
+    public ItemName getName() 
     {
         return itemName;
     }
