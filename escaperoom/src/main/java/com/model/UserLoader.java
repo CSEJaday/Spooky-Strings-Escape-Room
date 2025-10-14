@@ -1,6 +1,13 @@
 package com.model;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-public class UserLoader {
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+public class UserLoader 
+{
     private static UserLoader userLoader;
 
     private UserLoader()
@@ -13,8 +20,6 @@ public class UserLoader {
         return null;
     }
 
-    public ArrayList<User> loadData(String filepath)
-    {
-        return null;
-    }
+    public ArrayList<User> loadData(String filepath) {
+        
 }

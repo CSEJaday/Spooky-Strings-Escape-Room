@@ -19,4 +19,9 @@ public class CharacterList {
     public Character getCharacterByUsername(String name) {
         return null;
     }
+    public String toString() 
+    {
+        return name + " (" + avatar + ") - Level " + currentLevel;
+}
+
 }
