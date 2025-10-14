@@ -1,4 +1,4 @@
-package JSON;
+package json;
 import java.util.UUID;
 
 public class MakeUUID {

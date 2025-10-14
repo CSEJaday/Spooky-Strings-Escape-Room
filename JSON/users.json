@@ -1,0 +1,27 @@
+[
+    {
+        "username": "ThunderFury",
+        "password": "IloveEscaperooms",
+        "id": "d202faed-8388-4fb1-a1a3-7c4cf5b560e2",
+        "characters": 
+        [
+            
+            {"name": "Stormcaller", "level": 1},
+            {"name": "Windblade", "level": 2}
+            
+        ]
+        
+    },
+    {
+        "username": "NightBlade",
+        "password": "EscapeRoomNerd",
+        "id": "f9bb02ef-d177-4458-91b7-b48e08f7cd73",
+        "characters": 
+        [
+            
+            {"name": "Shadowstrike", "level": 3},
+            {"name": "Moonfang", "level": 4}
+            
+        ]
+    }
+]
