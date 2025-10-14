@@ -1,6 +1,5 @@
 package com.model;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,18 +8,10 @@ import java.util.UUID;
 /**
  * Represents a user with login credentials, a unique ID, and a list of characters.
  */
-=======
-import java.util.UUID;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-
->>>>>>> 7f605275ee5fc170cb1f8050f73c2eedf9251cc7
 public class User {
     private String username;
     private String password;
     private UUID id;
-<<<<<<< HEAD
     private ArrayList<Character> characters;
 
     // Constructor
@@ -79,22 +70,3 @@ public class User {
     }
 }
 
-=======
-    private ArrayList<Character> character;
-    private HashMap<String, Settings> settings;
-    private Progress progress;
-
-    public User(String username, String password, UUID id, Progress progress) {
-
-    }//end constructor
-
-    public void addCharacter(Character character) {
-
-    }//end addCharacter()
-
-    public void deleteCharacter(String name, String avatar) {
-
-    }//end deleteCharacter()
-
-}//end User
->>>>>>> 7f605275ee5fc170cb1f8050f73c2eedf9251cc7
