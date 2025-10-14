@@ -1,30 +1,40 @@
 package com.model;
 
 public class RiddlePuzzle extends Puzzle{
-    private String riddle;
+    //private String riddle; // duplicate already stored in puzzle class
     private String answer;
     private String category;
 
     public RiddlePuzzle(String riddle, String answer, String category, Difficulty difficulty)
     {
-        super(riddle, difficulty);
-        this.riddle = riddle;
+        super(riddle, difficulty); // stores riddel ad question in puzzle=
         this.answer = answer;
         this.category = category;
     }
 
-    public void setRiddle(String riddle)
+    public String getAnswer()
     {
-        this.riddle = riddle;
+        return answer;
     }
 
-    public String getRiddle()
+    public void setAnswer(String answer)
     {
-        return riddle;
+        this.answer = answer;
     }
 
+    public String getCategory()
+    {
+        return category;
+    }
+
+    public void setCategory(String category)
+    {
+        this.category = category;
+    }
+
+    @Override
     public boolean checkAnswer(String userAnswer)
     {
-        return false;
+        return answer.equalsIgnoreCase(userAnswer.trim());
     }
 }

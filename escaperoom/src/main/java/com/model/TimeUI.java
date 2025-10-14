@@ -1,16 +1,18 @@
 package com.model;
 
-public class TimeUI {
-    
+public class TimeUI implements TimeObserver {
     public TimeUI() {
-        System.out.println("This is the timerUI");
-    }//end constructor
 
+    }
+
+    @Override
     public void onTick(int timeRemaining) {
+        System.out.println("Time remaining: " + timeRemaining);
+    }
 
-    }//end timRemaining()
-
+    @Override
     public void onTimeUp() {
-
-    }//end onTimeUp()
-}//end TimeUI
+        System.out.println("Time is up!");
+    }
+    
+}

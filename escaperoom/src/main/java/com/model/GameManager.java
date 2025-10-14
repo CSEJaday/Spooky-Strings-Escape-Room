@@ -1,5 +1,6 @@
 package com.model;
 
+import java.util.Timer;
 import java.util.*;
 
 public class GameManager {
@@ -32,6 +33,12 @@ public class GameManager {
     }
 
     public void pauseGame() {
+        if (timer != null) 
+        {
+            timer.cancel(); 
+            timer = null;
+            System.out.println("Game paused.");
+        }
     }
 
     public void exitGame() {
