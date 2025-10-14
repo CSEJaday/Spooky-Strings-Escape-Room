@@ -9,7 +9,13 @@ public class Hint {
         this.description = description;
     }
 
-    public String getDescription() {
+    public String getDescription() 
+    {
         return description;
+    }
+
+    public int getLevel() 
+    {
+        return level;
     }
 }
