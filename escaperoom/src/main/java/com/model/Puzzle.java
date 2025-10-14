@@ -21,6 +21,11 @@ public abstract class Puzzle {
     }
 
     public abstract boolean checkAnswer(String userAnswer);
-   
+   // need to possibly implement a enum class
+   // named difficulty, should look like
+   // public enum Difficulty {
+   //.    EASY, MEDIUM HARD;
+   // }
+
 
 }

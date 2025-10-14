@@ -12,7 +12,7 @@ public class TimeUI implements TimeObserver {
 
     @Override
     public void onTimeUp() {
-        System.out.println("Time's up!");
+        System.out.println("Time is up!");
     }
     
 }
