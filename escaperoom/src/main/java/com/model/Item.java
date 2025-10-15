@@ -10,6 +10,10 @@ public class Item {
         this.iconFilePath = iconFilePath;
     }
 
+    public Item(Item name) {
+        //TODO Auto-generated constructor stub
+    }
+
     public String getName() 
     {
         return itemName;

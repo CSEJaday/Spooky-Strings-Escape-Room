@@ -1,7 +1,8 @@
 package com.model;
 
 import java.util.Timer;
-import java.util.*;
+import java.util.TimerTask;
+import java.util.ArrayList;
 
 public class GameManager {
     private User user;
@@ -10,28 +11,51 @@ public class GameManager {
     private HintList hintList;
 
     public User login(String username, String password) {
-        return null;
+        // Simple placeholder login logic
+        System.out.println("Attempting login for user: " + username);
+        // In a real system, you'd check credentials here
+    this.user = new User(username, password, null);
+        return this.user;
     }
 
     public User signup(String username, String password) {
-        return null;
+        // Simple placeholder signup logic
+        System.out.println("Creating new user: " + username);
+        this.user = new User(username, password, null);
+        return this.user;
     }
 
     public void playGame() {
+        System.out.println("Game started.");
+        if (timer == null) {
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    updateTimeUI();
+                }
+            }, 0, 1000); // Update every second
+        }
     }
 
     public void pauseGame() {
-        if (timer != null) 
-        {
-            timer.cancel(); 
+        if (timer != null) {
+            timer.cancel();
             timer = null;
             System.out.println("Game paused.");
         }
     }
 
-    public void exitGame() {
+    public void quitGame() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        System.out.println("Game exited.");
     }
 
-    public void updateTime() {
+    public void updateTimeUI() {
+        // Just a simple console message for now
+        System.out.println("Updating time UI...");
     }
 }
