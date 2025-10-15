@@ -23,7 +23,7 @@ public class Inventory {
 
     public void addItem(Item item)
     {
-        if (inventory.containsKey(Item))
+        if (inventory.containsKey(item))
         {
             int quantity = inventory.get(item);
             if (quantity > 1)
