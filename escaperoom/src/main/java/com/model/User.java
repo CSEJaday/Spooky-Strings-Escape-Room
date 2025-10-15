@@ -60,7 +60,7 @@ public class User {
         return characters;
     }
 
-    // Optional: Debugging output
+    // Characters information output
     @Override
     public String toString() {
         return "User{" +

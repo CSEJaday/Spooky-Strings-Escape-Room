@@ -37,7 +37,23 @@ public class Inventory {
         }
     }
 
-    public int getItemQunatity(Item item)
+    // method to remove item once used 
+    public void removeItem(Item item) 
+    {
+        if (inventory.containsKey(item)) 
+        {
+            int quantity = inventory.get(item);
+            if (quantity > 1) 
+            {
+                inventory.put(item, quantity - 1);
+            } 
+            else 
+            {
+                inventory.remove(item);
+            }
+        }
+    }
+    public int getItemQuantity(Item item)
     {
         return inventory.getOrDefault(item, 0);
     }
