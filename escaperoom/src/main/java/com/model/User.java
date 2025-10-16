@@ -1,73 +1,70 @@
-
 package com.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
 /**
- * Represents a user with login credentials, a unique ID, and a list of characters.
+ * The User class represents a simple user with a username and email address.
+ * It provides methods for converting between User objects and a simple
+ * text-based representation.
+ *
  */
 public class User {
+    /** The username. */
     private String username;
-    private String password;
-    private UUID id;
-    private ArrayList<Character> characters;
 
-    // Constructor
-    public User(String username, String password, UUID id) {
+    /** The user's email address. */
+    private String email;
+
+    /**
+     * Constructs a new User with the specified username and email.
+     *
+     * @param username the user's username
+     * @param email the user's email address
+     */
+    public User(String username, String email) {
         this.username = username;
-        this.password = password;
-        this.id = id;
-        this.characters = new ArrayList<>();
+        this.email = email;
     }
 
-    // Add a character to the user
-    public void addCharacter(Character character) {
-        if (character != null) {
-            characters.add(character);
-        }
-    }
-
-    // Remove a character by name and avatar
-    public boolean deleteCharacter(String name, String avatar) {
-        Iterator<Character> iterator = characters.iterator();
-        while (iterator.hasNext()) {
-            Character character = iterator.next();
-            if (character.getName().equals(name) && character.getAvatar().equals(avatar)) {
-                iterator.remove();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Getters
+    /**
+     * Returns the username of this user.
+     *
+     * @return the username as a String
+     */
     public String getUsername() {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    /**
+     * Returns the email address of this user.
+     *
+     * @return the email address as a String
+     */
+    public String getEmail() {
+        return email;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public ArrayList<Character> getCharacters() {
-        return characters;
-    }
-
-    // Characters information output
+    /**
+     * Converts this User object into a single line of text
+     *
+     * @return the user data as a single String line
+     */
     @Override
     public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", id=" + id +
-                ", characterCount=" + characters.size() +
-                '}';
+        return username + "," + email;
+    }
+
+    /**
+     * Converts a line of text back into a User object.
+     *
+     * @param line a line of text representing a user
+     * @return a User object, or null if the line is invalid
+     */
+    public static User fromString(String line) {
+        String[] parts = line.split(",");
+        if (parts.length == 2) {
+            String username = parts[0].trim();
+            String email = parts[1].trim();
+            return new User(username, email);
+        }
+        return null;
     }
 }
-

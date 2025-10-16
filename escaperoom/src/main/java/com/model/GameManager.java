@@ -2,6 +2,8 @@ package com.model;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 public class GameManager {
@@ -11,11 +13,11 @@ public class GameManager {
     private HintList hintList;
 
     public User login(String username, String password) {
-        // Simple placeholder login logic
-        System.out.println("Attempting login for user: " + username);
-        // In a real system, you'd check credentials here
-    this.user = new User(username, password, null);
-        return this.user;
+        // find the user data in the JSON file matching the username 
+        //check that the password is the same
+        //return a User object with the saved data
+    
+        return null;
     }
 
     /**
@@ -26,13 +28,8 @@ public class GameManager {
      */
     public User signup(String username, String password) {
         UUID id = UUID.randomUUID();
-        User user = new User(username, password, id);
-        addToJSON (user);
-
-        // Simple placeholder signup logic
-        System.out.println("Creating new user: " + username);
-        this.user = new User(username, password, null);
-        return this.user;
+        User user = new User(username, password);
+        return user;
     }
 
     public void playGame() {
@@ -67,16 +64,5 @@ public class GameManager {
     public void updateTimeUI() {
         // Just a simple console message for now
         System.out.println("Updating time UI...");
-    }
-
-    /**
-     * Adds the data for this User to JSON
-     * @param user the User object to add to the JSON file
-     */
-    private void addToJSON(User user){
-        try {
-            FileWriter writer = new FileWriter
-        } catch (Exception e) {
-        }
     }
 }
