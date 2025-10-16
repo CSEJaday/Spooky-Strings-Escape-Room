@@ -11,11 +11,6 @@ public class Character {
     //private Inventory inventory;
     //private HashMap<Integer, ArrayList<Hint>> hints;
 
-<<<<<<< HEAD
-    public Character(String name, String avatar) {
-        this.name = name;
-        this.avatar = avatar;
-=======
     public Character(String name, int level, String avatar) 
     {
         this.name = name;
@@ -45,7 +40,6 @@ public class Character {
     /* 
     public void unlockNextHint(int level) 
     {
->>>>>>> 8d259037a6e192cc6408702797ade55f840f91c4
 
     }
 
@@ -57,11 +51,6 @@ public class Character {
 
     public String toString() {
         
-<<<<<<< HEAD
-        return (name + " with Avatar " + avatar + " is on level " + currentLevel);
-    }
-=======
         return null;
     } */
->>>>>>> 8d259037a6e192cc6408702797ade55f840f91c4
 }

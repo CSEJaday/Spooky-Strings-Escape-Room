@@ -18,18 +18,6 @@ import org.json.simple.parser.ParseException;
  */
 public class DataLoader extends DataConstants {
 
-<<<<<<< HEAD
-    /**
-     * Pulls user data from the JSON file and loads into User Objects that are 
-     * added to an ArrayList
-     * @param filePath
-     * @return
-     */
-    public T loadData(String filePath) {
-        
-
-    }//end loadData()
-=======
     public static ArrayList<User> getUsers() 
     {
         ArrayList<User> users = new ArrayList<>();
@@ -98,23 +86,14 @@ public static void main (String[] args)
     //{
 
     //}//end filePath()
->>>>>>> 8d259037a6e192cc6408702797ade55f840f91c4
 
     /**
      * Retrieves all of the Users stored in the User.json file, adds them to an ArrayList and return
      * the ArrayList.
      * @return The ArrayList of Users.
      */
-<<<<<<< HEAD
-    public static ArrayList<User> getUsers() {
-        try {
-            FileReader file = new FileReader(User.json);
-        } catch ( e) {
-        }
-=======
     /*public static ArrayList<User> getUsers() {
         
->>>>>>> 8d259037a6e192cc6408702797ade55f840f91c4
         for (int i = 0; i < peopleJSON.size(); i++){
             JSONObject personJSON = (JSONObject)peopleJSON.get(i);
             UUID id = UUID.fromString((String)personJSON.get(USER_ID));
