@@ -21,8 +21,8 @@ public class UserList {
     private UserList()
     {
         users = new ArrayList<>();
-        users.add(new User("asmith", "12345", UUID.randomUUID()));
-        users.add(new User("bsmith", "12345", UUID.randomUUID()));
+        users.add(new User("asmith", "12345"));
+        users.add(new User("bsmith", "12345"));
 
     }
 
