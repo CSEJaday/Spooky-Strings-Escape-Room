@@ -1,5 +1,4 @@
 package com.model;
-
 public class MathPuzzle extends Puzzle{
     private String equation;
     private int answer;

@@ -1,20 +1,38 @@
 package com.model;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+
 public class UserLoader {
-    private static UserLoader userLoader;
+    private static UserLoader instance;
+    private ArrayList<User> users;
 
     private UserLoader()
     {
-        return;
+        users = DataLoader.getUsers(); //load users from json
     }
 
-    public UserLoader getInstance()
+    public static UserLoader getInstance()
     {
-        return null;
+        if (instance == null)
+        {
+            instance = new UserLoader();
+        }
+        return instance;
     }
 
-    public ArrayList<User> loadData(String filepath)
+    public ArrayList<User> getUsers()
     {
-        return null;
+        return users;
+    }
+
+    public void addUser(User user)
+    {
+        users.add(user);
+    }
+
+    public void clearUsers()
+    {
+        users.clear();
     }
 }

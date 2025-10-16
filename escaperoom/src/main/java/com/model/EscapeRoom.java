@@ -6,16 +6,22 @@ public class EscapeRoom {
     private boolean isSolved;
     private int level;
 
-    public EscapeRoom(String name, String description, int level) {
+    public EscapeRoom(String name, String description, int level)
+    {
+        this.name = name;
+        this.description = description;
+        this.level = level;
+        this.isSolved = false;
 
     }
 
-    public void enterRoom() {
-
+    public void enterRoom()
+    {
+        return;
     }
 
-    public Puzzle getPuzzle() {
-        
+    public Puzzle getPuzzle()
+    {
         return null;
     }
 }

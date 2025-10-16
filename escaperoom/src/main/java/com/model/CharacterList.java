@@ -4,19 +4,47 @@ import java.util.*;
 
 public class CharacterList {
     private ArrayList<Character> characters;
+    private static CharacterList instance;
 
-    public CharacterList() {
+    // private constructor for singleton pattern
+    public CharacterList() 
+    {
         characters = new ArrayList<>();
     }
 
-    public void addCharacter(Character c) {
+    // Singleton accessor
+    public static CharacterList getInstance()
+    {
+        if (instance == null) 
+        {
+            instance = new CharacterList();
+        }
+        return instance;
     }
 
-    public ArrayList<Character> getCharacterInventory() {
+    // return all the characters
+    public ArrayList<Character> getCharacterInventory() 
+    {
         return characters;
     }
 
-    public Character getCharacterByUsername(String name) {
-        return null;
+    // Add character to the list
+    public void addCharacter(Character character) 
+    {
+        characters.add(character);
     }
+
+    public String getCharacterByName(String name)
+    {
+        for (Character character : characters)
+        {
+            if (character.getName().equalsIgnoreCase(name))
+            {
+                return character.toString();
+            }
+        }
+        return "Character not found";
+    }
+    
+
 }

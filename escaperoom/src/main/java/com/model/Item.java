@@ -1,24 +1,32 @@
 package com.model;
 
 public class Item {
-    private String itemName;
-    private String filePath;
+    private ItemName itemName;
+    private String iconFilePath; //icon??
 
-    public Item(String name, String filePath) {
+    public Item(ItemName name, String iconFilePath) 
+    {
         this.itemName = name;
-        this.filePath = filePath;
+        this.iconFilePath = iconFilePath;
     }
 
-    public String getItemName() {
+    public ItemName getName() 
+    {
         return itemName;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getIconFilePath() 
+    {
+        return iconFilePath;
     }
 
+    public void useItem()
+    {
+        System.out.println("Using item:" + itemName);
+    }
     @Override
-    public String toString() {
-        return "Item: " + itemName + " (Path: " + filePath + ")";
+    public String toString() 
+    {
+        return "Item: " + itemName + " (Path: " + iconFilePath + ")";
     }
 }
