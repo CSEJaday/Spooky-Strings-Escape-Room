@@ -45,9 +45,6 @@ public class CharacterList {
         }
         return "Character not found";
     }
-    public String toString() 
-    {
-        return name + " (" + avatar + ") - Level " + currentLevel;
-}
+    
 
 }

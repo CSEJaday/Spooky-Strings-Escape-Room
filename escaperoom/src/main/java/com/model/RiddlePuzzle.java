@@ -7,7 +7,7 @@ public class RiddlePuzzle extends Puzzle{
 
     public RiddlePuzzle(String riddle, String answer, String category, Difficulty difficulty)
     {
-        super(riddle, difficulty); // stores riddel ad question in puzzle=
+        super(riddle, difficulty); // stores riddle and question in puzzle
         this.answer = answer;
         this.category = category;
     }
