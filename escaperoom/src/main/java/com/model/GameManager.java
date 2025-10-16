@@ -11,19 +11,11 @@ public class GameManager {
     private HintList hintList;
 
     public User login(String username, String password) {
-<<<<<<< HEAD
         // find the user data in the JSON file matching the username 
         //check that the password is the same
         //return a User object with the saved data
     
         return null;
-=======
-        // Simple placeholder login logic
-        System.out.println("Attempting login for user: " + username);
-        // In a real system, you'd check credentials here
-    this.user = new User(username, password, null);
-        return this.user;
->>>>>>> 84741b7c39353ecc95399ede93b7a99e0cf0d841
     }
 
     /**
@@ -33,16 +25,9 @@ public class GameManager {
      * @return - the User object created for this user.
      */
     public User signup(String username, String password) {
-<<<<<<< HEAD
         UUID id = UUID.randomUUID();
         User user = new User(username, password, id);
         addToJSON (user);
-=======
-        // Simple placeholder signup logic
-        System.out.println("Creating new user: " + username);
-        this.user = new User(username, password, null);
-        return this.user;
->>>>>>> 84741b7c39353ecc95399ede93b7a99e0cf0d841
     }
 
     public void playGame() {
