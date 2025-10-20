@@ -20,17 +20,10 @@ public class UserList {
     // constructor
     private UserList()
     {
-<<<<<<< HEAD
         //users = new ArrayList<>();
         //users.add(new User("asmith", "12345", UUID.randomUUID()));
         //users.add(new User("bsmith", "12345", UUID.randomUUID()));
         users = DataLoader.getUsers();
-=======
-        users = new ArrayList<>();
-        users.add(new User("asmith", "12345"));
-        users.add(new User("bsmith", "12345"));
-
->>>>>>> 49958707524be3549734851146eabb24250cc901
     }
 
     public ArrayList<User> getAllUsers()
