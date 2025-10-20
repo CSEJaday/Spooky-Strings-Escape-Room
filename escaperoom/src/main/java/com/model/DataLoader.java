@@ -1,8 +1,9 @@
 package com.model;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InvalidObjectException;
+//import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -63,6 +64,39 @@ public class DataLoader extends DataConstants {
         return users;
     }
 
+    // created method to save the newly created users
+    // check with professor to see if this is correct
+    public static void saveUsers(ArrayList<User> users)
+    {
+        JSONArray usersArray = new JSONArray();
+        for (User user : users)
+        {
+            JSONObject userJSON = new JSONObject();
+            userJSON.put(KEY_ID, user.getId().toString());
+            userJSON.put(KEY_USERNAME, user.getUsername());
+            userJSON.put(KEY_PASSWORD, user.getPassword());
+
+            JSONArray charactersArray = new JSONArray();
+            for (Character character : user.getCharacters())
+            {
+                JSONObject charJSON = new JSONObject();
+                charJSON.put("name", character.getName());
+                charJSON.put("level", character.getLevel());
+                charJSON.put("avatar", character.getAvatar());
+                charactersArray.add(charJSON);
+            }
+            userJSON.put(KEY_CHARACTERS, charactersArray);
+            usersArray.add(userJSON);
+        }
+        try (FileWriter file = new FileWriter(USER_DATA_FILE))
+        {
+            file.write(usersArray.toJSONString());
+            file.flush();
+        } catch (IOException e) {
+            System.err.println("Error saving users!" + e.getMessage());
+        }
+    }
+
 // test to see if it works
 public static void main (String[] args)
  {
@@ -76,35 +110,3 @@ public static void main (String[] args)
 
 }
 
-/**
-     * 
-     * @param filePath
-     * @return
-     */
-    //public T loadData(String filePath) 
-    //{
-
-    //}//end filePath()
-
-    /**
-     * 
-     * @return
-     */
-    /*public static ArrayList<User> getUsers() {
-        
-        for (int i = 0; i < peopleJSON.size(); i++){
-            JSONObject personJSON = (JSONObject)peopleJSON.get(i);
-            UUID id = UUID.fromString((String)personJSON.get(USER_ID));
-            String userName = (String)personJSON.get(USER_USER_NAME);
-            String firstName = (String)personJSON.get(USER_FIRST_NAME);
-            String lastName = (String)personJSON.get(USER_LAST_NAME);
-            int age = ((Long)personJSON.get(USER_AGE)).intValue();
-            String phoneNumber = (String)personJSON.get(USER_PHONE_NUMBER);
-
-            user.add(new User(id, userName, firstName, lastName, age, phoneNumber));
-        }
-        return users;
-    }//end getUsers()
-    
-}//end DataLoader()
-*/

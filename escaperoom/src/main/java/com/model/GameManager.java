@@ -2,7 +2,6 @@ package com.model;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.ArrayList;
 
 public class GameManager {
     private User user;
@@ -22,6 +21,11 @@ public class GameManager {
         // Simple placeholder signup logic
         System.out.println("Creating new user: " + username);
         this.user = new User(username, password, null);
+        return this.user;
+    }
+
+    public User getCurrentUser()
+    {
         return this.user;
     }
 

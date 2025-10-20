@@ -4,7 +4,7 @@ package com.model;
  * 
  * @author
  */
-public class Progress {
+public class Progress implements Comparable<Progress> {
     private int currentLevel;
     private ArrayList<String> completedPuzzles;
     private int totalScore;
@@ -12,8 +12,14 @@ public class Progress {
     private String playerName;
     private int score;
 
-    public Progress() {
-
+    public Progress() 
+    {
+        this.currentLevel = 1;
+        this.completedPuzzles = new ArrayList<>();
+        this.totalScore = 0;
+        this.timeSpent = 0;
+        this.playerName = "Unknown"; //players username should be here
+        this.score = 0;
     }//end constructor
 
     public void addCompletedPuzzle(String puzzleName) {
@@ -28,8 +34,9 @@ public class Progress {
 
     }//end advanceLevel()
 
-    public void addTime(long seconds) {
-
+    public void addTime(long seconds) 
+    {
+        this.timeSpent += seconds;
     }//end addTime()
 
     public int getCurrentLevel() {
@@ -44,7 +51,8 @@ public class Progress {
         return totalScore;
     }//end getTotalScore()
 
-    public long getTimeSpent() {
+    public long getTimeSpent() 
+    {
         return timeSpent;
     }//end getTimeSpent()
 
