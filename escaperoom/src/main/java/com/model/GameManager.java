@@ -2,9 +2,6 @@ package com.model;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
-import java.io.FileWriter;
-import java.util.ArrayList;
 
 public class GameManager {
     private User user;
@@ -30,6 +27,11 @@ public class GameManager {
         UUID id = UUID.randomUUID();
         User user = new User(username, password);
         return user;
+    }
+
+    public User getCurrentUser()
+    {
+        return this.user;
     }
 
     public void playGame() {

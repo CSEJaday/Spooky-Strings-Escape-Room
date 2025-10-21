@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
+//import org.json.simple.parser.ParseException;
 
 public class DataWriter extends DataConstants{
 
-    public static void savePlayers() 
+    public static void saveUsers() 
     {
         UserList users = UserList.getInstance();
         ArrayList<User> userList = users.getAllUsers();
@@ -72,14 +72,14 @@ public class DataWriter extends DataConstants{
 
     public static void logQuit() {
         System.out.println("Logging out...");
-        savePlayers();
+        saveUsers();
         UserLoader.getInstance().clearUsers();
         System.out.println("Logged out.");
     }
 
     public static void main(String[] args) 
     {
-        savePlayers();
+        saveUsers();
         // logQuit(); // Uncomment to test logout saving and clearing
     }
 }

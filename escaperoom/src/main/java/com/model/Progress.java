@@ -4,7 +4,7 @@ import java.util.ArrayList;
  * 
  * @author
  */
-public class Progress {
+public class Progress implements Comparable<Progress> {
     private int currentLevel;
     private ArrayList<String> completedPuzzles;
     //private int totalScore;
@@ -12,22 +12,14 @@ public class Progress {
     private String playerName;      //is this the same as username?
     private int score;
 
-    /*
-     * Constructor for the Progress object that tracks a user's progress through the game.
-     * @param level - the level the player is at in the game. If this is a first time user, progress is set to 0
-     * @param puzzles - the ArrayList of Strings that contains the puzzles the user has completed. If this is the first
-     *                  time creating Progress, this will be null
-     * @param score - the current number of points this user has earned. For new users, this will be 0
-     * @param time - the long value of the time the user has spent solving puzzles in the game. For new users, this will be 0
-     * @param name - this is the username for the player  - might want to use UUID?
-     */
-    public Progress(int level, ArrayList<String> puzzles, int score, long time, String name) {
-        currentLevel = level;
-        completedPuzzles = puzzles;
-        timeSpent = time;
-        playerName = name;  //should we use UUID instead?
-        this.score = score;
-
+    public Progress() 
+    {
+        this.currentLevel = 1;
+        this.completedPuzzles = new ArrayList<>();
+        this.score = 0;
+        this.timeSpent = 0;
+        this.playerName = "Unknown"; //players username should be here
+        this.score = 0;
     }//end constructor
 
     /*
@@ -54,13 +46,9 @@ public class Progress {
 
     }//end advanceLevel()
 
-    /*
-        Adds time to the local timeSpent tracking. This would be called when a user is either penalized with a time penalty,
-        pauses a level in progress, or when a user completes a level and needs to  update their progress
-    */
-    public void addTime(long seconds) {
-        timeSpent = timeSpent + seconds;
-
+    public void addTime(long seconds) 
+    {
+        this.timeSpent += seconds;
     }//end addTime()
 
     /**
@@ -125,5 +113,11 @@ public class Progress {
             value = -1;
         return value;
     }//end compareTo()
+
+    @Override
+    public int compareTo(Progress arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
+    }
     
 }//end Progress
