@@ -93,4 +93,9 @@ public class User {
     {
         return "User: username=" + username + ", id=" + id + ", characterCount=" + characters.size();
     }
+
+
+    public static User fromString(String line) {
+        throw new UnsupportedOperationException("Unimplemented method 'fromString'");
+    }
 }
