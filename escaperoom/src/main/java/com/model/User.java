@@ -22,6 +22,10 @@ public class User {
     // Constructor for users that are already created
     public User(String username, String password, UUID id) 
     {
+        this.username = username;
+        this.password = password;
+        this.id = id;
+        this.characters = new ArrayList<>();
     }
 
 
@@ -82,11 +86,11 @@ public class User {
         return characters;
     }
 
+    
     // Characters information output
     @Override
     public String toString() 
     {
-        return "User: " + "username: " + username + '\'' + ", id:" + id +
-                ", characterCount: " + characters.size();
+        return "User: username=" + username + ", id=" + id + ", characterCount=" + characters.size();
     }
 }

@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 //import java.io.InvalidObjectException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.UUID;
 
 import org.json.simple.JSONArray;
@@ -95,55 +96,77 @@ public class DataLoader extends DataConstants {
             file.flush();
         } catch (IOException e) {
             System.err.println("Error saving users!" + e.getMessage());
+            System.out.println("Choose option: \n 1 to sign in, \n 2 to create account");
         }
     }
 
+/* 
 // test to see if it works
-public static void main (String[] args)
- {
-    ArrayList<User> users = DataLoader.getUsers();
+public static void main(String[] args) 
+{
+    Scanner key = new Scanner(System.in);
+    UserList userList = UserList.getInstance();
 
-    for (User user : users)
+    // Load users from data source
+    //userList.loadUsers(); 
+
+    System.out.println("Choose option 1 to sign in, 2 to create account");
+    String option = key.nextLine();
+
+    if (option.equals("1")) 
     {
-        System.out.println(user);
-    }
- }
+        // Signing in
+        System.out.println("Enter username:");
+        String username = key.nextLine();
 
-}
+        System.out.println("Enter password:");
+        String password = key.nextLine();
 
-<<<<<<< HEAD
-=======
-/**
-     * 
-     * @param filePath
-     * @return
-     */
-    //public T loadData(String filePath) 
-    //{
+        User user = userList.getUserByName(username);
 
-    //}//end filePath()
-
-    /**
-     * Retrieves all of the Users stored in the User.json file, adds them to an ArrayList and return
-     * the ArrayList.
-     * @return The ArrayList of Users.
-     */
-    /*public static ArrayList<User> getUsers() {
-        
-        for (int i = 0; i < peopleJSON.size(); i++){
-            JSONObject personJSON = (JSONObject)peopleJSON.get(i);
-            UUID id = UUID.fromString((String)personJSON.get(USER_ID));
-            String userName = (String)personJSON.get(USER_USER_NAME);
-            String firstName = (String)personJSON.get(USER_FIRST_NAME);
-            String lastName = (String)personJSON.get(USER_LAST_NAME);
-            int age = ((Long)personJSON.get(USER_AGE)).intValue();
-            String phoneNumber = (String)personJSON.get(USER_PHONE_NUMBER);
-
-            user.add(new User(id, userName, firstName, lastName, age, phoneNumber));
+        if (user != null && user.getPassword().equals(password)) 
+        {
+            System.out.println("Sign-in successful! Welcome, " + user.getUsername() + "!");
+        } 
+        else 
+        {
+            System.out.println("Invalid username or password!");
         }
-        return users;
-    }//end getUsers()
-    
-}//end DataLoader()
-*/
->>>>>>> 49958707524be3549734851146eabb24250cc901
+
+    } else if (option.equals("2")) 
+    {
+        // Creating an account
+        System.out.println("Enter new username:");
+        String newUsername = key.nextLine();
+
+        System.out.println("Enter new password:");
+        String newPassword = key.nextLine();
+
+        boolean successful = userList.createAccount(newUsername, newPassword);
+        if (successful) 
+        {
+            System.out.println("Account has been created!");
+        } 
+        else 
+        {
+            System.out.println("This username is already taken.");
+        }
+
+    } 
+    else 
+    {
+        System.out.println("Invalid option.");
+    }
+
+    // Display all users for testing
+    userList.loadUsers();
+    ArrayList<User> users = DataLoader.getUsers();  // Or userList.getAllUsers();
+    for (User u : users) {
+        System.out.println(u);
+    }
+
+    key.close();
+*/    }
+
+
+
