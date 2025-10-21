@@ -35,19 +35,14 @@ public class Facade {
     public boolean createAccount(String username, String password)
     {
         UserList userList = UserList.getInstance();
-        // ask professor if this is ok
-        // if user already exists, this account cannot be created
-        User existingUser = userList.getUserByName(username); 
-        if(existingUser != null)
-        {
+        
+        User user = userList.createAccount(username, password);
+
+        if(user == null) {
             return false;
         }
 
-        // Creates new user and adds them to the list
-        User newUser = new User(username, password);
-        userList.addUser(newUser);
-
-        currentUser = newUser;
+        currentUser = user;
         return true;
     }
 }

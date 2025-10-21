@@ -2,12 +2,6 @@ package com.model;
 
 import java.util.Timer;
 import java.util.TimerTask;
-<<<<<<< HEAD
-=======
-import java.util.UUID;
-import java.io.FileWriter;
-import java.util.ArrayList;
->>>>>>> 49958707524be3549734851146eabb24250cc901
 
 public class GameManager {
     private User user;

@@ -31,6 +31,11 @@ public class UserList {
         return users;
     }
 
+    public void loadUsers() 
+    {
+        this.users = DataLoader.getUsers();
+    }
+
     public User getUserByName(String name) 
     {
         for (User user : users) 
@@ -45,12 +50,19 @@ public class UserList {
 
     // added this method so that i can add new users to the list
     // in my create account logic in the facade
-    public void addUser(User user)
+    public boolean createAccount(String username, String password)
     {
-        if (user != null)
+        // Checks if username already exists
+        if (getUserByName(username) != null)
         {
-            users.add(user);
+            return false;
         }
+
+        User user = new User(username, password);
+            users.add(user);
+            //incorporate writing to datawriter here
+            DataLoader.saveUsers(users);
+            return true;
     }
     
 }
