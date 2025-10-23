@@ -9,8 +9,9 @@ import java.util.HashMap;
 
 /**
  * Represents a user with login credentials, a unique ID, and a list of characters.
+ * @param <Settings>
  */
-public class User {
+public class User<Settings> {
     private String username;
     private String password;
     private UUID id;
@@ -30,9 +31,9 @@ public class User {
         this.username = username;
         this.password = password;
         this.id = id;
-        characterList = new ArrayList<Character>;
-        settings = new Hashmap();
-        progress = new Progress(0, new ArrayList<String>, 0, 0, username);
+        characterList = new ArrayList<Character>();
+        settings = new HashMap();
+        progress = new Progress();
 
         //do we write this to the JSON file when we create the user? I think we need to do this so that
         //we can update the user info as they play the game.
@@ -106,7 +107,7 @@ public class User {
      * @param settings - Hashmap containing settings for this user
      *
      */
-    public void updateSettings (Hashmap settings){
+    public void updateSettings (HashMap settings){
         this.settings  = settings;
     } // end updateSettings
 
@@ -121,6 +122,10 @@ public class User {
     public String getName(){
         return username;
     }
+    public String getUsername(){
+        return username;
+    }
+    
 
     public String getPassword(){
         return password;
@@ -144,6 +149,16 @@ public class User {
         System.out.println("User Data = " + userData);
 
         return userData;
+    }
+
+    public Character[] getCharacters() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCharacters'");
+    }
+
+    public static User fromString(String line) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'fromString'");
     }
 }//end User
 /* 

@@ -73,8 +73,8 @@ public class DataLoader extends DataConstants {
         for (User user : users)
         {
             JSONObject userJSON = new JSONObject();
-            userJSON.put(KEY_ID, user.getId().toString());
-            userJSON.put(KEY_USERNAME, user.getUsername());
+            userJSON.put(KEY_ID, user.getID().toString());
+            userJSON.put(KEY_USERNAME, user.getName());
             userJSON.put(KEY_PASSWORD, user.getPassword());
 
             JSONArray charactersArray = new JSONArray();

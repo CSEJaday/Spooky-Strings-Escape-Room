@@ -43,7 +43,7 @@ public class testMain {
         User user = userList.getUserByName(username);
         if (user != null && user.getPassword().equals(password)) 
         {
-            System.out.println("Log in successful! Welcome " + user.getUsername() + "!");
+            System.out.println("Log in successful! Welcome " + user.getName() + "!");
         } 
         else 
         {

@@ -82,14 +82,15 @@ public class DataWriter extends DataConstants {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
     @SuppressWarnings("unchecked")
     public static JSONObject getUserJSON(User user) 
     {
         JSONObject userDetails = new JSONObject();
 
-        userDetails.put(KEY_USERNAME, safeString(user.getUsername()));
+        userDetails.put(KEY_USERNAME, safeString(user.getName()));
         userDetails.put(KEY_PASSWORD, safeString(user.getPassword()));
-        userDetails.put(KEY_ID, user.getId() != null ? user.getId().toString() : "null");
+        userDetails.put(KEY_ID, user.getID() != null ? user.getID().toString() : "null");
  /* 
         JSONArray charactersArray = new JSONArray();
 

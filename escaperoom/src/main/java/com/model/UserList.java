@@ -40,7 +40,7 @@ public class UserList {
     {
         for (User user : users) 
         {
-            if (user.getUsername().equalsIgnoreCase(name)) 
+            if (user.getName().equalsIgnoreCase(name)) 
             {
                 return user;
             }
@@ -58,7 +58,7 @@ public class UserList {
             return false;
         }
 
-        User user = new User(username, password);
+        User user = new User(username, password, null);
             users.add(user);
             //incorporate writing to datawriter here
             DataLoader.saveUsers(users);
