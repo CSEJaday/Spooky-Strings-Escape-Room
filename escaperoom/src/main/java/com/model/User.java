@@ -93,4 +93,10 @@ public class User {
     {
         return "User: username=" + username + ", id=" + id + ", characterCount=" + characters.size();
     }
+
+
+    public static User fromString(String line) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'fromString'");
+    }
 }

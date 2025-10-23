@@ -41,6 +41,9 @@ public class GameDriver {
         //Test log in 1, correct password
         game.login("ThunderFury", "IloveEscaperooms");
 
+        //Test case
+        game.login("chavousn", "jordan1");
+
         //Test login 2, user not in json
         game.login("bsmith", "12345");
         
