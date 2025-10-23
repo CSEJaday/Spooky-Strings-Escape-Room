@@ -7,26 +7,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-public class DataWriter {
+ 
+public class DataWriter extends DataConstants {
     public static final String FILENAME = "JSON/User.json";   //check this for the correct filepath
-
-    /**
-     * Writes user data to the JSON file provided in the FILENAME constant. This will write ALL of the 
-     * user data. It would be called when adding a new user to the JSON file for the first time. It does not search
-     * for a duplicate entry
-     * @param user the user data to write to JSON
-     */
-    public void writeUserData(User user){
-    
-        try {
-            FileWriter file = new FileWriter(FILENAME);
-            file.write(user.toString());
-            System.out.println ("Successfully wrote user to JSON file ");
-            
-        } catch (IOException e) {
-
-
-public class DataWriter extends DataConstants{
 
     public static void savePlayers() 
     {
@@ -50,6 +33,23 @@ public class DataWriter extends DataConstants{
         {
             System.err.println(ERROR_SAVING_DATA + " " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Writes user data to the JSON file provided in the FILENAME constant. This will write ALL of the 
+     * user data. It would be called when adding a new user to the JSON file for the first time. It does not search
+     * for a duplicate entry
+     * @param user the user data to write to JSON
+     */
+    public void writeUserData(User user){
+    
+        try {
+            FileWriter file = new FileWriter(FILENAME);
+            file.write(user.toString());
+            System.out.println ("Successfully wrote user to JSON file ");
+            
+        } catch (IOException e) {
         }
     }
 
