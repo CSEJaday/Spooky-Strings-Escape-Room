@@ -68,13 +68,6 @@ public class Progress implements Comparable<Progress> {
         return completedPuzzles;
     }//end getCompletedPuzzles()
 
-    /**
-     * REMOVE THIS FROM UML
-     */
-    //public int getTotalScore() {
-        //return score;
-    //}//end getTotalScore()
-
     /** 
      * Returns the total time spent working through puzzles
      * @return a long with the total time spent working through puzzles

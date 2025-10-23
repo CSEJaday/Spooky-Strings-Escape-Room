@@ -10,6 +10,12 @@
 <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 </properties>
 <dependencies>
+<dependency>
+  <groupId>org.json</groupId>
+  <artifactId>json</artifactId>
+  <version>20190722</version>
+</dependency>
+
 
     <dependency>
         <groupId>com.googlecode.json-simple</groupId>

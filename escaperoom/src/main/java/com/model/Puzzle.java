@@ -1,31 +1,34 @@
 package com.model;
 
 public abstract class Puzzle {
-    private String question;
-    private Difficulty difficulty;
+    protected String question;
+    protected Difficulty difficulty;
 
-    public Puzzle(String question, Difficulty difficulty)
-    {
+    // UML: + Puzzle(String Question, Difficulty difficulty)
+    public Puzzle(String question, Difficulty difficulty) {
         this.question = question;
         this.difficulty = difficulty;
     }
 
-    public String getQuestion()
-    {
+    // UML: + getQuestion(): String
+    public String getQuestion() {
         return question;
     }
 
-    public Difficulty getDifficulty()
-    {
+    // UML: + getDifficulty(): Difficulty
+    public Difficulty getDifficulty() {
         return difficulty;
     }
 
-    //public PuzzleMaker getPuzzleMaker() // add constructor to puzzle instead of having puzzle maker
-    //{
-
-    //}
+    // UML: + checkAnswer(userAnswer: String): boolean
     public abstract boolean checkAnswer(String userAnswer);
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{question='" + question + "', difficulty=" + difficulty + "}";
+    }
+}
+
+
    
 
-
-}

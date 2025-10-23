@@ -21,6 +21,10 @@ public class Inventory {
         return instance;
     }
 
+    /**
+     * Adds item 
+     * @param item
+     */
     public void addItem(Item item)
     {
         if (inventory.containsKey(item))

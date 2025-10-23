@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-//import org.json.simple.parser.ParseException;
+import org.json.simple.parser.ParseException;
 
-public class DataWriter extends DataConstants{
+ 
+public class DataWriter extends DataConstants {
+    public static final String FILENAME = "JSON/User.json";   //check this for the correct filepath
 
-    public static void saveUsers() 
+    public static void savePlayers() 
     {
         UserList users = UserList.getInstance();
         ArrayList<User> userList = users.getAllUsers();
@@ -34,14 +36,61 @@ public class DataWriter extends DataConstants{
         }
     }
 
+    /**
+     * Writes user data to the JSON file provided in the FILENAME constant. This will write ALL of the 
+     * user data. It would be called when adding a new user to the JSON file for the first time. It does not search
+     * for a duplicate entry
+     * @param user the user data to write to JSON
+     */
+    public void writeUserData(User user){
+    
+        try {
+            FileWriter file = new FileWriter(FILENAME);
+            file.write(user.toString());
+            System.out.println ("Successfully wrote user to JSON file ");
+            
+        } catch (IOException e) {
+        }
+    }
+
+    /**
+     * Updates data in the JSON file for this User to include progress made. Searches for the correct entry and 
+     * updates the Progress data provided in the User Object
+     * @param User the User data to update progress for
+     */
+    public void saveProgress(User user) {
+
+        //need to find the correct JSON entry and either completely overwrite it will all of the user data
+        //or just update the Progress data
+        try {
+            FileWriter file = new FileWriter(FILENAME);
+            file.write(user.toString());
+            System.out.println ("Successfully wrote user to JSON file ");
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //is this any different than SaveProgress?
+    public void logOut(User user) {
+        try {
+            FileWriter file = new FileWriter(FILENAME);
+            file.write(user.toString());
+            System.out.println ("Successfully wrote user to JSON file ");
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @SuppressWarnings("unchecked")
     public static JSONObject getUserJSON(User user) 
     {
         JSONObject userDetails = new JSONObject();
 
-        userDetails.put(KEY_USERNAME, safeString(user.getUsername()));
+        userDetails.put(KEY_USERNAME, safeString(user.getName()));
         userDetails.put(KEY_PASSWORD, safeString(user.getPassword()));
-        userDetails.put(KEY_ID, user.getId() != null ? user.getId().toString() : "null");
+        userDetails.put(KEY_ID, user.getID() != null ? user.getID().toString() : "null");
  /* 
         JSONArray charactersArray = new JSONArray();
 
@@ -72,14 +121,14 @@ public class DataWriter extends DataConstants{
 
     public static void logQuit() {
         System.out.println("Logging out...");
-        saveUsers();
+        savePlayers();
         UserLoader.getInstance().clearUsers();
         System.out.println("Logged out.");
     }
 
     public static void main(String[] args) 
     {
-        saveUsers();
+        savePlayers();
         // logQuit(); // Uncomment to test logout saving and clearing
     }
 }

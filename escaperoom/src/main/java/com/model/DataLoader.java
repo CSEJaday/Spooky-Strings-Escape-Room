@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 //import java.io.InvalidObjectException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.UUID;
 
 import org.json.simple.JSONArray;
@@ -74,8 +73,8 @@ public class DataLoader extends DataConstants {
         for (User user : users)
         {
             JSONObject userJSON = new JSONObject();
-            userJSON.put(KEY_ID, user.getId().toString());
-            userJSON.put(KEY_USERNAME, user.getUsername());
+            userJSON.put(KEY_ID, user.getID().toString());
+            userJSON.put(KEY_USERNAME, user.getName());
             userJSON.put(KEY_PASSWORD, user.getPassword());
 
             JSONArray charactersArray = new JSONArray();
@@ -96,74 +95,19 @@ public class DataLoader extends DataConstants {
             file.flush();
         } catch (IOException e) {
             System.err.println("Error saving users!" + e.getMessage());
-            System.out.println("Choose option: \n 1 to sign in, \n 2 to create account");
         }
     }
 
-/* 
 // test to see if it works
-public static void main(String[] args) 
-{
-    Scanner key = new Scanner(System.in);
-    UserList userList = UserList.getInstance();
+public static void main (String[] args)
+ {
+    ArrayList<User> users = DataLoader.getUsers();
 
-    // Load users from data source
-    //userList.loadUsers(); 
-
-    System.out.println("Choose option 1 to sign in, 2 to create account");
-    String option = key.nextLine();
-
-    if (option.equals("1")) 
+    for (User user : users)
     {
-        // Signing in
-        System.out.println("Enter username:");
-        String username = key.nextLine();
-
-        System.out.println("Enter password:");
-        String password = key.nextLine();
-
-        User user = userList.getUserByName(username);
-
-        if (user != null && user.getPassword().equals(password)) 
-        {
-            System.out.println("Sign-in successful! Welcome, " + user.getUsername() + "!");
-        } 
-        else 
-        {
-            System.out.println("Invalid username or password!");
-        }
-
-    } else if (option.equals("2")) 
-    {
-        // Creating an account
-        System.out.println("Enter new username:");
-        String newUsername = key.nextLine();
-
-        System.out.println("Enter new password:");
-        String newPassword = key.nextLine();
-
-        boolean successful = userList.createAccount(newUsername, newPassword);
-        if (successful) 
-        {
-            System.out.println("Account has been created!");
-        } 
-        else 
-        {
-            System.out.println("This username is already taken.");
-        }
-
-    } 
-    else 
-    {
-        System.out.println("Invalid option.");
+        System.out.println(user);
     }
+ }
 
-    // Display all users for testing
-    userList.loadUsers();
-    ArrayList<User> users = DataLoader.getUsers();  // Or userList.getAllUsers();
-    for (User u : users) {
-        System.out.println(u);
-    }
+}//end DataLoader
 
-    key.close();
-*/    }
