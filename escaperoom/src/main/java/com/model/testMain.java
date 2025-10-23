@@ -1,6 +1,7 @@
 package com.model;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -93,5 +94,30 @@ public class testMain {
     */
     key.close();
 
+    try {
+            RoomLoader loader = new RoomLoader();
+            // try classpath resource first: "/EscapeRoom.json"
+            // or file system path "EscapeRoom.json"
+                        List<EscapeRoom> rooms = loader.loadRooms("JSON/EscapeRoom.json");
+
+
+            for (EscapeRoom r : rooms) {
+                r.enterRoom();
+                System.out.println(r);
+                // follow UML: getPuzzle() returns one Puzzle (first)
+                Puzzle p = r.getPuzzle();
+                System.out.println("getPuzzle() -> " + p);
+                if (p != null) {
+                    System.out.println("Checking sample answers:");
+                    if (p instanceof RiddlePuzzle) System.out.println("checkAnswer(\"Piano\") -> " + p.checkAnswer("Piano"));
+                    else if (p instanceof MathPuzzle) System.out.println("checkAnswer(\"42\") -> " + p.checkAnswer("42"));
+                    else if (p instanceof DoorPuzzle) System.out.println("checkAnswer(\"2\") -> " + p.checkAnswer("2"));
+                }
+                System.out.println();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 }

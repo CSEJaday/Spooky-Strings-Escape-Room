@@ -1,59 +1,69 @@
 package com.model;
 import java.util.Random;
 
-/**
- * @author
- */
-public class DoorPuzzle {
+public class DoorPuzzle extends Puzzle {
     private int correctDoor;
     private int numDoors;
     private int attempts;
+    private boolean isSolved;
+    private int id;
 
-    /**
-     * 
-     * @param numDoors
-     */
-    public DoorPuzzle(int numDoors) 
-    {
-        this.numDoors = numDoors;
-        this.correctDoor = new Random().nextInt(numDoors) + 1;
+    // UML: + DoorPuzzle(numDoors): int
+    // (constructors don't return int; UML likely meant constructor taking numDoors)
+    public DoorPuzzle(int numDoors) {
+        super("Choose a door (1.." + Math.max(1, numDoors) + ")", Difficulty.MEDIUM);
+        this.numDoors = Math.max(1, numDoors);
+        this.correctDoor = 1; // default; loader should set this or you can add setter
         this.attempts = 0;
+        this.isSolved = false;
     }
 
-    /*
-     * 
-     */
-    public boolean guessDoor(int choice) 
-    {
+    // helper constructor used by loader (keeps UML behavior but allows setting correctDoor/attempts)
+    public DoorPuzzle(int numDoors, int correctDoor, int attempts, Difficulty difficulty) {
+        super("Choose a door (1.." + Math.max(1, numDoors) + ")", difficulty);
+        this.numDoors = Math.max(1, numDoors);
+        this.correctDoor = correctDoor;
+        this.attempts = attempts;
+        this.isSolved = false;
+    }
+
+    // UML: + guessDoor(choice: int): boolean
+    public boolean guessDoor(int choice) {
         attempts++;
-        return choice == correctDoor;
+        boolean ok = (choice == correctDoor);
+        if (ok) isSolved = true;
+        return ok;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public int getAttempts() 
-    {
+    // UML: + getAttempts(): int
+    public int getAttempts() {
         return attempts;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public String getHint() 
-    {
-        return "Only one door will help you make it through! Mwah-ha-ha";
+    // UML: + getHint(): String
+    public String getHint() {
+        // simple hint implementation
+        return "There are " + numDoors + " doors. Try to reason about labels/clues.";
     }
 
-    /**
-     * 
-     * @return
-     */
-    public int getNumDoors()
-    {
-        return numDoors;
+    // implement abstract method
+    @Override
+    public boolean checkAnswer(String userAnswer) {
+        if (userAnswer == null) return false;
+        try {
+            int choice = Integer.parseInt(userAnswer.trim());
+            return guessDoor(choice);
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
-    
+
+    public int getNumDoors() { return numDoors; }
+    public int getCorrectDoor() { return correctDoor; }
+    public boolean isSolved() { return isSolved; }
+
+    @Override
+    public String toString() {
+        return "DoorPuzzle{numDoors=" + numDoors + ", correctDoor=" + correctDoor + ", attempts=" + attempts + ", solved=" + isSolved + "}";
+    }
 }
