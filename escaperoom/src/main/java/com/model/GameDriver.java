@@ -30,23 +30,12 @@ public class GameDriver {
     }
     
 
-    /**
-     * Main method to test login and password, with correct
-     * and incorrect scenarios.
-     * @param args
+    /*
+     * Main method to test the game
      */
     public static void main(String[] args) {
-        GameDriver game = new GameDriver();
-
-        //Test log in 1, correct password
-        game.login("ThunderFury", "IloveEscaperooms");
-
-        //Test case
-        game.login("chavousn", "jordan1");
-
-        //Test login 2, user not in json
-        game.login("bsmith", "12345");
-        
+        EscapeRoomGameUI ui = new EscapeRoomGameUI();
+        ui.run();
     }
 }
    

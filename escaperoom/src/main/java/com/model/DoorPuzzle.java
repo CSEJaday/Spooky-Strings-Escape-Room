@@ -11,7 +11,7 @@ public class DoorPuzzle extends Puzzle {
     // UML: + DoorPuzzle(numDoors): int
     // (constructors don't return int; UML likely meant constructor taking numDoors)
     public DoorPuzzle(int numDoors) {
-        super("Choose a door (1 to " + Math.max(1, numDoors) + ")", Difficulty.MEDIUM);
+        super("Choose a door (1-" + Math.max(1, numDoors) + ")", Difficulty.MEDIUM);
         this.numDoors = Math.max(1, numDoors);
         this.correctDoor = 1; // default; loader should set this or you can add setter
         this.attempts = 0;
@@ -20,7 +20,7 @@ public class DoorPuzzle extends Puzzle {
 
     // helper constructor used by loader (keeps UML behavior but allows setting correctDoor/attempts)
     public DoorPuzzle(int numDoors, int correctDoor, int attempts, Difficulty difficulty) {
-        super("Choose a door (1 to" + Math.max(1, numDoors) + ")", difficulty);
+        super("Choose a door (1-" + Math.max(1, numDoors) + ")", difficulty);
         this.numDoors = Math.max(1, numDoors);
         this.correctDoor = correctDoor;
         this.attempts = attempts;
