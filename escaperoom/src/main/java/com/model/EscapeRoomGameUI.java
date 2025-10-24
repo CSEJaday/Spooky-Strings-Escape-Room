@@ -210,7 +210,6 @@ public class EscapeRoomGameUI {
             System.out.println("Sign up failed unexpectedly.");
             return;
         }
-        // ... after successful signup and before playSession(...)
         System.out.println("Sign up successful! Logged in as " + username);
 
         Difficulty chosen = askDifficulty();
@@ -521,28 +520,28 @@ public class EscapeRoomGameUI {
                     Hint h = hintList.getHint(idx);
                     if (h != null) {
                         for (int i = 0; i < Math.min(count, h.getCount()); i++) {
-                            System.out.printf("      Hint %d: %s%n", i+1, h.getNextHint(i));
+                            System.out.printf("Hint %d: %s%n", i+1, h.getNextHint(i));
                         }
                         // If used hints exceed stored hint count, note that
                         if (count > h.getCount()) {
-                            System.out.printf("      (user used %d hints; only %d hints are in hints.txt)%n", count, h.getCount());
+                            System.out.printf("(user used %d hints; only %d hints are in hints.txt)%n", count, h.getCount());
                         }
                     } else {
                         // try fallback local hints map
                         List<String> local = hints.get(idx);
                         if (local != null && !local.isEmpty()) {
                             for (int i = 0; i < Math.min(count, local.size()); i++) {
-                                System.out.printf("      Hint %d: %s%n", i+1, local.get(i));
+                                System.out.printf("Hint %d: %s%n", i+1, local.get(i));
                             }
                             if (count > local.size()) {
-                                System.out.printf("      (user used %d hints; only %d hints are in hints.txt)%n", count, local.size());
+                                System.out.printf("(user used %d hints; only %d hints are in hints.txt)%n", count, local.size());
                             }
                         } else {
-                            System.out.println("      (no hint texts available for this puzzle)");
+                            System.out.println("(no hint texts available for this puzzle)");
                         }
                     }
                 } catch (Throwable ignore) {
-                    System.out.println("      (hint text lookup failed)");
+                    System.out.println("(hint text lookup failed)");
                 }
             }
         }
