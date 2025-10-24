@@ -13,9 +13,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- * This class loads data from the respository (i.e. JSON file) and returns it to
+ * This class loads data from the repository (i.e. JSON file) and returns it to
  * be used in the Escape Room classes.
- * @author 
  */
 public class DataLoader extends DataConstants {
 
@@ -78,14 +77,40 @@ public class DataLoader extends DataConstants {
             userJSON.put(KEY_PASSWORD, user.getPassword());
 
             JSONArray charactersArray = new JSONArray();
-            for (Character character : user.getCharacters())
-            {
-                JSONObject charJSON = new JSONObject();
-                charJSON.put("name", character.getName());
-                charJSON.put("level", character.getLevel());
-                charJSON.put("avatar", character.getAvatar());
-                charactersArray.add(charJSON);
+
+            /*
+             * Robust iteration for user.getCharacters():
+             * - Accept Iterable<?> (List, ArrayList, etc)
+             * - Accept array (Character[])
+             * - Avoid compile-time mismatch if getCharacters() returns a raw type
+             */
+            Object charsObj = user.getCharacters();
+            if (charsObj instanceof Iterable) {
+                for (Object ch : (Iterable<?>) charsObj) {
+                    if (ch instanceof Character) {
+                        Character character = (Character) ch;
+                        JSONObject charJSON = new JSONObject();
+                        charJSON.put("name", character.getName());
+                        charJSON.put("level", character.getLevel());
+                        charJSON.put("avatar", character.getAvatar());
+                        charactersArray.add(charJSON);
+                    }
+                }
+            } else if (charsObj != null && charsObj.getClass().isArray()) {
+                int len = java.lang.reflect.Array.getLength(charsObj);
+                for (int i = 0; i < len; i++) {
+                    Object ch = java.lang.reflect.Array.get(charsObj, i);
+                    if (ch instanceof Character) {
+                        Character character = (Character) ch;
+                        JSONObject charJSON = new JSONObject();
+                        charJSON.put("name", character.getName());
+                        charJSON.put("level", character.getLevel());
+                        charJSON.put("avatar", character.getAvatar());
+                        charactersArray.add(charJSON);
+                    }
+                }
             }
+            // attach characters array (empty if none)
             userJSON.put(KEY_CHARACTERS, charactersArray);
             usersArray.add(userJSON);
         }
@@ -110,4 +135,3 @@ public static void main (String[] args)
  }
 
 }//end DataLoader
-
