@@ -139,16 +139,33 @@ public class EscapeRoomGameUI {
         String username = in.nextLine().trim();
         System.out.print("Choose a password: ");
         String pwd = in.nextLine();
+    
         boolean ok = userList.createAccount(username, pwd);
-        if (!ok) { System.out.println("Username already exists."); return; }
+        if (!ok) {
+            System.out.println("Username already exists. Try logging in or pick a different username.");
+            return;
+        }
         User newUser = userList.getUserByName(username);
-        if (newUser == null) { System.out.println("Sign up failed."); return; }
+        if (newUser == null) {
+            System.out.println("Sign up failed unexpectedly.");
+            return;
+        }
         System.out.println("Sign up successful! Logged in as " + username);
+    
         Difficulty chosen = askDifficulty();
-        if (chosen == null) { System.out.println("No difficulty chosen — returning to main menu."); return; }
+        if (chosen == null) {
+            System.out.println("No difficulty chosen — returning to main menu.");
+            return;
+        }
+    
+        // persist their choice immediately so it shows on next login too
         newUser.getProgress().setLastDifficulty(chosen);
+        // *** NEW: save users now so lastDifficulty is persisted immediately ***
+        DataLoader.saveUsers(userList.getAllUsers());
+    
         playSession(newUser, chosen);
     }
+    
 
     private void showLeaderboard() {
         JSONArray arr = loadLeaderboardJson();
@@ -257,11 +274,11 @@ public class EscapeRoomGameUI {
             System.out.println("\nPuzzle: " + p.getQuestion());
             boolean solvedCurrent = false;
             while (!solvedCurrent) {
-                System.out.println("(type your answer, 'hint' for a hint, 'pickup <item>', 'use <item>', or 'back' to return)");
+                System.out.println("(type your answer, 'hint' for a hint, 'use <item>', or 'back' to return)");
                 System.out.print("> ");
                 String answer = in.nextLine().trim();
                 if (answer.equalsIgnoreCase("back")) break;
-                if (answer.toLowerCase().startsWith("pickup ")) {
+                /*if (answer.toLowerCase().startsWith("pickup ")) {
                     String token = answer.substring(7).trim().toUpperCase().replaceAll("\\s+", "_");
                     try {
                         ItemName name = ItemName.valueOf(token);
@@ -277,7 +294,7 @@ public class EscapeRoomGameUI {
                         System.out.println("Unknown item: " + token);
                     }
                     continue;
-                }
+                }*/
                 if (answer.toLowerCase().startsWith("use ")) {
                     String token = answer.substring(4).trim().toUpperCase().replaceAll("\\s+", "_");
                     try {
