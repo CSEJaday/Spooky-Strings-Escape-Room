@@ -461,57 +461,110 @@ public class EscapeRoomGameUI {
     private void displayUserProgress(User user) {
         if (user == null) return;
         Progress prog = user.getProgress();
-        if (prog == null) { System.out.println("No progress recorded yet."); return; }
-
-        int totalPuzzles = 0;
+        if (prog == null) {
+            System.out.println("No progress recorded yet.");
+            return;
+        }
+    
+        // Determine the difficulty to evaluate against (user's last chosen, default ALL)
+        Difficulty chosen = prog.getLastDifficultyAsEnum();
+        if (chosen == null) chosen = Difficulty.ALL;
+    
+        // Load rooms to determine total puzzle count for the chosen difficulty
+        int totalPuzzlesForDifficulty = 0;
+        int completedCountForDifficulty = 0;
         List<EscapeRoom> rooms = Collections.emptyList();
         try {
             rooms = roomLoader.loadRooms("JSON/EscapeRoom.json");
-            for (EscapeRoom r : rooms) { List<Puzzle> pz = r.getPuzzles(); if (pz != null) totalPuzzles += pz.size(); }
-        } catch (IOException e) {}
-
-        int completedCount = prog.getCompletedPuzzles().size();
-        double percent = (totalPuzzles > 0) ? (completedCount * 100.0 / totalPuzzles) : 0.0;
-
+            for (EscapeRoom r : rooms) {
+                List<Puzzle> pz = r.getPuzzles();
+                if (pz == null) continue;
+                for (Puzzle pu : pz) {
+                    String pd = pu.getDifficulty() == null ? "easy" : pu.getDifficulty().name().toLowerCase();
+                    boolean matches = (chosen == Difficulty.ALL) || pd.equals(chosen.name().toLowerCase());
+                    if (matches) {
+                        totalPuzzlesForDifficulty++;
+                        // count as completed if progress contains the puzzle id OR the question string (compatibility)
+                        if (prog.hasCompletedByEither(pu.getId(), pu.getQuestion())) {
+                            completedCountForDifficulty++;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // If rooms can't be loaded, we will still show a conservative summary below
+            System.err.println("Warning: couldn't load rooms to compute progress: " + e.getMessage());
+        }
+    
+        double percent = 0.0;
+        if (totalPuzzlesForDifficulty > 0) {
+            percent = (completedCountForDifficulty * 100.0) / totalPuzzlesForDifficulty;
+        }
+    
         System.out.println("\n=== YOUR SAVED PROGRESS ===");
         System.out.printf("Player: %s%n", user.getName());
-        if (totalPuzzles > 0) {
-            System.out.printf("Progress: %d / %d puzzles completed (%.1f%%)%n", completedCount, totalPuzzles, percent);
+        if (totalPuzzlesForDifficulty > 0) {
+            System.out.printf("Progress: %d / %d puzzles completed (%.1f%%) [based on %s difficulty]%n",
+                    completedCountForDifficulty, totalPuzzlesForDifficulty, percent, chosen.name());
         } else {
-            System.out.printf("Progress: %d puzzles completed (total puzzles unknown)%n", completedCount);
+            // fallback: show total completed questions (by question list) and indicate unknown total
+            int completedByQuestion = prog.getCompletedPuzzles().size();
+            System.out.printf("Progress: %d puzzles completed (total puzzles unknown for difficulty %s)%n",
+                    completedByQuestion, chosen.name());
         }
+    
         System.out.printf("Score: %d%n", prog.getScore());
         System.out.printf("Total time (all sessions): %s%n", formatSeconds(prog.getTimeSpent()));
-
+    
         System.out.println("\nAnswered questions (completed):");
-        if (prog.getCompletedPuzzles().isEmpty()) System.out.println("  (none)");
-        else for (String q : prog.getCompletedPuzzles()) System.out.println("  - " + q);
-
+        if (prog.getCompletedPuzzles().isEmpty()) {
+            System.out.println("  (none)");
+        } else {
+            for (String q : prog.getCompletedPuzzles()) {
+                System.out.println("  - " + q);
+            }
+        }
+    
         System.out.println("\nHints used:");
-        if (prog.getHintsUsed().isEmpty()) System.out.println("  (no hints used)");
-        else {
+        if (prog.getHintsUsed().isEmpty()) {
+            System.out.println("  (no hints used)");
+        } else {
+            // each entry: puzzle id -> count
             for (Map.Entry<Integer, Integer> e : prog.getHintsUsed().entrySet()) {
                 int idx = e.getKey();
                 int count = e.getValue();
                 System.out.printf("  - Puzzle index %d : %d hint(s) used%n", idx, count);
+                // If we have a HintList entry, print the actual hints that were used (up to 'count')
                 try {
                     Hint h = hintList.getHint(idx);
                     if (h != null) {
-                        for (int i = 0; i < Math.min(count, h.getCount()); i++) System.out.printf("Hint %d: %s%n", i+1, h.getNextHint(i));
-                        if (count > h.getCount()) System.out.printf("(user used %d hints; only %d hints are in hints.txt)%n", count, h.getCount());
+                        for (int i = 0; i < Math.min(count, h.getCount()); i++) {
+                            System.out.printf("Hint %d: %s%n", i+1, h.getNextHint(i));
+                        }
+                        if (count > h.getCount()) {
+                            System.out.printf("(user used %d hints; only %d hints are in hints.txt)%n", count, h.getCount());
+                        }
                     } else {
+                        // try fallback local hints map
                         List<String> local = hints.get(idx);
                         if (local != null && !local.isEmpty()) {
-                            for (int i = 0; i < Math.min(count, local.size()); i++) System.out.printf("Hint %d: %s%n", i+1, local.get(i));
-                            if (count > local.size()) System.out.printf("(user used %d hints; only %d hints are in hints.txt)%n", count, local.size());
+                            for (int i = 0; i < Math.min(count, local.size()); i++) {
+                                System.out.printf("Hint %d: %s%n", i+1, local.get(i));
+                            }
+                            if (count > local.size()) {
+                                System.out.printf("(user used %d hints; only %d hints are in hints.txt)%n", count, local.size());
+                            }
                         } else {
                             System.out.println("(no hint texts available for this puzzle)");
                         }
                     }
-                } catch (Throwable ignore) { System.out.println("(hint text lookup failed)"); }
+                } catch (Throwable ignore) {
+                    System.out.println("(hint text lookup failed)");
+                }
             }
         }
     }
+    
 
     // Leaderboard helpers
     private JSONArray loadLeaderboardJson() {
