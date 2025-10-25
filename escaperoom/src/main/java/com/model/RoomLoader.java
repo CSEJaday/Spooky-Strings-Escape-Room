@@ -85,29 +85,62 @@ public class RoomLoader {
         switch (type) {
             case "math": {
                 int ans = optInt(p, "answer", 0);
-                // UML: MathPuzzle(String question, int answer, Difficulty difficulty)
                 MathPuzzle mp = new MathPuzzle(question, ans, difficulty);
-                // Optionally set equation if present: mp.generateEquation() or set field directly if you added setter.
+                // optional: set reward if declared in JSON
+                String rewardStr = optString(p, "reward", null);
+                if (rewardStr != null) {
+                    try {
+                        mp.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
+                    } catch (IllegalArgumentException ignore) { /* invalid reward name -> ignore */ }
+                }
                 return mp;
             }
             case "door": {
                 int numDoors = optInt(p, "numDoors", 2);
+                Puzzle created;
                 if (p.containsKey("correctDoor") || p.containsKey("attempts") || p.containsKey("difficulty")) {
                     int correctDoor = optInt(p, "correctDoor", 1);
                     int attempts = optInt(p, "attempts", 0);
                     Difficulty diff = Difficulty.fromString(optString(p, "difficulty", "MEDIUM"));
-                    return new DoorPuzzle(numDoors, correctDoor, attempts, diff);
+                    created = new DoorPuzzle(numDoors, correctDoor, attempts, diff);
                 } else {
-                    return new DoorPuzzle(numDoors);
+                    created = new DoorPuzzle(numDoors);
                 }
+                String rewardStr = optString(p, "reward", null);
+                if (rewardStr != null) {
+                    try {
+                        created.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
+                    } catch (IllegalArgumentException ignore) {}
+                }
+                return created;
             }
             case "riddle":
             default: {
                 String answer = optString(p, "answer", null);
                 String category = optString(p, "category", null);
-                return new RiddlePuzzle(question, answer, category, difficulty);
+                RiddlePuzzle rp = new RiddlePuzzle(question, answer, category, difficulty);
+                String rewardStr = optString(p, "reward", null);
+                if (rewardStr != null) {
+                    try {
+                        rp.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
+                    } catch (IllegalArgumentException ignore) {}
+                }
+                return rp;
+            }
+            case "trivia": {
+                String answer = optString(p, "answer", null);
+                String category = optString(p, "category", null);
+                TriviaPuzzle rp = new TriviaPuzzle(question, answer, category, difficulty);
+                String rewardStr = optString(p, "reward", null);
+                if (rewardStr != null) {
+                    try {
+                        rp.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
+                    } catch (IllegalArgumentException ignore) {}
+                }
+                return rp;
             }
         }
+
     }
 
     // helpers to extract typed values from underlying Map (which contains parser output)

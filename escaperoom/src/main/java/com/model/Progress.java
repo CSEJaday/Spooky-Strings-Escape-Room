@@ -14,6 +14,7 @@ public class Progress implements Comparable<Progress> {
     private long timeSpent; // seconds
     private String playerName;      // optional
     private int score;
+    private Inventory inventory;
 
     // persistent hint-tracking map (globalPuzzleIndex -> hint count)
     private Map<Integer, Integer> hintsUsed;
@@ -29,6 +30,8 @@ public class Progress implements Comparable<Progress> {
         this.playerName = "Unknown";
         this.hintsUsed = new HashMap<>();
         this.lastDifficulty = "all"; // default
+        this.inventory = new Inventory();
+
     }
 
     // ---------------------------
@@ -86,6 +89,16 @@ public class Progress implements Comparable<Progress> {
     public int getScore() {
         return score;
     }
+
+    public Inventory getInventory() {
+        if (this.inventory == null) this.inventory = new Inventory();
+        return this.inventory;
+    }
+    
+    public void setInventory(Inventory inv) {
+        this.inventory = inv;
+    }
+    
 
     // ---------------------------
     // Hints tracking

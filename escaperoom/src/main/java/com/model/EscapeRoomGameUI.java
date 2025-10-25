@@ -310,6 +310,56 @@ public class EscapeRoomGameUI {
     
                 while (true) {
                     String answer = in.nextLine().trim();
+                    // --- Inventory commands: pickup <ITEM> and use <ITEM> ---
+                    if (answer.toLowerCase().startsWith("pickup ")) {
+                        String token = answer.substring(7).trim().toUpperCase().replaceAll("\\s+", "_");
+                        try {
+                            ItemName name = ItemName.valueOf(token);
+                            Item template;
+                            switch (name) {
+                                case KEY -> template = new Item(ItemName.KEY, "A small iron key. Might open a lock.", true, true, "You used the key.");
+                                case TORCH -> template = new Item(ItemName.TORCH, "A wooden torch to light dark places.", true, false, "You light the torch; shadows recede.");
+                                case POTION -> template = new Item(ItemName.POTION, "A mysterious potion. Drink to heal.", true, true, "You drink the potion; you feel better.");
+                                default -> template = new Item(name, "An item: " + name.name(), false, false, "");
+                            }
+                            currentUser.getProgress().getInventory().addItem(template, 1);
+                            System.out.println("You picked up: " + name.name() + ". It is now in your inventory.");
+                        } catch (IllegalArgumentException iae) {
+                            System.out.println("No such item: " + token + " (use names like KEY, TORCH, POTION).");
+                        }
+                        System.out.print("> ");
+                        continue;
+                    }
+                    
+                    if (answer.toLowerCase().startsWith("use ")) {
+                        String token = answer.substring(4).trim().toUpperCase().replaceAll("\\s+", "_");
+                        try {
+                            ItemName name = ItemName.valueOf(token);
+                            Inventory inv = currentUser.getProgress().getInventory();
+                            if (!inv.has(name)) {
+                                System.out.println("You don't have " + name.name() + " in your inventory.");
+                            } else {
+                                Item template = inv.getTemplate(name);
+                                if (template != null && !template.isUsable()) {
+                                    System.out.println("You can't use " + name.name() + ".");
+                                } else {
+                                    boolean used = inv.useItem(name);
+                                    if (used) {
+                                        String useText = (template != null ? template.getUseText() : "You use the " + name.name() + ".");
+                                        System.out.println(useText);
+                                        // NOTE: implement game effects here, e.g., unlocking doors or revealing clues.
+                                        // Example: if (name == ItemName.KEY) { /* unlock logic */ }
+                                    } else {
+                                        System.out.println("Failed to use " + name.name() + ".");
+                                    }
+                                }
+                            }
+                        } catch (IllegalArgumentException iae) {
+                            System.out.println("No such item: " + token);
+                        }
+                        System.out.print("> ");
+                        continue;
+                    }
                     if (answer.equalsIgnoreCase("logout")) {
                         // add wall-clock elapsed time to user's progress before saving
                         long wallElapsed = (System.currentTimeMillis() / 1000L) - wallStart;
@@ -364,7 +414,25 @@ public class EscapeRoomGameUI {
                             currentUser.getProgress().increaseScore(pts);
                             puzzlesSolved++;
                             DataLoader.saveUsers(userList.getAllUsers());
-                            break;
+                            
+                            // --- Conditional reward: only if this puzzle declares a reward ---
+                            ItemName rewardName = null;
+                            try {
+                                rewardName = p.getReward();
+                            } catch (Throwable ignore) {
+                                // if p has no getReward (older Puzzle class), rewardName stays null
+                            }
+                            if (rewardName != null) {
+                                Item reward = switch (rewardName) {
+                                    case KEY -> new Item(ItemName.KEY, "A small iron key, probably opens a nearby door.", true, true, "You used the key.");
+                                    case TORCH -> new Item(ItemName.TORCH, "A wooden torch to light dark places.", true, false, "You light the torch; shadows recede.");
+                                    case POTION -> new Item(ItemName.POTION, "A mysterious potion. Drink to heal.", true, true, "You drink the potion; you feel better.");
+                                    default -> new Item(rewardName, "A found item: " + rewardName.name(), false, false, "");
+                                };
+                                currentUser.getProgress().getInventory().addItem(reward);
+                                System.out.println("You found a " + rewardName.name() + " as you solve the puzzle! It has been added to your inventory.");
+                            }
+break;
                         } else {
                             System.out.println("Incorrect. Try again or type 'hint'.");
                             System.out.print("> ");
@@ -400,7 +468,10 @@ public class EscapeRoomGameUI {
     
             String diffStr = chosen == Difficulty.ALL ? "all" : chosen.name().toLowerCase();
             long totalTime = currentUser.getProgress().getTimeSpent();
-            updateLeaderboardJson(currentUser.getName(),
+            
+            
+
+updateLeaderboardJson(currentUser.getName(),
                     currentUser.getProgress().getScore(), diffStr, totalTime);
             DataLoader.saveUsers(userList.getAllUsers());
             System.out.println("Progress saved.");

@@ -13,6 +13,7 @@
         "difficulty": "EASY",
         "answer": "a spoo-key",
         "category": "house",
+        "reward": "KEY",
         "isSolved": false
       },
       {
@@ -22,7 +23,8 @@
         "difficulty": "EASY",
         "answer": "a living room",
         "category": "house",
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "riddle",
