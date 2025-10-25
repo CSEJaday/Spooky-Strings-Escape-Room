@@ -7,14 +7,11 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * Pure-Java loader that uses JsonSimpleParser to parse JSON and instantiate model objects.
- * This version reads optional fields: reward, locked, hiddenHint.
+ * RoomLoader: parses JSON (via JsonSimpleParser.parse) and builds EscapeRoom / Puzzle objects.
+ * Reads optional fields: id, reward, locked, hiddenHint, difficulty, correctDoor, attempts.
  */
 public class RoomLoader {
 
-    /**
-     * Load rooms. resourceOrPath may be "/EscapeRoom.json" (classpath) or "EscapeRoom.json" (filesystem).
-     */
     public List<EscapeRoom> loadRooms(String resourceOrPath) throws IOException {
         String text = readAllText(resourceOrPath);
         if (text == null) throw new FileNotFoundException("Cannot open " + resourceOrPath);
@@ -35,14 +32,12 @@ public class RoomLoader {
     }
 
     private String readAllText(String resourceOrPath) throws IOException {
-        // try classpath
         InputStream in = RoomLoader.class.getResourceAsStream(resourceOrPath.startsWith("/") ? resourceOrPath : "/" + resourceOrPath);
         if (in != null) {
             try (Reader r = new InputStreamReader(in, StandardCharsets.UTF_8)) {
                 return readReaderToString(r);
             }
         }
-        // filesystem fallback
         if (!Files.exists(Paths.get(resourceOrPath))) return null;
         try (Reader r = Files.newBufferedReader(Paths.get(resourceOrPath), StandardCharsets.UTF_8)) {
             return readReaderToString(r);
@@ -57,7 +52,6 @@ public class RoomLoader {
         return sb.toString();
     }
 
-    // convert raw Map to EscapeRoom
     private EscapeRoom parseRoom(Map<String,Object> obj) {
         String name = optString(obj, "name", optString(obj, "roomName", "Unnamed Room"));
         String description = optString(obj, "description", "");
@@ -93,7 +87,7 @@ public class RoomLoader {
             case "door": {
                 int numDoors = optInt(p, "numDoors", 2);
 
-                // If JSON provides correctDoor/attempts/difficulty, construct with full constructor so difficulty is preserved
+                // prefer the richer constructor if JSON provides fields
                 if (p.containsKey("correctDoor") || p.containsKey("attempts") || p.containsKey("difficulty")) {
                     int correctDoor = optInt(p, "correctDoor", 1);
                     int attempts = optInt(p, "attempts", 0);
@@ -102,8 +96,7 @@ public class RoomLoader {
                     return dp;
                 } else {
                     DoorPuzzle dp = new DoorPuzzle(numDoors);
-                    // ensure difficulty from JSON is applied if present
-                    dp.setDifficulty(difficulty);
+                    dp.setDifficulty(difficulty); // honor JSON difficulty if present
                     applyCommonOptionalFields(dp, p);
                     return dp;
                 }
@@ -127,10 +120,15 @@ public class RoomLoader {
     }
 
     /**
-     * Apply optional fields common to all puzzle types: reward, locked, hiddenHint, isSolved etc.
+     * Apply optional fields common to all puzzles:
+     *  - id, reward, locked, hiddenHint
      */
     private void applyCommonOptionalFields(Puzzle puzzle, Map<String,Object> p) {
         if (puzzle == null || p == null) return;
+
+        // id
+        int idVal = optInt(p, "id", -1);
+        if (idVal >= 0) puzzle.setId(idVal);
 
         // reward
         String rewardStr = optString(p, "reward", null);
@@ -146,15 +144,12 @@ public class RoomLoader {
 
         // hidden hint
         String hidden = optString(p, "hiddenHint", null);
-        if (hidden != null && !hidden.trim().isEmpty()) {
-            puzzle.setHiddenHint(hidden);
-        }
+        if (hidden != null && !hidden.trim().isEmpty()) puzzle.setHiddenHint(hidden);
 
-        // isSolved flag (note: the EscapeRoom container also carries isSolved; keep puzzle-level flag if present)
-        // some puzzle classes might have methods to set solved state; we only preserve data here.
+        // additional optional fields can be applied here
     }
 
-    // helpers to extract typed values from underlying Map (which contains parser output)
+    // helpers
     private static String optString(Map<String,Object> m, String key, String def) {
         Object v = m.get(key);
         if (v == null) return def;
@@ -176,4 +171,5 @@ public class RoomLoader {
         try { return Integer.parseInt(v.toString()); } catch (NumberFormatException e) { return def; }
     }
 }
+
 
