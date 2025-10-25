@@ -12,7 +12,6 @@ public class MathPuzzle extends Puzzle {
 
     public void generateEquation() {
         // optional: generate or parse the equation string into fields
-        // left as no-op for now
     }
 
     @Override
