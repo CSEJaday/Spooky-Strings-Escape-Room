@@ -7,7 +7,8 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * Pure-Java loader that uses JsonSimpleParser to parse JSON and instantiate UML objects.
+ * Pure-Java loader that uses JsonSimpleParser to parse JSON and instantiate model objects.
+ * This version reads optional fields: reward, locked, hiddenHint.
  */
 public class RoomLoader {
 
@@ -86,61 +87,71 @@ public class RoomLoader {
             case "math": {
                 int ans = optInt(p, "answer", 0);
                 MathPuzzle mp = new MathPuzzle(question, ans, difficulty);
-                // optional: set reward if declared in JSON
-                String rewardStr = optString(p, "reward", null);
-                if (rewardStr != null) {
-                    try {
-                        mp.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
-                    } catch (IllegalArgumentException ignore) { /* invalid reward name -> ignore */ }
-                }
+                applyCommonOptionalFields(mp, p);
                 return mp;
             }
             case "door": {
                 int numDoors = optInt(p, "numDoors", 2);
-                Puzzle created;
+
+                // If JSON provides correctDoor/attempts/difficulty, construct with full constructor so difficulty is preserved
                 if (p.containsKey("correctDoor") || p.containsKey("attempts") || p.containsKey("difficulty")) {
                     int correctDoor = optInt(p, "correctDoor", 1);
                     int attempts = optInt(p, "attempts", 0);
-                    Difficulty diff = Difficulty.fromString(optString(p, "difficulty", "MEDIUM"));
-                    created = new DoorPuzzle(numDoors, correctDoor, attempts, diff);
+                    DoorPuzzle dp = new DoorPuzzle(numDoors, correctDoor, attempts, difficulty);
+                    applyCommonOptionalFields(dp, p);
+                    return dp;
                 } else {
-                    created = new DoorPuzzle(numDoors);
+                    DoorPuzzle dp = new DoorPuzzle(numDoors);
+                    // ensure difficulty from JSON is applied if present
+                    dp.setDifficulty(difficulty);
+                    applyCommonOptionalFields(dp, p);
+                    return dp;
                 }
-                String rewardStr = optString(p, "reward", null);
-                if (rewardStr != null) {
-                    try {
-                        created.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
-                    } catch (IllegalArgumentException ignore) {}
-                }
-                return created;
+            }
+            case "trivia": {
+                String answer = optString(p, "answer", null);
+                String category = optString(p, "category", null);
+                TriviaPuzzle rp = new TriviaPuzzle(question, answer, category, difficulty);
+                applyCommonOptionalFields(rp, p);
+                return rp;
             }
             case "riddle":
             default: {
                 String answer = optString(p, "answer", null);
                 String category = optString(p, "category", null);
                 RiddlePuzzle rp = new RiddlePuzzle(question, answer, category, difficulty);
-                String rewardStr = optString(p, "reward", null);
-                if (rewardStr != null) {
-                    try {
-                        rp.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
-                    } catch (IllegalArgumentException ignore) {}
-                }
-                return rp;
-            }
-            case "trivia": {
-                String answer = optString(p, "answer", null);
-                String category = optString(p, "category", null);
-                TriviaPuzzle rp = new TriviaPuzzle(question, answer, category, difficulty);
-                String rewardStr = optString(p, "reward", null);
-                if (rewardStr != null) {
-                    try {
-                        rp.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
-                    } catch (IllegalArgumentException ignore) {}
-                }
+                applyCommonOptionalFields(rp, p);
                 return rp;
             }
         }
+    }
 
+    /**
+     * Apply optional fields common to all puzzle types: reward, locked, hiddenHint, isSolved etc.
+     */
+    private void applyCommonOptionalFields(Puzzle puzzle, Map<String,Object> p) {
+        if (puzzle == null || p == null) return;
+
+        // reward
+        String rewardStr = optString(p, "reward", null);
+        if (rewardStr != null && !rewardStr.trim().isEmpty()) {
+            try {
+                puzzle.setReward(ItemName.valueOf(rewardStr.trim().toUpperCase()));
+            } catch (IllegalArgumentException ignore) {}
+        }
+
+        // locked
+        boolean locked = optBoolean(p, "locked", false);
+        puzzle.setLocked(locked);
+
+        // hidden hint
+        String hidden = optString(p, "hiddenHint", null);
+        if (hidden != null && !hidden.trim().isEmpty()) {
+            puzzle.setHiddenHint(hidden);
+        }
+
+        // isSolved flag (note: the EscapeRoom container also carries isSolved; keep puzzle-level flag if present)
+        // some puzzle classes might have methods to set solved state; we only preserve data here.
     }
 
     // helpers to extract typed values from underlying Map (which contains parser output)
@@ -165,3 +176,4 @@ public class RoomLoader {
         try { return Integer.parseInt(v.toString()); } catch (NumberFormatException e) { return def; }
     }
 }
+

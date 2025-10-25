@@ -13,8 +13,8 @@
         "difficulty": "EASY",
         "answer": "a spoo-key",
         "category": "house",
-        "reward": "KEY",
-        "isSolved": false
+        "isSolved": false,
+        "reward": "KEY"
       },
       {
         "type": "riddle",
@@ -33,7 +33,8 @@
         "difficulty": "MEDIUM",
         "answer": "a ghost",
         "category": "monsters",
-        "isSolved": false
+        "isSolved": false,
+        "reward": "KEY"
       },
       {
         "type": "riddle",
@@ -42,7 +43,8 @@
         "difficulty": "MEDIUM",
         "answer": "a coffin",
         "category": "objects",
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "riddle",
@@ -51,7 +53,8 @@
         "difficulty": "HARD",
         "answer": "a creaky door",
         "category": "objects",
-        "isSolved": false
+        "isSolved": false,
+        "reward": "KEY"
       },
       {
         "type": "riddle",
@@ -60,7 +63,8 @@
         "difficulty": "HARD",
         "answer": "a skeleton",
         "category": "monsters",
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       }
     ]
   },
@@ -78,7 +82,8 @@
         "numDoors": 3,
         "correctDoor": 2,
         "attempts": 0,
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "door",
@@ -88,7 +93,9 @@
         "numDoors": 5,
         "correctDoor": 4,
         "attempts": 0,
-        "isSolved": false
+        "isSolved": false,
+        "reward": "",
+        "locked": true
       },
       {
         "type": "door",
@@ -98,7 +105,8 @@
         "numDoors": 10,
         "correctDoor": 7,
         "attempts": 0,
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "door",
@@ -108,7 +116,9 @@
         "numDoors": 15,
         "correctDoor": 11,
         "attempts": 0,
-        "isSolved": false
+        "isSolved": false,
+        "reward": "",
+        "locked": true
       },
       {
         "type": "door",
@@ -118,7 +128,8 @@
         "numDoors": 30,
         "correctDoor": 3,
         "attempts": 0,
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "door",
@@ -128,7 +139,9 @@
         "numDoors": 30,
         "correctDoor": 25,
         "attempts": 0,
-        "isSolved": false
+        "isSolved": false,
+        "reward": "",
+        "locked": true
       }
     ]
   },
@@ -145,7 +158,8 @@
         "difficulty": "EASY",
         "equation": "8 * 12",
         "answer": 96,
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "math",
@@ -154,7 +168,8 @@
         "difficulty": "EASY",
         "equation": "44*10",
         "answer": 440,
-        "isSolved": false
+        "isSolved": false,
+        "reward": "DOLL"
       },
       {
         "type": "math",
@@ -163,7 +178,8 @@
         "difficulty": "MEDIUM",
         "equation": "100*6/5",
         "answer": 120,
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "math",
@@ -172,7 +188,8 @@
         "difficulty": "MEDIUM",
         "equation": "16*13",
         "answer": 208,
-        "isSolved": false
+        "isSolved": false,
+        "reward": "DOLL"
       },
       {
         "type": "math",
@@ -181,7 +198,8 @@
         "difficulty": "HARD",
         "equation": "14*27/9",
         "answer": 42,
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "math",
@@ -190,7 +208,8 @@
         "difficulty": "HARD",
         "equation": "124*9/18",
         "answer": 71,
-        "isSolved": false
+        "isSolved": false,
+        "reward": "DOLL"
       }
     ]
   },
@@ -207,7 +226,8 @@
         "difficulty": "EASY",
         "category": "creatures",
         "answer": "a homunculus",
-        "isSolved": false
+        "isSolved": false,
+        "reward": "POTION"
       },
       {
         "type": "trivia",
@@ -216,7 +236,8 @@
         "difficulty": "EASY",
         "category": "potions",
         "answer": "trouble",
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "trivia",
@@ -225,7 +246,8 @@
         "difficulty": "MEDIUM",
         "category": "creatures",
         "answer": "a spirit",
-        "isSolved": false
+        "isSolved": false,
+        "reward": "POTION"
       },
       {
         "type": "trivia",
@@ -234,7 +256,8 @@
         "difficulty": "MEDIUM",
         "category": "potions",
         "answer": "phosphorus vapors",
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       },
       {
         "type": "trivia",
@@ -243,7 +266,8 @@
         "difficulty": "HARD",
         "category": "elements",
         "answer": "mercury",
-        "isSolved": false
+        "isSolved": false,
+        "reward": "POTION"
       },
       {
         "type": "trivia",
@@ -252,7 +276,8 @@
         "difficulty": "HARD",
         "category": "elements",
         "answer": "lead",
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
       }
     ]
   }

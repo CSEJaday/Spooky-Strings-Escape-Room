@@ -15,5 +15,6 @@ public enum ItemName {
     MAP,
     NOTE,
     GOLD_COIN,
-    ARROW
+    ARROW,
+    DOLL
 }

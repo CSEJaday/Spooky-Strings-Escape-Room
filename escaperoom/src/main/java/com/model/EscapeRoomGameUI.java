@@ -310,9 +310,15 @@ public class EscapeRoomGameUI {
     
                 while (true) {
                     String answer = in.nextLine().trim();
+
+                    // If puzzle is locked, tell user and allow them to use items / hints but not answer until unlocked
+                    if (p.isLocked()) {
+                        System.out.println("This puzzle is locked. Try to 'use KEY' to unlock it or type other commands.");
+                    }
+
                     // --- Inventory commands: pickup <ITEM> and use <ITEM> ---
                     if (answer.toLowerCase().startsWith("pickup ")) {
-                        String token = answer.substring(7).trim().toUpperCase().replaceAll("\\s+", "_");
+                        String token = answer.substring(7).trim().toUpperCase().replaceAll("\\\\s+", "_");
                         try {
                             ItemName name = ItemName.valueOf(token);
                             Item template;
@@ -330,9 +336,8 @@ public class EscapeRoomGameUI {
                         System.out.print("> ");
                         continue;
                     }
-                    
                     if (answer.toLowerCase().startsWith("use ")) {
-                        String token = answer.substring(4).trim().toUpperCase().replaceAll("\\s+", "_");
+                        String token = answer.substring(4).trim().toUpperCase().replaceAll("\\\\s+", "_");
                         try {
                             ItemName name = ItemName.valueOf(token);
                             Inventory inv = currentUser.getProgress().getInventory();
@@ -347,8 +352,40 @@ public class EscapeRoomGameUI {
                                     if (used) {
                                         String useText = (template != null ? template.getUseText() : "You use the " + name.name() + ".");
                                         System.out.println(useText);
-                                        // NOTE: implement game effects here, e.g., unlocking doors or revealing clues.
-                                        // Example: if (name == ItemName.KEY) { /* unlock logic */ }
+
+                                        // --- Item effects ---
+
+                                        // KEY: unlock a locked puzzle
+                                        if (name == ItemName.KEY) {
+                                            if (p.isLocked()) {
+                                                p.setLocked(false);
+                                                System.out.println("The key turns — the lock clicks open. You can now attempt the puzzle.");
+                                            } else {
+                                                System.out.println("There is nothing to use the key on here.");
+                                            }
+                                        }
+
+                                        // TORCH: reveal the hidden hint (if any)
+                                        if (name == ItemName.TORCH) {
+                                            if (!p.isHiddenHintShown()) {
+                                                String hidden = p.getHiddenHint();
+                                                if (hidden != null && !hidden.isEmpty()) {
+                                                    System.out.println("[TORCH] Revealed: " + hidden);
+                                                    p.setHiddenHintShown(true);
+                                                } else {
+                                                    System.out.println("The torch lights the room but reveals nothing new.");
+                                                }
+                                            } else {
+                                                System.out.println("You already revealed the hidden details here.");
+                                            }
+                                        }
+
+                                        // POTION: consumable, grant small bonus points
+                                        if (name == ItemName.POTION) {
+                                            System.out.println("You feel invigorated! (+10 points)");
+                                            currentUser.getProgress().increaseScore(10);
+                                        }
+
                                     } else {
                                         System.out.println("Failed to use " + name.name() + ".");
                                     }
@@ -402,6 +439,11 @@ public class EscapeRoomGameUI {
                     } else {
                         boolean correct;
                         try {
+                            if (p.isLocked()) {
+                                System.out.println("This puzzle is locked. Use a key to unlock it first.");
+                                System.out.print("> ");
+                                continue;
+                            }
                             correct = p.checkAnswer(answer);
                         } catch (Exception e) {
                             System.out.println("Error: " + e.getMessage());
@@ -414,14 +456,9 @@ public class EscapeRoomGameUI {
                             currentUser.getProgress().increaseScore(pts);
                             puzzlesSolved++;
                             DataLoader.saveUsers(userList.getAllUsers());
-                            
+
                             // --- Conditional reward: only if this puzzle declares a reward ---
-                            ItemName rewardName = null;
-                            try {
-                                rewardName = p.getReward();
-                            } catch (Throwable ignore) {
-                                // if p has no getReward (older Puzzle class), rewardName stays null
-                            }
+                            ItemName rewardName = p.getReward();
                             if (rewardName != null) {
                                 Item reward = switch (rewardName) {
                                     case KEY -> new Item(ItemName.KEY, "A small iron key, probably opens a nearby door.", true, true, "You used the key.");
@@ -432,7 +469,8 @@ public class EscapeRoomGameUI {
                                 currentUser.getProgress().getInventory().addItem(reward);
                                 System.out.println("You found a " + rewardName.name() + " as you solve the puzzle! It has been added to your inventory.");
                             }
-break;
+
+                            break;
                         } else {
                             System.out.println("Incorrect. Try again or type 'hint'.");
                             System.out.print("> ");
@@ -465,13 +503,15 @@ break;
             System.out.println(" - Total hints used: " + totalHints);
             System.out.println(" - Session time: " + formatSeconds(sessionSeconds));
             System.out.println(" - Total time (all sessions): " + formatSeconds(endTime));
+            System.out.println(" - Difficulty played on: " + chosen.name());
+            System.out.println(" - Total score: " + currentUser.getProgress().getScore());
     
             String diffStr = chosen == Difficulty.ALL ? "all" : chosen.name().toLowerCase();
             long totalTime = currentUser.getProgress().getTimeSpent();
             
-            
+            // keep earlier certificate debug block (optional) if you want; removed here for brevity
 
-updateLeaderboardJson(currentUser.getName(),
+            updateLeaderboardJson(currentUser.getName(),
                     currentUser.getProgress().getScore(), diffStr, totalTime);
             DataLoader.saveUsers(userList.getAllUsers());
             System.out.println("Progress saved.");
@@ -696,3 +736,4 @@ updateLeaderboardJson(currentUser.getName(),
         }
     }
 }
+

@@ -99,6 +99,14 @@ public class Progress implements Comparable<Progress> {
         this.inventory = inv;
     }
     
+    public Map<String, Integer> exportInventoryAsMap() {
+        Map<String,Integer> out = new HashMap<>();
+        Map<ItemName,Integer> q = this.inventory.getQuantities();
+        for (Map.Entry<ItemName,Integer> e : q.entrySet()) {
+            out.put(e.getKey().name(), e.getValue());
+        }
+        return out;
+    }
 
     // ---------------------------
     // Hints tracking
