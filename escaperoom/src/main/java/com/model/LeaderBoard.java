@@ -58,7 +58,7 @@ public class LeaderBoard {
             if (name.equals( entries.get(i).getName())) {
                 entries.get(i).setProgress(progress);
                 entries.sort(Comparator.comparingInt(User.getProgress().getScore()));
-                return 0;
+                return;
             }
         }
     }//end updateEntry() 
@@ -78,4 +78,15 @@ public class LeaderBoard {
     public void clear() {
         System.out.print("\033[H\033[2J");     
     }//end clear
+
+    public String toString() {
+        String returnString = ("Username\t Level\t Score\t Time spent\n");
+        for (int i = 0; i < entries.size(); i++) {
+            User localUser = entries.get(i);
+            returnString += (localUser.getName() + "\t" + localUser.getProgress().getCurrentLevel() + "\t" + 
+            localUser.getProgress().getScore() + localUser.getProgress().getTimeSpent() + "\n");
+        }
+        return returnString;
+        
+    }//end toString()
 }//end LeaderBoard

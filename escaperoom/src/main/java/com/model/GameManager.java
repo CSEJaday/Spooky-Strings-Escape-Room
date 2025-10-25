@@ -2,27 +2,14 @@ package com.model;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.ArrayList;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.UUID;
 
-/**
- * 
- * @author
- */
 public class GameManager {
     private User user;
     private Timer timer;
     private CharacterList characterList;
     private HintList hintList;
 
-    /**
-     * 
-     * @param username
-     * @param password
-     * @return
-     */
     public User login(String username, String password) {
         // find the user data in the JSON file matching the username 
         //check that the password is the same
@@ -37,16 +24,17 @@ public class GameManager {
      * @param password - the password this User selects
      * @return - the User object created for this user.
      */
-    public User signup(String username, String password, UUID id) {
-        UUID temp = UUID.randomUUID();
-        User user = new User(username, password, id);
-        addToJSON (user);
+    public User signup(String username, String password) {
+        UUID id = UUID.randomUUID();
+        User user = new User(username, password);
         return user;
     }
 
-    /**
-     * 
-     */
+    public User getCurrentUser()
+    {
+        return this.user;
+    }
+
     public void playGame() {
         System.out.println("Game started.");
         if (timer == null) {
@@ -60,9 +48,6 @@ public class GameManager {
         }
     }
 
-    /**
-     * 
-     */
     public void pauseGame() {
         if (timer != null) {
             timer.cancel();
@@ -82,16 +67,5 @@ public class GameManager {
     public void updateTimeUI() {
         // Just a simple console message for now
         System.out.println("Updating time UI...");
-    }
-
-    /**
-     * Adds the data for this User to JSON
-     * @param user the User object to add to the JSON file
-     */
-    private void addToJSON(User user){
-        try {
-            FileWriter writer = new FileWriter();
-        } catch (Exception e) {
-        }
     }
 }

@@ -19,7 +19,6 @@ public class Progress implements Comparable<Progress> {
         this.score = 0;
         this.timeSpent = 0;
         this.playerName = "Unknown"; //players username should be here
-        this.score = 0;
     }//end constructor
 
     /*
