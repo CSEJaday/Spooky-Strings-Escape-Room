@@ -7,11 +7,27 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * RoomLoader: parses JSON (via JsonSimpleParser.parse) and builds EscapeRoom / Puzzle objects.
- * Reads optional fields: id, reward, locked, hiddenHint, difficulty, correctDoor, attempts.
+ * Utility which parses JSON text into {@code EscapeRoom} and {@code Puzzle} objects.
+ *
+ * High-level behavior:
+ * 
+ *   Accepts either a classpath resource or filesystem path.
+ *   Parses top-level JSON arrays or single objects.
+ *   Supports optional puzzle fields like id, reward, locked and difficulty.
  */
 public class RoomLoader {
 
+    /**
+     * Load rooms from the specified resource or file path.
+     *
+     * If the argument begins with '/', it is treated as an absolute classpath resource.
+     * Otherwise the loader first attempts a classpath resource (by prefixing with '/'),
+     * then falls back to a filesystem path.
+     *
+     * @param resourceOrPath classpath resource or filesystem path (e.g. "JSON/EscapeRoom.json").
+     * @return list of loaded {@code EscapeRoom} objects (possibly empty).
+     * @throws IOException if the resource cannot be read or top-level JSON is invalid.
+     */
     public List<EscapeRoom> loadRooms(String resourceOrPath) throws IOException {
         String text = readAllText(resourceOrPath);
         if (text == null) throw new FileNotFoundException("Cannot open " + resourceOrPath);
@@ -31,6 +47,13 @@ public class RoomLoader {
         return rooms;
     }
 
+    /**
+     * Read all text from the given resource or file path and return it as a string.
+     *
+     * @param resourceOrPath path or resource.
+     * @return file contents as a string, or null when resource not found on disk or classpath.
+     * @throws IOException on read failures.
+     */
     private String readAllText(String resourceOrPath) throws IOException {
         InputStream in = RoomLoader.class.getResourceAsStream(resourceOrPath.startsWith("/") ? resourceOrPath : "/" + resourceOrPath);
         if (in != null) {
@@ -44,6 +67,13 @@ public class RoomLoader {
         }
     }
 
+    /**
+     * Read all text from the given resource or file path and return it as a string.
+     * 
+     * @param r path or resource.
+     * @return file contents as a string, or null when resource not found on disk or classpath.
+     * @throws IOException on read failures.
+     */
     private String readReaderToString(Reader r) throws IOException {
         StringBuilder sb = new StringBuilder();
         char[] buf = new char[4096];
@@ -52,6 +82,12 @@ public class RoomLoader {
         return sb.toString();
     }
 
+    /**
+     * Convert a {@code Map} representing a room into an {@code EscapeRoom}.
+     *
+     * @param obj parsed JSON map for a room object.
+     * @return constructed {@code EscapeRoom}.
+     */
     private EscapeRoom parseRoom(Map<String,Object> obj) {
         String name = optString(obj, "name", optString(obj, "roomName", "Unnamed Room"));
         String description = optString(obj, "description", "");
@@ -72,6 +108,14 @@ public class RoomLoader {
         return r;
     }
 
+    /**
+     * Parse a puzzle JSON map into a typed {@code Puzzle} instance.
+     *
+     * Supported types: "math", "door", "trivia", "riddle" (default).
+     *
+     * @param p map representing the puzzle JSON object.
+     * @return typed Puzzle implementation.
+     */
     private Puzzle parsePuzzle(Map<String,Object> p) {
         String type = optString(p, "type", "riddle").toLowerCase(Locale.ROOT);
         String question = optString(p, "question", "");
@@ -120,8 +164,10 @@ public class RoomLoader {
     }
 
     /**
-     * Apply optional fields common to all puzzles:
-     *  - id, reward, locked, hiddenHint
+     * Apply optional fields common to all puzzle types (id, reward, locked, hiddenHint).
+     *
+     * @param puzzle the puzzle instance to mutate with optional fields.
+     * @param p      map from parsed JSON that may contain optional keys.
      */
     private void applyCommonOptionalFields(Puzzle puzzle, Map<String,Object> p) {
         if (puzzle == null || p == null) return;
@@ -149,7 +195,9 @@ public class RoomLoader {
         // additional optional fields can be applied here
     }
 
-    // helpers
+    /**
+     * Helpers
+     */
     private static String optString(Map<String,Object> m, String key, String def) {
         Object v = m.get(key);
         if (v == null) return def;

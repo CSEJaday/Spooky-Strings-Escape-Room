@@ -6,7 +6,10 @@ public class RiddlePuzzle extends Puzzle {
     private boolean isSolved;
     private int id;
 
-    // UML: + RiddlePuzzle(String riddle, String answer, String category, Difficulty difficulty)
+    /**
+     * A text-based puzzle where the player must answer a riddle correctly.
+     * Comparison is case-insensitive and ignores extra whitespace.
+     */
     public RiddlePuzzle(String riddle, String answer, String category, Difficulty difficulty) {
         super(riddle, difficulty);
         this.answer = answer;
@@ -14,13 +17,24 @@ public class RiddlePuzzle extends Puzzle {
         this.isSolved = false;
     }
 
+    /**
+     * Getters/Setter for Answer
+     */
     public String getAnswer() { return answer; }
     public void setAnswer(String answer) { this.answer = answer; }
 
+    /**
+     * Getters/Setter for Category
+     */
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
 
-    // UML: + checkAnswer(String userAnswer): boolean
+    /**
+     * Checks whether the player’s answer matches the correct answer.
+     *
+     * @param userAnswer the player’s input
+     * @return true if the answer matches; false otherwise
+     */
     @Override
     public boolean checkAnswer(String userAnswer) {
         if (userAnswer == null || answer == null) return false;
@@ -29,6 +43,7 @@ public class RiddlePuzzle extends Puzzle {
         return ok;
     }
 
+     /** @return true if the riddle has been solved */
     public boolean isSolved() { return isSolved; }
 
     @Override

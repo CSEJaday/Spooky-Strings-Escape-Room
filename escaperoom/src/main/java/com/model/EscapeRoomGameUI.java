@@ -12,15 +12,26 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * EscapeRoomGameUI — console backend with non-linear puzzle selection, inventory and item effects.
+ * Console-driven user interface and game loop for the Escape Room application.
+ *
+ * Responsibilities:
+ *  - bootstraps resources (hints, rooms, leaderboard)
+ *  - presents login and signup flows
+ *  - runs the main session loop where players select and solve puzzles
+ *  - handles per-puzzle actions such as requesting hints, using inventory items,
+ *    scoring, and persisting progress/leaderboard entries
+ *
+ * This class is intentionally imperative and interacts with the console Scanner.
+ * It persists user progress through {@link DataLoader} and updates a simple
+ * leaderboard JSON file under the JSON directory.
  */
 public class EscapeRoomGameUI {
     private final Scanner in = new Scanner(System.in);
     private final UserList userList = UserList.getInstance();
     private final RoomLoader roomLoader = new RoomLoader();
 
-    /*
-     * Tests the EscapeRoomGame
+    /**
+     * Entry point for running the console UI.
      */
     public static void main(String[] args) {
         EscapeRoomGameUI ui = new EscapeRoomGameUI();
@@ -53,6 +64,10 @@ public class EscapeRoomGameUI {
     private final HintList hintList = new HintList();
     private final Map<Integer, List<String>> hints = new HashMap<>();
 
+    /**
+     * Start the main UI loop. Ensures JSON directory exists, attempts to load hints,
+     * and repeatedly shows the main menu until the user exits.
+     */
     public void run() {
         try { Files.createDirectories(Paths.get(JSON_DIR)); } catch (IOException ignored) {}
 
@@ -92,6 +107,10 @@ public class EscapeRoomGameUI {
         }
     }
 
+    /**
+     * Attempt loading hints from a small set of default locations.
+     * The first existing file found will be parsed into the local hints map.
+     */
     private void loadHintsFromDefaults() {
         String jsonCandidate = System.getProperty("user.dir") + "/JSON/hints.txt";
         String projectCandidate = System.getProperty("user.dir") + "/hints.txt";
@@ -102,6 +121,11 @@ public class EscapeRoomGameUI {
         if (Files.exists(Paths.get(modelCandidate))) { loadHintsFromFile(modelCandidate); System.out.println("Hints loaded from: " + modelCandidate); return; }
     }
 
+    /**
+     * Parse a hints file and populate the in-memory hints map.
+     *
+     * @param path path to a readable hints file using the format "index|hint1, hint2,..."
+     */
     private void loadHintsFromFile(String path) {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
@@ -120,6 +144,10 @@ public class EscapeRoomGameUI {
         } catch (IOException e) { System.err.println("Failed to load hints from " + path + ": " + e.getMessage()); }
     }
 
+    /**
+     * Handle user login flow: prompt for username and password, then resume a play session.
+     * Successful login will display user progress before starting a session.
+     */
     private void loginFlow() {
         System.out.println("\n== LOGIN ==");
         System.out.print("Username: ");
@@ -136,6 +164,10 @@ public class EscapeRoomGameUI {
         playSession(user, chosen);
     }
 
+    /**
+     * Handle sign-up flow: create account, persist the chosen difficulty immediately,
+     * then start a play session for the new user.
+     */
     private void signUpFlow() {
         System.out.println("\n== SIGN UP ==");
         System.out.print("Choose username: ");
@@ -194,7 +226,10 @@ public class EscapeRoomGameUI {
         playSession(newUser, chosen);
     }
     
-
+    /**
+     * Print the leaderboard sorted by score (desc) and time (asc).
+     * Reads leaderboard JSON and displays a formatted ranking.
+     */
     private void showLeaderboard() {
         JSONArray arr = loadLeaderboardJson();
         if (arr == null || arr.isEmpty()) { System.out.println("\n=== LEADERBOARD ===\nNo entries yet."); return; }
@@ -220,6 +255,13 @@ public class EscapeRoomGameUI {
         }
     }
 
+    /**
+     * Print an atmospheric intro for the supplied puzzle. If the puzzle has a positive id,
+     * a handcrafted backstory for that id is used when available. Otherwise, a type-based
+     * fallback description is printed.
+     *
+     * @param p puzzle to introduce
+     */
     private void printPuzzleIntro(Puzzle p) {
         if (p == null) return;
     
@@ -380,8 +422,9 @@ public class EscapeRoomGameUI {
     }
     
     /**
-     * Helper that prints the previous type-based intro (used as a fallback).
-     * Kept as a separate method so the main switch stays tidy.
+     * Fallback flavor text selected by puzzle type when no id-specific text exists.
+     *
+     * @param p puzzle instance
      */
     private void printPuzzleIntroFallbackByType(Puzzle p) {
         String q = p.getQuestion() == null ? "" : p.getQuestion().toLowerCase();
@@ -407,6 +450,16 @@ public class EscapeRoomGameUI {
         }
     }        
 
+    /**
+     * Run a play session for the given user at the selected difficulty. This method:
+     *  - loads rooms and flattens puzzles into an id map
+     *  - allows the player to choose puzzles, request hints, use inventory, and submit answers
+     *  - awards points, time penalties, and optional item rewards
+     *  - persists progress and updates the leaderboard on session completion
+     *
+     * @param currentUser user playing the session
+     * @param chosen difficulty selected for this session (cannot be null)
+     */
     private void playSession(User currentUser, Difficulty chosen) {
         if (chosen == null) { System.out.println("No difficulty selected. Aborting session."); return; }
 
@@ -668,11 +721,23 @@ public class EscapeRoomGameUI {
         }
     }
 
+    /**
+     * Compute the time penalty (in seconds) applied when a hint is taken.
+     *
+     * @param pdiffLower difficulty as lowercase string
+     * @return penalty seconds
+     */
     private static int computeHintPenaltySeconds(String pdiffLower) {
         if ("FIXED".equalsIgnoreCase(HINT_PENALTY_MODE)) return HINT_FIXED_SECONDS;
         return HINT_PENALTY_SCALED.getOrDefault(pdiffLower.toLowerCase(), 30);
     }
 
+    /**
+     * Format a seconds count into minutes:seconds for human display.
+     *
+     * @param seconds seconds to format
+     * @return formatted string like "3:05"
+     */
     private static String formatSeconds(long seconds) {
         if (seconds < 0) seconds = 0;
         long mins = seconds / 60;
@@ -680,11 +745,22 @@ public class EscapeRoomGameUI {
         return String.format("%d:%02d", mins, sec);
     }
 
+    /**
+     * Lookup points awarded for a puzzle based on difficulty key.
+     *
+     * @param pdiffLower difficulty string in lower case
+     * @return point value
+     */
     private static int getPointsForDifficulty(String pdiffLower) {
         if (pdiffLower == null) return POINTS.getOrDefault("easy", 10);
         return POINTS.getOrDefault(pdiffLower.toLowerCase(), POINTS.get("easy"));
     }
 
+    /**
+     * Prompt the user to choose a difficulty and return the corresponding enum.
+     *
+     * @return selected Difficulty or null when canceled/invalid
+     */
     private Difficulty askDifficulty() {
         System.out.println("\nChoose difficulty: [1] Easy  [2] Medium  [3] Hard  [4] All  [0] Cancel");
         System.out.print("> ");
@@ -698,6 +774,9 @@ public class EscapeRoomGameUI {
         };
     }
 
+    /**
+     * Print the game's backstory and invoke speech output via Speek.
+     */
     private void printBackstory() {
         System.out.println("\n--- SPOOKY BACKSTORY ---");
         System.out.println("You awaken in the Wilkes Mansion, a place long abandoned and whispered about in ghost stories.");
@@ -733,6 +812,12 @@ public class EscapeRoomGameUI {
     }
     
 
+    /**
+     * Display a summary of the provided user's saved progress including percent complete
+     * for the last chosen difficulty, score, time, and used hints.
+     *
+     * @param user the user whose progress will be displayed
+     */
     private void displayUserProgress(User user) {
         if (user == null) return;
         Progress prog = user.getProgress();
@@ -842,6 +927,12 @@ public class EscapeRoomGameUI {
     
 
     // Leaderboard helpers
+
+    /**
+     * Read the leaderboard JSON file and return a JSONArray (empty if missing or unreadable).
+     *
+     * @return parsed leaderboard array or an empty JSONArray
+     */
     private JSONArray loadLeaderboardJson() {
         JSONParser parser = new JSONParser();
         try (FileReader fr = new FileReader(LEADERBOARD_PATH)) {
@@ -852,6 +943,16 @@ public class EscapeRoomGameUI {
         catch (IOException | ParseException e) { System.err.println("Failed to read leaderboard.json: " + e.getMessage()); return new JSONArray(); }
     }
 
+    /**
+     * Update or append an entry in the leaderboard file. If an entry for the same user
+     * and difficulty exists, it is replaced only if the new score is higher or the same
+     * score was achieved in less time.
+     *
+     * @param username player's name
+     * @param newScore player's score
+     * @param difficulty difficulty key (lowercase or "all")
+     * @param newTimeSpent total time in seconds for this player
+     */
     @SuppressWarnings("unchecked")
     private void updateLeaderboardJson(String username, long newScore, String difficulty, long newTimeSpent) {
         if (username == null) return;

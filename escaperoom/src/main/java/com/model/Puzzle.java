@@ -1,13 +1,13 @@
 package com.model;
 
 /**
- * Base Puzzle class with support for:
- *  - numeric id (optional)
- *  - reward (ItemName) optional
- *  - locked flag
- *  - hiddenHint + shown flag
- *
- * Concrete puzzles must implement checkAnswer().
+ * Tracks a player's in-game progress, including:
+ * - Time spent playing
+ * - Score
+ * - Completed puzzles (by both ID and question text)
+ * - Hint usage
+ * - Last selected difficulty
+ * - Player inventory
  */
 public abstract class Puzzle {
     protected String question;
@@ -24,29 +24,40 @@ public abstract class Puzzle {
     private String hiddenHint = null;
     private boolean hiddenHintShown = false;
 
+    /** Creates a new Progress instance with an empty inventory. */
     public Puzzle(String question, Difficulty difficulty) {
         this.question = question == null ? "" : question;
         this.difficulty = difficulty == null ? Difficulty.EASY : difficulty;
     }
 
-    // id
+    /**
+     * Getters/Setters for ID
+     */ 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    // question / difficulty
+    /** 
+     * Getters/Setters for  Question and Difficulty
+     */
     public String getQuestion() { return question; }
     public Difficulty getDifficulty() { return difficulty; }
     public void setDifficulty(Difficulty d) { this.difficulty = d; }
 
-    // reward
+    /**
+     * Getters/Setters for Reward
+     */
     public ItemName getReward() { return reward; }
     public void setReward(ItemName reward) { this.reward = reward; }
 
-    // lock
+    /**
+     * Getters/Setters for IsLocked
+     */
     public boolean isLocked() { return locked; }
     public void setLocked(boolean locked) { this.locked = locked; }
 
-    // hidden hint
+    /**
+     * Getters/Setters for HiddenHint
+     */
     public String getHiddenHint() { return hiddenHint; }
     public void setHiddenHint(String hint) { this.hiddenHint = hint; }
     public boolean isHiddenHintShown() { return hiddenHintShown; }

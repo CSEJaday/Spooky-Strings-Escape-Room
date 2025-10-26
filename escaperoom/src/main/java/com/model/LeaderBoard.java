@@ -5,13 +5,21 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Simple leaderboard helper utilities.
- * Provides methods to sort users by score and print a leaderboard.
+ * Utility methods to build and display a simple leaderboard for {@code User} objects.
+ *
+ * Provides sorting by score (descending) and formatted printing to stdout.
+ * Methods are static helpers and do not maintain state.
  */
 public class LeaderBoard {
 
     /**
-     * Return a new list of users sorted by progress score in descending order.
+     * Return a new list of users sorted by their progress score in descending order.
+     *
+     * This method clones the provided list to avoid mutating the caller's list.
+     * If {@code users} is null, an empty list is returned.
+     *
+     * @param users list of users to sort; may be null.
+     * @return a new {@code List<User>} sorted from highest to lowest score.
      */
     public static List<User> sortByScoreDesc(List<User> users) {
         List<User> copy = new ArrayList<>();
@@ -25,8 +33,12 @@ public class LeaderBoard {
     }
 
     /**
-     * Print a simple leaderboard to stdout for the supplied users list.
-     * Shows rank, username, score, and total time (formatted).
+     * Print a human-friendly leaderboard to stdout.
+     *
+     * Shows rank, username, score and time spent. If the input list is empty or null,
+     * prints a message indicating there are no entries.
+     *
+     * @param users list of users to display on the leaderboard; may be null or empty.
      */
     public static void printLeaderboard(List<User> users) {
         List<User> sorted = sortByScoreDesc(users);
@@ -48,6 +60,9 @@ public class LeaderBoard {
 
     /**
      * Format seconds into M:SS (minutes:seconds).
+     *
+     * @param seconds number of seconds (non-negative preferred).
+     * @return formatted string like "4:05" or "0:00".
      */
     private static String formatSeconds(long seconds) {
         if (seconds < 0) seconds = 0;

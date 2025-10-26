@@ -1,11 +1,20 @@
 package com.model;
 
+/**
+ * The {@code DataConstants} class defines constant values used for accessing and managing
+ * JSON data files related to users and escape rooms.
+ * 
+ * This class contains file path constants, JSON key constants, and error message constants
+ * used throughout the data handling process in the application.
+ */
 public class DataConstants {
     protected static final String USER_DATA_FILE = "json/users.json";
     protected static final String USER_DATA_FILE_TEST = "json/users_test.json";
     protected static final String ROOM_DATA_FILE = "json/rooms.json";
 
-    //User JSON Keys
+    /**
+     * User JSON Keys
+     */
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_ID = "id";
@@ -13,7 +22,9 @@ public class DataConstants {
     public static final String KEY_SETTINGS = "settings";
 
 
-    //Escape Room JSON Keys
+    /**
+     * Escape Room JSON Keys
+     */
     protected static final String KEY_NAME = "roomName";
     protected static final String KEY_DESCRIPTION = "description";
     protected static final String KEY_IS_SOLVED = "isSolved";

@@ -1,13 +1,9 @@
 package com.model;
 
 /**
- * DoorPuzzle: player chooses a numbered door. If they pick the correct door, the puzzle is solved.
- * Supports:
- *  - variable number of doors (numDoors)
- *  - correctDoor (1-based index)
- *  - optional attemptsAllowed (0 = unlimited)
- *  - optional difficulty
- * The checkAnswer method expects the player's input to be parseable to an integer.
+ * A puzzle where the player must choose the correct numbered door to solve it.
+ * The puzzle supports a configurable number of doors, attempt limits, and a
+ * blocked state requiring external action or items to clear.
  */
 public class DoorPuzzle extends Puzzle {
 
@@ -19,7 +15,9 @@ public class DoorPuzzle extends Puzzle {
     // locked is supported via Puzzle.setLocked(boolean)/isLocked()
 
     /**
-     * Simple constructor with number of doors. correctDoor defaults to 1.
+     * Creates a door puzzle with the specified number of doors.
+     * 
+     * @param numDoors number of door choices; values below 1 are set to 1
      */
     public DoorPuzzle(int numDoors) {
         super("Choose a door (1-" + Math.max(1, numDoors) + ")", Difficulty.MEDIUM);
@@ -27,11 +25,12 @@ public class DoorPuzzle extends Puzzle {
     }
 
     /**
-     * Full constructor allowing correct door, attempts allowed and difficulty.
-     * @param numDoors number of choices
-     * @param correctDoor 1-based correct door index
-     * @param attemptsAllowed 0 = unlimited, otherwise max attempts allowed before lockout or fail
-     * @param difficulty difficulty of puzzle
+     * Creates a door puzzle with custom parameters.
+     * 
+     * @param numDoors number of doors available
+     * @param correctDoor the 1-based index of the correct door
+     * @param attemptsAllowed 0 for unlimited, otherwise max allowed attempts
+     * @param difficulty difficulty setting for the puzzle
      */
     public DoorPuzzle(int numDoors, int correctDoor, int attemptsAllowed, Difficulty difficulty) {
         super("Choose a door (1-" + Math.max(1, numDoors) + ")", difficulty);
@@ -40,16 +39,28 @@ public class DoorPuzzle extends Puzzle {
         this.attemptsAllowed = Math.max(0, attemptsAllowed);
     }
 
+    /**
+     * Get the number of door choices.
+     *
+     * @return number of doors (>= 1).
+     */
     public int getNumDoors() {
         return numDoors;
     }
 
+    /**
+     * Get the correct door index (1-based).
+     *
+     * @return the correct door index.
+     */
     public int getCorrectDoor() {
         return correctDoor;
     }
 
     /**
-     * Setter used by RoomLoader when it wants to override the correct door after constructing.
+     * Sets the correct door index, clamped between 1 and {@code numDoors}.
+     *
+     * @param correctDoor the 1-based index to set
      */
     public void setCorrectDoor(int correctDoor) {
         if (correctDoor < 1) correctDoor = 1;
@@ -57,33 +68,67 @@ public class DoorPuzzle extends Puzzle {
         this.correctDoor = correctDoor;
     }
 
+    /**
+     * Get maximum allowed attempts (0 indicates unlimited).
+     *
+     * @return attempts allowed.
+     */
     public int getAttemptsAllowed() {
         return attemptsAllowed;
     }
 
+    /**
+     * Set the attempts allowed (negative values are coerced to 0).
+     *
+     * @param attemptsAllowed new maximum attempts (0 = unlimited).
+     */
     public void setAttemptsAllowed(int attemptsAllowed) {
         this.attemptsAllowed = Math.max(0, attemptsAllowed);
     }
 
+    /**
+     * Get attempts made so far.
+     *
+     * @return number of attempts recorded.
+     */
     public int getAttemptsMade() {
         return attemptsMade;
     }
 
+    /**
+     * Set attempts made (negative values become 0).
+     *
+     * @param attemptsMade attempts to record.
+     */
     public void setAttemptsMade(int attemptsMade) {
         this.attemptsMade = Math.max(0, attemptsMade);
     }
 
+    /**
+     * Check whether this door is currently blocked (physically).
+     *
+     * @return true when blocked and cannot be solved by normal choice.
+     */
     public boolean isBlocked() {
         return blocked;
     }
 
+    /**
+     * Mark or clear the blocked status.
+     *
+     * @param blocked true to mark as blocked.
+     */
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
     }
 
     /**
-     * Check answer: expects an integer string; returns true if matches correctDoor.
-     * If attemptsAllowed > 0 and attemptsMade exceeds allowed, returns false and will not accept more attempts.
+     * Checks the player’s answer by parsing a numeric door choice and comparing it
+     * to the correct door. Returns false if locked, blocked, invalid, or over the
+     * allowed attempt limit.
+     *
+     * @param userAnswer player input string
+     * @return true if the chosen door is correct and valid; false otherwise
      */
     @Override
     public boolean checkAnswer(String userAnswer) {

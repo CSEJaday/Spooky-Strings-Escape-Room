@@ -8,20 +8,20 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * Loads hints.txt and provides lookup by global puzzle index.
+ * Loads and provides lookup for hint entries read from a hints.txt file.
  *
  * Expected hints.txt format (UTF-8):
- *  <index>|hint1, hint2, hint3
- * Example:
- *  1|Think about black and white keys,Piano is an instrument
- *  2|It must be broken to be used,Think breakfast food with a shell
+ *  index|hint1, hint2, hint3
  *
- * Index is 1-based and corresponds to the global puzzle order that RoomLoader loads.
+ * Index is 1-based and should match the global puzzle ordering used by RoomLoader.
  */
 public class HintList {
     private final Map<Integer, Hint> hints = new HashMap<>();
     private final String[] defaultCandidates;
 
+    /**
+     * Constructs a HintList and initializes default candidate paths to search for hints.txt.
+     */
     public HintList() {
         String jsonDir = System.getProperty("user.dir") + "/JSON";
         defaultCandidates = new String[] {
@@ -32,7 +32,10 @@ public class HintList {
     }
 
     /**
-     * Load using a specific explicit path. Returns the path if loaded successfully, otherwise null.
+     * Attempts to load hints from the explicit path provided.
+     *
+     * @param path the file system path to a hints file
+     * @return the path that was successfully loaded, or null if loading failed
      */
     public String load(String path) {
         if (path == null) return null;
@@ -41,7 +44,9 @@ public class HintList {
     }
 
     /**
-     * Existing load behavior (tries a few default locations). Returns the path loaded or null.
+     * Attempts to load hints by trying a set of default locations.
+     *
+     * @return the path that was successfully loaded, or null if no file was found or parsed
      */
     public String load() {
         for (String cand : defaultCandidates) {
@@ -56,8 +61,11 @@ public class HintList {
     }
 
     /**
-     * Internal helper: parse file at path into hints map.
-     * Returns path on success or null on failure.
+     * Parse the file at the given path and populate the internal hints map.
+     * Commits parsed hints only if at least one valid entry was found.
+     *
+     * @param path path to the hints file
+     * @return the same path on success, or null on failure
      */
     private String loadFromPath(String path) {
         Map<Integer, Hint> tmp = new HashMap<>();
@@ -96,14 +104,22 @@ public class HintList {
     }
 
     /**
-     * Get the Hint object for a global index or null.
+     * Retrieve the Hint object associated with the given global puzzle index.
+     *
+     * @param globalIndex 1-based global puzzle index
+     * @return the {@link Hint} if present, otherwise null
      */
     public Hint getHint(int globalIndex) {
         return hints.get(globalIndex);
     }
 
     /**
-     * Convenience: return the next hint string for globalIndex, given alreadyUsed count.
+     * Convenience method to obtain the next hint string for a puzzle given how many hints
+     * have already been used.
+     *
+     * @param globalIndex 1-based global puzzle index
+     * @param alreadyUsed number of hints already consumed for this puzzle
+     * @return the next hint string, or null if no hint is available
      */
     public String getNextHintFor(int globalIndex, int alreadyUsed) {
         Hint h = getHint(globalIndex);
@@ -111,6 +127,8 @@ public class HintList {
         return h.getNextHint(alreadyUsed);
     }
 
-    /** Returns number of hint entries loaded. */
+    /**
+     * @return number of hint entries currently loaded
+     */
     public int size() { return hints.size(); }
 }

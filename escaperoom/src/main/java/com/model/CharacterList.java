@@ -6,13 +6,20 @@ public class CharacterList {
     private ArrayList<Character> characters;
     private static CharacterList instance;
 
-    // private constructor for singleton pattern
+    /**
+     * Manages a collection of Character objects using the Singleton pattern.
+     * Provides global access to the game's character list for lookups and updates.
+     */
     public CharacterList() 
     {
         characters = new ArrayList<>();
     }
 
-    // Singleton accessor
+    /**
+     * Returns the single instance of CharacterList.
+     *
+     * @return the shared CharacterList instance
+     */
     public static CharacterList getInstance()
     {
         if (instance == null) 
@@ -22,18 +29,32 @@ public class CharacterList {
         return instance;
     }
 
-    // return all the characters
+    /**
+     * Returns the list of all characters currently stored.
+     *
+     * @return list of Character objects
+     */
     public ArrayList<Character> getCharacterInventory() 
     {
         return characters;
     }
 
-    // Add character to the list
+    /**
+     * Adds a character to the list.
+     *
+     * @param character the Character to add
+     */
     public void addCharacter(Character character) 
     {
         characters.add(character);
     }
 
+    /**
+     * Finds a character by name (case-insensitive) and returns its string representation.
+     *
+     * @param name the name of the character to search for
+     * @return character description if found, otherwise "Character not found"
+     */
     public String getCharacterByName(String name)
     {
         for (Character character : characters)

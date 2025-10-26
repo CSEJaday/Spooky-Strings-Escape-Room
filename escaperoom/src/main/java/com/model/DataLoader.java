@@ -9,9 +9,11 @@ import java.io.*;
 import java.util.*;
 
 /**
- * DataLoader - read + write users.json including Progress inventory and completed puzzle ids.
+ * Handles loading and saving user data, including progress, inventory,
+ * and completed puzzle information, from and to a JSON file.
  *
- * Save format is compatible with saveUsers(List<User>) implemented previously.
+ * This class provides static methods for reading and writing user data in a format
+ * compatible with previously implemented save methods.
  */
 public final class DataLoader {
 
@@ -20,9 +22,13 @@ public final class DataLoader {
 
     private DataLoader() {}
 
-    // -----------------------
-    // Saving (same as provided earlier)
-    // -----------------------
+    
+    /**
+     * Saves a list of users to a JSON file, including progress details such as
+     * time spent, score, completed puzzles, hints used, last difficulty, and inventory.
+     *
+     * @param users the list of {@link User} objects to save; if null, an empty list is used
+     */
     @SuppressWarnings("unchecked")
     public static void saveUsers(List<User> users) {
         if (users == null) users = List.of();
@@ -128,9 +134,12 @@ public final class DataLoader {
         }
     }
 
-    // -----------------------
-    // Loading: reconstruct Users and Progress (inventory + completed ids)
-    // -----------------------
+    /**
+     * Loads and reconstructs a list of users from the JSON data file.
+     * Includes their progress, completed puzzles, hints, difficulty, and inventory.
+     *
+     * @return a list of {@link User} objects loaded from the JSON file; may be empty if none found
+     */
     public static ArrayList<User> getUsers() {
         ArrayList<User> out = new ArrayList<>();
 
@@ -294,7 +303,12 @@ public final class DataLoader {
         return out;
     }
 
-    // small helper
+    /**
+     * Returns a non-null, trimmed string or an empty string if input is null.
+     *
+     * @param s the input string
+     * @return a safe non-null string
+     */
     private static String safeString(String s) {
         return s == null ? "" : s;
     }

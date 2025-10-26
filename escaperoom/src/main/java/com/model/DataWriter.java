@@ -8,9 +8,21 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
  
+/**
+ * Handles writing user data to JSON files, including saving users,
+ * updating progress, and handling logout data persistence.
+ *
+ * Extends {@link DataConstants} to reuse key names, file paths,
+ * and error message constants.
+ */
 public class DataWriter extends DataConstants {
+    /** Path to the main user JSON file. */
     public static final String FILENAME = "JSON/User.json";   //check this for the correct filepath
 
+    /**
+     * Saves all current users from the {@link UserList} singleton
+     * to the user data JSON file. Each user is converted to JSON format.
+     */
     public static void savePlayers() 
     {
         UserList users = UserList.getInstance();
@@ -37,10 +49,11 @@ public class DataWriter extends DataConstants {
     }
 
     /**
-     * Writes user data to the JSON file provided in the FILENAME constant. This will write ALL of the 
-     * user data. It would be called when adding a new user to the JSON file for the first time. It does not search
-     * for a duplicate entry
-     * @param user the user data to write to JSON
+     * Writes the provided user data to the JSON file.
+     * Used primarily when adding a new user for the first time.
+     * This method does not check for duplicates.
+     *
+     * @param user the {@link User} object to write to the JSON file
      */
     public void writeUserData(User user){
     
@@ -54,9 +67,10 @@ public class DataWriter extends DataConstants {
     }
 
     /**
-     * Updates data in the JSON file for this User to include progress made. Searches for the correct entry and 
-     * updates the Progress data provided in the User Object
-     * @param User the User data to update progress for
+     * Updates an existing user's JSON entry to include new progress data.
+     * Overwrites the corresponding user's entry with updated progress values.
+     *
+     * @param user the {@link User} whose progress should be updated
      */
     public void saveProgress(User user) {
 
@@ -72,7 +86,12 @@ public class DataWriter extends DataConstants {
         }
     }
 
-    //is this any different than SaveProgress?
+    /**
+     * Logs out the given user and writes their latest data to the JSON file.
+     * Functionally similar to {@link #saveProgress(User)}.
+     *
+     * @param user the {@link User} to log out
+     */
     public void logOut(User user) {
         try {
             FileWriter file = new FileWriter(FILENAME);
@@ -83,6 +102,12 @@ public class DataWriter extends DataConstants {
             e.printStackTrace();
         }
     }
+    /**
+     * Converts a {@link User} object into a JSON representation.
+     *
+     * @param user the {@link User} to convert
+     * @return a {@link JSONObject} containing user data
+     */
     @SuppressWarnings("unchecked")
     public static JSONObject getUserJSON(User user) 
     {
@@ -114,11 +139,21 @@ public class DataWriter extends DataConstants {
         return userDetails;
     }
 
+    /**
+     * Ensures a non-null string is returned.
+     *
+     * @param input the string to check
+     * @return the original string if not null, otherwise an empty string
+     */
     private static String safeString(String input) 
     {
         return input != null ? input : "";
     }
 
+    /**
+     * Logs out all users by saving their data and clearing user memory.
+     * Called when the application is shutting down or logging out globally.
+     */
     public static void logQuit() {
         System.out.println("Logging out...");
         savePlayers();
@@ -126,6 +161,7 @@ public class DataWriter extends DataConstants {
         System.out.println("Logged out.");
     }
 
+    /** Basic test method for manual verification. */
     public static void main(String[] args) 
     {
         savePlayers();
