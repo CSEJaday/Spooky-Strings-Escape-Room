@@ -2,33 +2,33 @@ package com.model;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.UUID;
+import java.util.List;
 
 /**
- * Singleton class that maintains a listing of players and their current scores relative to each other.
- * @author
+ * Simple leaderboard helper utilities.
+ * Provides methods to sort users by score and print a leaderboard.
  */
 public class LeaderBoard {
-    private static LeaderBoard leaderboard;
-    private ArrayList<User> entries;
 
     /**
-     * Private constructor that builds the leaderboard from data stored in a JSON file
+     * Return a new list of users sorted by progress score in descending order.
      */
-    private LeaderBoard() {
-        //build ArrayList of users from JSON file
-        entries = DataLoader.getUsers();
-        //sort entries by user score
-        //entries.sort(Comparator.comparingInt(User.getProgress().getScore()));
-        entries.sort(Comparator.comparing(User::getProgress::getScore));
-    }//end constructor
+    public static List<User> sortByScoreDesc(List<User> users) {
+        List<User> copy = new ArrayList<>();
+        if (users != null) copy.addAll(users);
+        // Use a lambda so type inference is explicit and compatible with Java 17
+        copy.sort(Comparator.comparingInt((User u) -> {
+            Progress p = u.getProgress();
+            return p == null ? 0 : p.getScore();
+        }).reversed());
+        return copy;
+    }
 
     /**
-     * Public method that checks for the existence of a LeaderBoard.
-     * If one does not exist, it calls the private constructor and creates one and returns it.
-     * Otherwise, it returns the current instance of the LeaderBoard
-     * @return
+     * Print a simple leaderboard to stdout for the supplied users list.
+     * Shows rank, username, score, and total time (formatted).
      */
+<<<<<<< HEAD
     public static LeaderBoard getInstance() {
         if (leaderboard == null) {
           leaderboard = new LeaderBoard();  
@@ -60,14 +60,30 @@ public class LeaderBoard {
                 entries.sort(Comparator.comparingInt(User.getProgress().getScore()));
                 return;
             }
+=======
+    public static void printLeaderboard(List<User> users) {
+        List<User> sorted = sortByScoreDesc(users);
+        System.out.println("\n=== LEADERBOARD ===");
+        if (sorted.isEmpty()) {
+            System.out.println("No entries yet.");
+            return;
+>>>>>>> 2c0099efdaadf9e881fc0f0f3ad451f04ec46680
         }
-    }//end updateEntry() 
+
+        int rank = 1;
+        for (User u : sorted) {
+            Progress p = u.getProgress();
+            int score = p == null ? 0 : p.getScore();
+            long time = p == null ? 0L : p.getTimeSpent();
+            String timeStr = formatSeconds(time);
+            System.out.printf("%2d. %s — %d pts (time: %s)%n", rank++, u.getName(), score, timeStr);
+        }
+    }
 
     /**
-     * Returns an ArrayList of the top specified number of entries in the ArrayList.
-     * @param limit
-     * @return
+     * Format seconds into M:SS (minutes:seconds).
      */
+<<<<<<< HEAD
     public ArrayList<User> getTopEntries(int limit) {
         return entries;
     }//end getTopEntries()
@@ -90,3 +106,12 @@ public class LeaderBoard {
         
     }//end toString()
 }//end LeaderBoard
+=======
+    private static String formatSeconds(long seconds) {
+        if (seconds < 0) seconds = 0;
+        long mins = seconds / 60;
+        long sec = seconds % 60;
+        return String.format("%d:%02d", mins, sec);
+    }
+}
+>>>>>>> 2c0099efdaadf9e881fc0f0f3ad451f04ec46680

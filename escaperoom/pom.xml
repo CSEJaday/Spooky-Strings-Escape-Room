@@ -46,9 +46,11 @@
 <artifactId>javafx-maven-plugin</artifactId>
 <version>${javafx.maven.plugin.version}</version>
 <configuration>
-<jlinkImageName>hellofx</jlinkImageName>
-<launcher>launcher</launcher>
-<mainClass>hellofx/org.openjfx.hellofx.App</mainClass>
+  <!-- IMPORTANT: for a modular run, specify module/mainClass -->
+  <mainClass>com.example/com.model.EscapeRoomGameUI</mainClass>
+  <!-- keep existing settings if you want -->
+  <jlinkImageName>hellofx</jlinkImageName>
+  <launcher>launcher</launcher>
 </configuration>
 </plugin>
 </plugins>

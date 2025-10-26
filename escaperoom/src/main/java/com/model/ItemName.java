@@ -1,11 +1,20 @@
 package com.model;
 
+/**
+ * Add new item names here as needed.
+ */
 public enum ItemName {
     KEY,
-    SHIELD,
+    TORCH,
+    RAG,
+    CROWBAR,
     SCROLL,
     POTION,
     SWORD,
-    ARROW
-    
+    SHIELD,
+    MAP,
+    NOTE,
+    GOLD_COIN,
+    ARROW,
+    DOLL
 }

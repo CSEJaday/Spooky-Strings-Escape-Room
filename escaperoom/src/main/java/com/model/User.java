@@ -30,15 +30,19 @@ public class User<Settings> {
     public User(String username, String password, UUID id) {
         this.username = username;
         this.password = password;
-        this.id = id;
+        /*
+         * Ensures id is never null
+         */
+        if (id == null) {
+            this.id = UUID.randomUUID();
+        } else {
+            this.id = id;
+        }
         characterList = new ArrayList<Character>();
         settings = new HashMap();
         progress = new Progress();
-
-        //do we write this to the JSON file when we create the user? I think we need to do this so that
-        //we can update the user info as they play the game.
-
     }//end default constructor
+
 
     /**
      * This constructor is used by Leaderboard to retrieve existing users to display on the Leaderboard. Data is retrieved
@@ -51,16 +55,19 @@ public class User<Settings> {
      * @param prg = Progress object for this User.
      */
 
-    public User(String name, String pwd, UUID id, ArrayList<Character> characters, HashMap settings, Progress prg) {
-        
+     public User(String name, String pwd, UUID id, ArrayList<Character> characters, HashMap settings, Progress prg) {
         username = name;
         password = pwd;
-        this.id = id;
-        characterList = characters;
-        this.settings = settings;
-        progress = prg;
-        
+        if (id == null) {
+            this.id = UUID.randomUUID();
+        } else {
+            this.id = id;
+        }
+        characterList = characters != null ? characters : new ArrayList<>();
+        this.settings = settings != null ? settings : new HashMap<>();
+        progress = prg != null ? prg : new Progress();
     }//end second constructor
+
 
     /**
      *  is there a  use case for another User constructor? Would we create a user AFTER they played a game and have a score?
@@ -151,9 +158,12 @@ public class User<Settings> {
         return userData;
     }
 
-    public Character[] getCharacters() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCharacters'");
+    public List<Character> getCharacters() {
+        // Ensure characters list is always non-null for callers that iterate/serialize it.
+        if (this.characterList == null) {
+            this.characterList = new ArrayList<>();
+        }
+        return this.characterList;
     }
 
     public static User fromString(String line) {
@@ -211,16 +221,6 @@ public class User<Settings> {
                 ", characterCount=" + characters.size() +
                 '}';
     }
-<<<<<<< HEAD
-
-
-    public static User fromString(String line) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'fromString'");
-    }
-}
-=======
 }
     */
 
->>>>>>> 0563f153d54f9fde8ab3b73dff3892622bbf4534

@@ -1,55 +1,283 @@
 
   [
     {
-      "name": "Entry Room",
-    "description": "A dimly lit room with a single door.",
+      "name": "The Dark Foyer",
+    "description": "A dimly lit room that is deafening in sound with a single door at the end of the room...",
     "isSolved": false,
     "level": 1,
     "puzzle": [
       {
         "type": "riddle",
         "id": 1,
-        "question": "What has keys but can't open locks?",
+        "question": "What type of key opens a haunted house?",
         "difficulty": "EASY",
-        "answer": "Piano",
-        "category": "classic",
-        "isSolved": false
+        "answer": "a spoo-key",
+        "category": "house",
+        "isSolved": false,
+        "reward": "KEY"
       },
       {
         "type": "riddle",
         "id": 2,
-        "question": "What has to be broken before you can use it?",
+        "question": "A zombie, mummy, and a skeleton bought a house together. It had all the usual rooms except for one. Which one?",
         "difficulty": "EASY",
-        "answer": "Egg",
-        "category": "classic",
-        "isSolved": false
+        "answer": "a living room",
+        "category": "house",
+        "isSolved": false,
+        "reward": ""
       },
       {
-        "type": "math",
+        "type": "riddle",
         "id": 3,
-        "question": "Solve: 7 * 6",
+        "question": "I have no body, head, or face, but I zoom from place to place. I haunt halls when night is near. What am I?",
         "difficulty": "MEDIUM",
-        "equation": "7*6",
-        "answer": 42,
-        "isSolved": false
+        "answer": "a ghost",
+        "category": "monsters",
+        "isSolved": false,
+        "reward": "KEY"
+      },
+      {
+        "type": "riddle",
+        "id": 4,
+        "question": "What is made, bought, and used without the maker wanting it, the buyer needing it, or the user knowing it?",
+        "difficulty": "MEDIUM",
+        "answer": "a coffin",
+        "category": "objects",
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "riddle",
+        "id": 5,
+        "question": "I hang around a doorway and creak when people pass, at night I swing and scare the brave. What am I? ",
+        "difficulty": "HARD",
+        "answer": "a creaky door",
+        "category": "objects",
+        "isSolved": false,
+        "reward": "KEY"
+      },
+      {
+        "type": "riddle",
+        "id": 6,
+        "question": "I have many teeth but I never bite, in a haunted house I chatter in the night. What am I?",
+        "difficulty": "HARD",
+        "answer": "a skeleton",
+        "category": "monsters",
+        "isSolved": false,
+        "reward": ""
       }
     ]
   },
   {
     "name": "Hall of Doors",
-    "description": "Several doors — only one leads forward.",
+    "description": "A long hallway of doors, but only two lead forward...",
     "isSolved": false,
     "level": 2,
     "puzzle": [
       {
         "type": "door",
-        "id": 10,
-        "question": "Choose the correct door (1..3).",
-        "difficulty": "MEDIUM",
+        "id": 7,
+        "question": "Choose the correct door (1-3).",
+        "difficulty": "EASY",
         "numDoors": 3,
         "correctDoor": 2,
         "attempts": 0,
-        "isSolved": false
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "door",
+        "id": 8,
+        "question": "Choose the correct door (1-5).",
+        "difficulty": "EASY",
+        "numDoors": 5,
+        "correctDoor": 4,
+        "attempts": 0,
+        "isSolved": false,
+        "reward": "",
+        "locked": true
+      },
+      {
+        "type": "door",
+        "id": 9,
+        "question": "Choose the correct door (1-10).",
+        "difficulty": "MEDIUM",
+        "numDoors": 10,
+        "correctDoor": 7,
+        "attempts": 0,
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "door",
+        "id": 10,
+        "question": "Choose the correct door (1-15).",
+        "difficulty": "MEDIUM",
+        "numDoors": 15,
+        "correctDoor": 11,
+        "attempts": 0,
+        "isSolved": false,
+        "reward": "",
+        "locked": true
+      },
+      {
+        "type": "door",
+        "id": 11,
+        "question": "Choose the correct door (1-30).",
+        "difficulty": "HARD",
+        "numDoors": 30,
+        "correctDoor": 3,
+        "attempts": 0,
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "door",
+        "id": 12,
+        "question": "Choose the correct door (1-40).",
+        "difficulty": "HARD",
+        "numDoors": 40,
+        "correctDoor": 25,
+        "attempts": 0,
+        "isSolved": false,
+        "reward": "",
+        "locked": true
+      }
+    ]
+  },
+  {
+    "name": "Cursed Room",
+    "description": "A lone candles burns... though no one's been there for years",
+    "isSolved": false,
+    "level": 3,
+    "puzzle": [
+      {
+        "type": "math",
+        "id": 13,
+        "question": "Solve: 8 * 12",
+        "difficulty": "EASY",
+        "equation": "8 * 12",
+        "answer": 96,
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "math",
+        "id": 14,
+        "question": "Solve: 44 * 10",
+        "difficulty": "EASY",
+        "equation": "44*10",
+        "answer": 440,
+        "isSolved": false,
+        "reward": "DOLL"
+      },
+      {
+        "type": "math",
+        "id": 15,
+        "question": "Solve: 100 * 6 / 5",
+        "difficulty": "MEDIUM",
+        "equation": "100*6/5",
+        "answer": 120,
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "math",
+        "id": 16,
+        "question": "Solve: 16 * 13",
+        "difficulty": "MEDIUM",
+        "equation": "16*13",
+        "answer": 208,
+        "isSolved": false,
+        "reward": "DOLL"
+      },
+      {
+        "type": "math",
+        "id": 17,
+        "question": "Solve: 14 * 27 / 9",
+        "difficulty": "HARD",
+        "equation": "14*27/9",
+        "answer": 42,
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "math",
+        "id": 18,
+        "question": "Solve: 124 * 9 / 18",
+        "difficulty": "HARD",
+        "equation": "124*9/18",
+        "answer": 71,
+        "isSolved": false,
+        "reward": "DOLL"
+      }
+    ]
+  },
+  {
+    "name": "Alchemy Lab",
+    "description": "Strange fumes rise from bubbling bottles",
+    "isSolved": false,
+    "level": 4,
+    "puzzle": [
+      {
+        "type": "trivia",
+        "id": 19,
+        "question": "In legends, which creature might guard an alchemist's secret potions?",
+        "difficulty": "EASY",
+        "category": "creatures",
+        "answer": "a homunculus",
+        "isSolved": false,
+        "reward": "POTION"
+      },
+      {
+        "type": "trivia",
+        "id": 20,
+        "question": "What would a haunted cauldron most likely brew on its own at midnight?",
+        "difficulty": "EASY",
+        "category": "potions",
+        "answer": "trouble",
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "trivia",
+        "id": 21,
+        "question": "If a glowing green bottle starts humming, what's trapped inside?",
+        "difficulty": "MEDIUM",
+        "category": "creatures",
+        "answer": "a spirit",
+        "isSolved": false,
+        "reward": "POTION"
+      },
+      {
+        "type": "trivia",
+        "id": 22,
+        "question": "What ghostly gas might an alchemist accidentally create while mixing strange brews in the dark?",
+        "difficulty": "MEDIUM",
+        "category": "potions",
+        "answer": "phosphorus vapors",
+        "isSolved": false,
+        "reward": ""
+      },
+      {
+        "type": "trivia",
+        "id": 23,
+        "question": "Which element's symbol, Hg, comes from the alchemical name 'quicksilver'?",
+        "difficulty": "HARD",
+        "category": "elements",
+        "answer": "mercury",
+        "isSolved": false,
+        "reward": "POTION"
+      },
+      {
+        "type": "trivia",
+        "id": 24,
+        "question": "Which alchemical element was linked to death, rebirth, and the color black?",
+        "difficulty": "HARD",
+        "category": "elements",
+        "answer": "lead",
+        "isSolved": false,
+        "reward": ""
       }
     ]
   }
