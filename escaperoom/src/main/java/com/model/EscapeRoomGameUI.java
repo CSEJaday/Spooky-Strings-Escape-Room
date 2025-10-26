@@ -192,6 +192,97 @@ public class EscapeRoomGameUI {
         }
     }
 
+    private void printPuzzleIntro(Puzzle p) {
+        if (p == null) return;
+    
+        System.out.println();
+        System.out.println("~~~ Atmosphere ~~~");
+    
+        // If puzzle has a valid id, prefer the id-based handcrafted backstory.
+        int id = p.getId();
+        if (id > 0) {
+            switch (id) {
+                // Dark Foyer (1-6)
+                case 1 -> System.out.println("You stand before a massive iron door. A ghostly draft seeps through its keyhole, whispering the punchline you dread to speak aloud.");
+                case 2 -> System.out.println("Shadows flicker across the walls, shaped like the undead in casual conversation. They laugh at a joke only the dead would understand.");
+                case 3 -> System.out.println("The chandelier rattles above; something unseen rushes by. The air itself challenges you to name it.");
+                case 4 -> System.out.println("A polished coffin rests in the corner. Its lid trembles as if expecting company—whatever it is, it didn't want to be made.");
+                case 5 -> System.out.println("An ancient door sways in still air. Each slow groan sounds like a warning; the hinges remember old laments.");
+                case 6 -> System.out.println("Skeletons in the alcoves grin wider as you enter. One begins to chatter its jaw rhythmically—it's waiting for an answer.");
+    
+                // Hall of Doors (7-12)
+                case 7 -> System.out.println("Three doors stand before you. Behind one you hear chains, another hides a heartbeat, the last breathes an unnatural silence.");
+                case 8 -> System.out.println("Five doors shimmer faintly. One glows warmer than the rest — but in this place, warmth can lie.");
+                case 9 -> System.out.println("The corridor stretches to infinity. Ten doors leer at you, engraved with symbols that rearrange when you blink.");
+                case 10 -> System.out.println("Soft whispers count from behind every door—different numbers, same terrified voice. Choose the one that keeps calm.");
+                case 11 -> System.out.println("Thirty doors rise like tombstones. The air grows heavy with indecision; take too long and the corridor remembers you.");
+                case 12 -> System.out.println("The hallway folds into itself. Each door watches you as if it learned your name; one will not send you back.");
+    
+                // Cursed Room (math 13-18)
+                case 13 -> System.out.println("Equations crawl across candlelit walls like living things. The numbers shimmer, rearranging themselves in mockery.");
+                case 14 -> System.out.println("A chalkboard hisses as invisible hands scrawl fresh formulas—each wrong answer seems to shudder the room.");
+                case 15 -> System.out.println("A dusty abacus counts itself with spectral fingers. It dares you to out-calculate the dead before the beads freeze.");
+                case 16 -> System.out.println("Books drift lazily in the air, flipping pages of half-burned equations. One number seems to stare back, waiting.");
+                case 17 -> System.out.println("Runes of calculation pulse in the dark. The numbers whisper in chorus — finish the math or be counted among them.");
+                case 18 -> System.out.println("The equation glows and burns itself into the plaster. Solve it before the light becomes a brand on your memory.");
+    
+                // Alchemy Lab (trivia 19-24)
+                case 19 -> System.out.println("A glass jar trembles on a shelf. Something small and unnatural peers out, guarding its master's secrets with jealous eyes.");
+                case 20 -> System.out.println("The cauldron boils on its own; steam curls into letters you almost read. The scent of trouble hangs heavy in the air.");
+                case 21 -> System.out.println("A sealed vial hums softly. The glow inside flickers like a heartbeat — whatever is trapped knows you noticed it.");
+                case 22 -> System.out.println("Blue flames dance in flasks across the bench. Each one exhales a whisper that smells faintly of phosphorus and regret.");
+                case 23 -> System.out.println("A cracked symbol for Mercury shimmers on a battered chart. It seems to melt and grin back at you from the page.");
+                case 24 -> System.out.println("An obsidian mirror catches your reflection—and for a flash it isn't yours. Lead hums softly in the shadows.");
+    
+                // default for any id not handled
+                default -> {
+                    // fallback to type-based text below if id unknown
+                    printPuzzleIntroFallbackByType(p);
+                    System.out.println("~~~~~~~~~~~~~~~~~~");
+                    System.out.println();
+                    return;
+                }
+            }
+    
+            System.out.println("~~~~~~~~~~~~~~~~~~");
+            System.out.println();
+            return;
+        }
+    
+        // If no valid id, or id <= 0, fallback to type-based intros (previous behavior).
+        printPuzzleIntroFallbackByType(p);
+        System.out.println("~~~~~~~~~~~~~~~~~~");
+        System.out.println();
+    }
+    
+    /**
+     * Helper that prints the previous type-based intro (used as a fallback).
+     * Kept as a separate method so the main switch stays tidy.
+     */
+    private void printPuzzleIntroFallbackByType(Puzzle p) {
+        String q = p.getQuestion() == null ? "" : p.getQuestion().toLowerCase();
+    
+        if (p instanceof RiddlePuzzle) {
+            if (q.contains("key opens a haunted house") || q.contains("spoo-key")) {
+                System.out.println("A cold wind passes through the foyer. A rusted key lies on a dusty table, glinting faintly under ghostlight.");
+            } else if (q.contains("zombie") || q.contains("mummy") || q.contains("skeleton")) {
+                System.out.println("You hear shuffling footsteps somewhere close. Something undead seems amused by your presence...");
+            } else {
+                System.out.println("You feel a presence whispering riddles in your ear, daring you to speak the answer aloud.");
+            }
+        } else if (p instanceof DoorPuzzle) {
+            System.out.println("The hallway stretches endlessly before you. Countless doors line the walls—some whisper, some breathe.");
+            System.out.println("Only one will let you pass. Choose carefully; the wrong one may close forever.");
+        } else if (p instanceof MathPuzzle) {
+            System.out.println("Symbols pulse faintly across the walls of this cursed study. Numbers twist and rearrange themselves like ghosts of logic.");
+            System.out.println("The air smells of ink, chalk, and something metallic—solve before the formula consumes you.");
+        } else if (p instanceof TriviaPuzzle) {
+            System.out.println("You find a dusty tome on a pedestal. Each page whispers a question—knowledge itself feels haunted here.");
+        } else {
+            System.out.println("The mansion shifts around you. Another mystery emerges from the darkness...");
+        }
+    }        
+
     private void playSession(User currentUser, Difficulty chosen) {
         if (chosen == null) { System.out.println("No difficulty selected. Aborting session."); return; }
 
@@ -271,6 +362,7 @@ public class EscapeRoomGameUI {
             if (currentUser.getProgress().hasCompletedByEither(p.getId(), p.getQuestion())) { System.out.println("You already completed this puzzle."); continue; }
 
             // Per-puzzle interactive loop
+            printPuzzleIntro(p);
             System.out.println("\nPuzzle: " + p.getQuestion());
             boolean solvedCurrent = false;
             while (!solvedCurrent) {
@@ -452,11 +544,22 @@ public class EscapeRoomGameUI {
 
     private void printBackstory() {
         System.out.println("\n--- SPOOKY BACKSTORY ---");
-        System.out.println("You stand before the old Wilkes mansion. Fog curls across the crooked path.");
-        System.out.println("Legends say the mansion traps clever souls in games of wit. Tonight, the doors creak open...");
-        System.out.println("Solve the haunted puzzles and escape before the clock runs out.");
+        System.out.println("You awaken in the Wilkes Mansion, a place long abandoned and whispered about in ghost stories.");
+        System.out.println("The air hums with a strange energy—doors creak even when still, and the portraits seem to watch your every move.");
+        System.out.println();
+        System.out.println("Once the home of the eccentric inventor Dr. Lucien Wilkes, the mansion was said to hold his greatest creation:");
+        System.out.println("a series of “living puzzles” designed to trap the curious and test the worthy.");
+        System.out.println("Riddles echo through dark halls, alchemical fumes drift from the old laboratory,");
+        System.out.println("and enchanted locks guard rooms that have not opened in a century.");
+        System.out.println();
+        System.out.println("To escape, you must solve the mansion’s mysteries—crack the haunted riddles, unseal cursed doors,");
+        System.out.println("and master the forbidden math and alchemy that fuel its magic.");
+        System.out.println("But beware: each puzzle draws you deeper into the house’s restless heart.");
+        System.out.println();
+        System.out.println("The mansion does not like to be solved.");
         System.out.println("------------------------\n");
     }
+    
 
     private void displayUserProgress(User user) {
         if (user == null) return;
@@ -613,5 +716,3 @@ public class EscapeRoomGameUI {
         } catch (IOException e) { System.err.println("Failed to write leaderboard.json: " + e.getMessage()); }
     }
 }
-
-
