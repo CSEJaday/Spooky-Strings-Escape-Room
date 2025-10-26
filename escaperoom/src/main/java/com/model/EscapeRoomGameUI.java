@@ -19,6 +19,9 @@ public class EscapeRoomGameUI {
     private final UserList userList = UserList.getInstance();
     private final RoomLoader roomLoader = new RoomLoader();
 
+    /*
+     * Tests the EscapeRoomGame
+     */
     public static void main(String[] args) {
         EscapeRoomGameUI ui = new EscapeRoomGameUI();
         ui.run();

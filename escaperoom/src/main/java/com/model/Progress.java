@@ -13,20 +13,9 @@ import java.util.*;
  */
 public class Progress {
 
-<<<<<<< HEAD
-    public Progress() 
-    {
-        this.currentLevel = 1;
-        this.completedPuzzles = new ArrayList<>();
-        this.score = 0;
-        this.timeSpent = 0;
-        this.playerName = "Unknown"; //players username should be here
-    }//end constructor
-=======
     private long timeSpent = 0L;// seconds
     private int score = 0;
     private int currentLevel = 1;
->>>>>>> 2c0099efdaadf9e881fc0f0f3ad451f04ec46680
 
     // completed puzzles: store both id set and question text set for compatibility
     private Set<Integer> completedPuzzleIds = new LinkedHashSet<>();
@@ -49,7 +38,7 @@ public class Progress {
     public void setCurrentLevel(int currentLevel) {
         this.currentLevel = Math.max(1, currentLevel);
     }
-    
+
     // time
     public long getTimeSpent() { return timeSpent; }
     public void addTime(long seconds) { if (seconds > 0) this.timeSpent += seconds; }
