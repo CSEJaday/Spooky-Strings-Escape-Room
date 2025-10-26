@@ -51,11 +51,8 @@ public class Character {
 
     public String toString() {
         
+        return (name + " with Avatar " + avatar + " is on level " + currentLevel);
+    }
         return null;
     } */
-
-    public static boolean isDigit(char charAt) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isDigit'");
-    }
 }
