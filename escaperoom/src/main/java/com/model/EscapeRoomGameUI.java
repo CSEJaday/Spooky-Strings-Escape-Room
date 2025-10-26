@@ -158,6 +158,31 @@ public class EscapeRoomGameUI {
             return;
         }
     
+        System.out.println(
+        "          .-.\n" +
+        "         (o o) boo!\n" +
+        "          |O|   _  _   _  _  _  _  _  _\n" +
+        "         /   \\  \\`/ \\_/ \\\\/ \\/ \\/ \\/ \\/ \\\n" +
+        "        /_____\\  \\              HAUNTED\n" +
+        "       /  /|\\  \\  \\   MANSION   MANSION\n" +
+        "      /__/ | \\__\\  \\  ______  ______  __\n" +
+        "     /  \\  |  /  \\  / /  __ \\/  __  \\/  \\\n" +
+        "    /____\\ | /____\\/ /  /  \\/  /  \\  /\\  \\\n" +
+        "   /      \\|/      /_/__/\\___/__/\\__\\/__\\_\\\n" +
+        "   |  .--.  |  .--.  .--.  .--.  .--.  .--. |\n" +
+        "   | (    ) | (    )(    )(    )(    )(    )|\n" +
+        "   |  `--'  |  `--'  `--'  `--'  `--'  `--' |\n" +
+        "   |                                       |\n" +
+        "   |   Beware. The Wilkes Mansion is old   |\n" +
+        "   |   and hungry for riddles, doors, and  |\n" +
+        "   |   brave souls. Solve if you dare...   |\n" +
+        "   |_______________________________________|\n" +
+        "       \\_________________________________/\n" +
+        "        /  /  /  /  /  /  /  /  /  /  /  /\n" +
+        "       /__/_ /__/_ /__/_ /__/_ /__/_ /__/\n"
+        );
+
+
         // persist their choice immediately so it shows on next login too
         newUser.getProgress().setLastDifficulty(chosen);
         // *** NEW: save users now so lastDifficulty is persisted immediately ***
@@ -489,6 +514,23 @@ public class EscapeRoomGameUI {
 
             System.out.println("\n===                 Haunted House Escaped                 ===");
             System.out.println("\nYOU'VE ESCAPED ME FOR NOW BUT THIS IS ONLY THE BEGINNING.....");
+            System.out.println("""
+                        .-.
+                     .-(o o)-.
+                    /   (_)   \\
+                    |  .---.  |
+                    | (     ) |
+                    |  `-.-'  |
+                    |         |
+                    | |     | |
+                    | |     | |
+                    |_|     |_|
+                    (__)    (__)
+                    
+                    MWAHHAHHAA!
+            """);
+
+            System.out.println("");
             System.out.println("You solved " + puzzlesSolved + " puzzles!");
             long endTime = currentUser.getProgress().getTimeSpent();
             long sessionSeconds = Math.max(0, endTime - startTimeTotal);

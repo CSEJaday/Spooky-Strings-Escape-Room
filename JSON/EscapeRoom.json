@@ -136,7 +136,7 @@
         "id": 12,
         "question": "Choose the correct door (1-40).",
         "difficulty": "HARD",
-        "numDoors": 30,
+        "numDoors": 40,
         "correctDoor": 25,
         "attempts": 0,
         "isSolved": false,
