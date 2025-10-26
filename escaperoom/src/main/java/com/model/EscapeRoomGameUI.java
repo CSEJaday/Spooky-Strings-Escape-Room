@@ -4,7 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
+import com.speech.Speek;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -227,57 +227,153 @@ public class EscapeRoomGameUI {
         int id = p.getId();
         if (id > 0) {
             switch (id) {
-                // Dark Foyer (1-6)
-                case 1 -> System.out.println("You stand before a massive iron door. A ghostly draft seeps through its keyhole, whispering the punchline you dread to speak aloud.");
-                case 2 -> System.out.println("Shadows flicker across the walls, shaped like the undead in casual conversation. They laugh at a joke only the dead would understand.");
-                case 3 -> System.out.println("The chandelier rattles above; something unseen rushes by. The air itself challenges you to name it.");
-                case 4 -> System.out.println("A polished coffin rests in the corner. Its lid trembles as if expecting company—whatever it is, it didn't want to be made.");
-                case 5 -> System.out.println("An ancient door sways in still air. Each slow groan sounds like a warning; the hinges remember old laments.");
-                case 6 -> System.out.println("Skeletons in the alcoves grin wider as you enter. One begins to chatter its jaw rhythmically—it's waiting for an answer.");
-    
-                // Hall of Doors (7-12)
-                case 7 -> System.out.println("Three doors stand before you. Behind one you hear chains, another hides a heartbeat, the last breathes an unnatural silence.");
-                case 8 -> System.out.println("Five doors shimmer faintly. One glows warmer than the rest — but in this place, warmth can lie.");
-                case 9 -> System.out.println("The corridor stretches to infinity. Ten doors leer at you, engraved with symbols that rearrange when you blink.");
-                case 10 -> System.out.println("Soft whispers count from behind every door—different numbers, same terrified voice. Choose the one that keeps calm.");
-                case 11 -> System.out.println("Thirty doors rise like tombstones. The air grows heavy with indecision; take too long and the corridor remembers you.");
-                case 12 -> System.out.println("The hallway folds into itself. Each door watches you as if it learned your name; one will not send you back.");
-    
-                // Cursed Room (math 13-18)
-                case 13 -> System.out.println("Equations crawl across candlelit walls like living things. The numbers shimmer, rearranging themselves in mockery.");
-                case 14 -> System.out.println("A chalkboard hisses as invisible hands scrawl fresh formulas—each wrong answer seems to shudder the room.");
-                case 15 -> System.out.println("A dusty abacus counts itself with spectral fingers. It dares you to out-calculate the dead before the beads freeze.");
-                case 16 -> System.out.println("Books drift lazily in the air, flipping pages of half-burned equations. One number seems to stare back, waiting.");
-                case 17 -> System.out.println("Runes of calculation pulse in the dark. The numbers whisper in chorus — finish the math or be counted among them.");
-                case 18 -> System.out.println("The equation glows and burns itself into the plaster. Solve it before the light becomes a brand on your memory.");
-    
-                // Alchemy Lab (trivia 19-24)
-                case 19 -> System.out.println("A glass jar trembles on a shelf. Something small and unnatural peers out, guarding its master's secrets with jealous eyes.");
-                case 20 -> System.out.println("The cauldron boils on its own; steam curls into letters you almost read. The scent of trouble hangs heavy in the air.");
-                case 21 -> System.out.println("A sealed vial hums softly. The glow inside flickers like a heartbeat — whatever is trapped knows you noticed it.");
-                case 22 -> System.out.println("Blue flames dance in flasks across the bench. Each one exhales a whisper that smells faintly of phosphorus and regret.");
-                case 23 -> System.out.println("A cracked symbol for Mercury shimmers on a battered chart. It seems to melt and grin back at you from the page.");
-                case 24 -> System.out.println("An obsidian mirror catches your reflection—and for a flash it isn't yours. Lead hums softly in the shadows.");
+                // Dark Foyer (1–6)
+                case 1 -> {
+                    String darkFoyer1 = "You stand before a massive iron door. A ghostly draft seeps through its keyhole, whispering the punchline you dread to speak aloud.";
+                    System.out.println(darkFoyer1);
+                    Speek.speak(darkFoyer1);
+                }
+                case 2 -> {
+                    String darkFoyer2 = "Shadows flicker across the walls, shaped like the undead in casual conversation. They laugh at a joke only the dead would understand.";
+                    System.out.println(darkFoyer2);
+                    Speek.speak(darkFoyer2);
+                }
+                case 3 -> {
+                    String darkFoyer3 = "The chandelier rattles above; something unseen rushes by. The air itself challenges you to name it.";
+                    System.out.println(darkFoyer3);
+                    Speek.speak(darkFoyer3);
+                }
+                case 4 -> {
+                    String darkFoyer4 = "A polished coffin rests in the corner. Its lid trembles as if expecting company—whatever it is, it didn't want to be made.";
+                    System.out.println(darkFoyer4);
+                    Speek.speak(darkFoyer4);
+                }
+                case 5 -> {
+                    String darkFoyer5 = "An ancient door sways in still air. Each slow groan sounds like a warning; the hinges remember old laments.";
+                    System.out.println(darkFoyer5);
+                    Speek.speak(darkFoyer5);
+                }
+                case 6 -> {
+                    String darkFoyer6 = "Skeletons in the alcoves grin wider as you enter. One begins to chatter its jaw rhythmically—it's waiting for an answer.";
+                    System.out.println(darkFoyer6);
+                    Speek.speak(darkFoyer6);
+                }
+
+                // Hall of Doors (7–12)
+                case 7 -> {
+                    String hall7 = "Three doors stand before you. Behind one you hear chains, another hides a heartbeat, the last breathes an unnatural silence.";
+                    System.out.println(hall7);
+                    Speek.speak(hall7);
+                }
+                case 8 -> {
+                    String hall8 = "Five doors shimmer faintly. One glows warmer than the rest — but in this place, warmth can lie.";
+                    System.out.println(hall8);
+                    Speek.speak(hall8);
+                }
+                case 9 -> {
+                    String hall9 = "The corridor stretches to infinity. Ten doors leer at you, engraved with symbols that rearrange when you blink.";
+                    System.out.println(hall9);
+                    Speek.speak(hall9);
+                }
+                case 10 -> {
+                    String hall10 = "Soft whispers count from behind every door—different numbers, same terrified voice. Choose the one that keeps calm.";
+                    System.out.println(hall10);
+                    Speek.speak(hall10);
+                }
+                case 11 -> {
+                    String hall11 = "Thirty doors rise like tombstones. The air grows heavy with indecision; take too long and the corridor remembers you.";
+                    System.out.println(hall11);
+                    Speek.speak(hall11);
+                }
+                case 12 -> {
+                    String hall12 = "The hallway folds into itself. Each door watches you as if it learned your name; one will not send you back.";
+                    System.out.println(hall12);
+                    Speek.speak(hall12);
+                }
+
+                // Cursed Room (Math 13–18)
+                case 13 -> {
+                    String math13 = "Equations crawl across candlelit walls like living things. The numbers shimmer, rearranging themselves in mockery.";
+                    System.out.println(math13);
+                    Speek.speak(math13);
+                }
+                case 14 -> {
+                    String math14 = "A chalkboard hisses as invisible hands scrawl fresh formulas—each wrong answer seems to shudder the room.";
+                    System.out.println(math14);
+                    Speek.speak(math14);
+                }
+                case 15 -> {
+                    String math15 = "A dusty abacus counts itself with spectral fingers. It dares you to out-calculate the dead before the beads freeze.";
+                    System.out.println(math15);
+                    Speek.speak(math15);
+                }
+                case 16 -> {
+                    String math16 = "Books drift lazily in the air, flipping pages of half-burned equations. One number seems to stare back, waiting.";
+                    System.out.println(math16);
+                    Speek.speak(math16);
+                }
+                case 17 -> {
+                    String math17 = "Runes of calculation pulse in the dark. The numbers whisper in chorus — finish the math or be counted among them.";
+                    System.out.println(math17);
+                    Speek.speak(math17);
+                }
+                case 18 -> {
+                    String math18 = "The equation glows and burns itself into the plaster. Solve it before the light becomes a brand on your memory.";
+                    System.out.println(math18);
+                    Speek.speak(math18);
+                }
+
+                // Alchemy Lab (Trivia 19–24)
+                case 19 -> {
+                    String alchemy19 = "A glass jar trembles on a shelf. Something small and unnatural peers out, guarding its master's secrets with jealous eyes.";
+                    System.out.println(alchemy19);
+                    Speek.speak(alchemy19);
+                }
+                case 20 -> {
+                    String alchemy20 = "The cauldron boils on its own; steam curls into letters you almost read. The scent of trouble hangs heavy in the air.";
+                    System.out.println(alchemy20);
+                    Speek.speak(alchemy20);
+                }
+                case 21 -> {
+                    String alchemy21 = "A sealed vial hums softly. The glow inside flickers like a heartbeat — whatever is trapped knows you noticed it.";
+                    System.out.println(alchemy21);
+                    Speek.speak(alchemy21);
+                }
+                case 22 -> {
+                    String alchemy22 = "Blue flames dance in flasks across the bench. Each one exhales a whisper that smells faintly of phosphorus and regret.";
+                    System.out.println(alchemy22);
+                    Speek.speak(alchemy22);
+                }
+                case 23 -> {
+                    String alchemy23 = "A cracked symbol for Mercury shimmers on a battered chart. It seems to melt and grin back at you from the page.";
+                    System.out.println(alchemy23);
+                    Speek.speak(alchemy23);
+                }
+                case 24 -> {
+                    String alchemy24 = "An obsidian mirror catches your reflection—and for a flash it isn't yours. Lead hums softly in the shadows.";
+                    System.out.println(alchemy24);
+                    Speek.speak(alchemy24);
+                }
     
                 // default for any id not handled
                 default -> {
                     // fallback to type-based text below if id unknown
                     printPuzzleIntroFallbackByType(p);
                     System.out.println("~~~~~~~~~~~~~~~~~~");
-                    System.out.println();
+                    //System.out.println();
                     return;
                 }
             }
     
             System.out.println("~~~~~~~~~~~~~~~~~~");
-            System.out.println();
+            //System.out.println();
             return;
         }
     
         // If no valid id, or id <= 0, fallback to type-based intros (previous behavior).
         printPuzzleIntroFallbackByType(p);
         System.out.println("~~~~~~~~~~~~~~~~~~");
-        System.out.println();
+        //System.out.println();
     }
     
     /**
@@ -389,9 +485,13 @@ public class EscapeRoomGameUI {
             // Per-puzzle interactive loop
             printPuzzleIntro(p);
             System.out.println("\nPuzzle: " + p.getQuestion());
+            String puzzleMessage = "\nPuzzle: " + p.getQuestion();
+            Speek.speak(puzzleMessage);
             boolean solvedCurrent = false;
             while (!solvedCurrent) {
                 System.out.println("(type your answer, 'hint' for a hint, 'use <item>', or 'back' to return)");
+                String answerMessage = "type your answer, 'hint' for a hint, 'use <item>', or 'back' to return";
+                Speek.speak(answerMessage);
                 System.out.print("> ");
                 String answer = in.nextLine().trim();
                 if (answer.equalsIgnoreCase("back")) break;
@@ -461,17 +561,26 @@ public class EscapeRoomGameUI {
                         int penalty = computeHintPenaltySeconds(pdRaw);
                         currentUser.getProgress().addTime(penalty);
                         System.out.println("[HINT] " + nextHint + " (Penalty +" + formatSeconds(penalty) + ")");
+                        String hintMessage = "[HINT] " + nextHint + " (Penalty +" + formatSeconds(penalty) + ")";
+                        Speek.speak(hintMessage);
                         DataLoader.saveUsers(userList.getAllUsers());
                     }
                     continue;
                 }
 
                 // attempt answer (respect lock)
-                if (p.isLocked()) { System.out.println("This puzzle is locked. Try to 'use KEY' first."); continue; }
+                if (p.isLocked()) { 
+                    System.out.println("This puzzle is locked. Try to 'use KEY' first.");
+                    String lockedMessage = "This puzzle is locked. Try to 'use KEY' first.";
+                    Speek.speak(lockedMessage);
+                    continue;
+                }
                 boolean correct = false;
                 try { correct = p.checkAnswer(answer); } catch (Exception e) { correct = false; }
                 if (correct) {
                     System.out.println("Correct!");
+                    String correctMessage = "Correct!";
+                    Speek.speak(correctMessage);
                     currentUser.getProgress().addCompletedPuzzle(p.getQuestion());
                     currentUser.getProgress().addCompletedPuzzleId(p.getId());
                     int pts = getPointsForDifficulty(pdRaw);
@@ -490,6 +599,8 @@ public class EscapeRoomGameUI {
                         };
                         currentUser.getProgress().getInventory().addItem(reward);
                         System.out.println("You found a " + rewardName.name() + " as you solve the puzzle! It has been added to your inventory.");
+                        String item = "You found a " + rewardName.name() + " as you solve the puzzle! It has been added to your inventory.";
+                        Speek.speak(item);
                     }
 
                     solvedCurrent = true;
@@ -599,7 +710,23 @@ public class EscapeRoomGameUI {
         System.out.println("But beware: each puzzle draws you deeper into the house’s restless heart.");
         System.out.println();
         System.out.println("The mansion does not like to be solved.");
-        System.out.println("------------------------\n");
+        System.out.println("------------------------");
+        String message = 
+        "SPOOKY BACKSTORY\n" +
+        "You awaken in the Wilkes Mansion, a place long abandoned and whispered about in ghost stories.\n" +
+        "The air hums with a strange energy—doors creak even when still, and the portraits seem to watch your every move.\n" +
+        "\n" +
+        "Once the home of the eccentric inventor Dr. Lucien Wilkes, the mansion was said to hold his greatest creation:\n" +
+        "a series of “living puzzles” designed to trap the curious and test the worthy.\n" +
+        "Riddles echo through dark halls, alchemical fumes drift from the old laboratory,\n" +
+        "and enchanted locks guard rooms that have not opened in a century.\n" +
+        "\n" +
+        "To escape, you must solve the mansion’s mysteries—crack the haunted riddles, unseal cursed doors,\n" +
+        "and master the forbidden math and alchemy that fuel its magic.\n" +
+        "But beware: each puzzle draws you deeper into the house’s restless heart.\n" +
+        "\n" +
+        "The mansion does not like to be solved.";
+        Speek.speak(message);
     }
     
 
