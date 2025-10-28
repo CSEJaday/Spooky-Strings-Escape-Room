@@ -1,1 +1,30 @@
-[{"difficulty":"all","score":450,"timeSpent":648,"username":"chavousn","timestamp":"2025-10-24T22:14:54"},{"difficulty":"easy","score":80,"timeSpent":207,"username":"techno","timestamp":"2025-10-25T19:56:18"},{"difficulty":"hard","score":210,"timeSpent":415,"username":"RealGamer","timestamp":"2025-10-25T20:34:23"},{"difficulty":"easy","score":80,"timeSpent":393,"username":"Leni","timestamp":"2025-10-26T19:27:15"}]
+[
+    {
+        "difficulty": "all",
+        "score": 450,
+        "timeSpent": 648,
+        "username": "chavousn",
+        "timestamp": "2025-10-24T22:14:54"
+    },
+    {
+        "difficulty": "easy",
+        "score": 80,
+        "timeSpent": 207,
+        "username": "techno",
+        "timestamp": "2025-10-25T19:56:18"
+    },
+    {
+        "difficulty": "hard",
+        "score": 210,
+        "timeSpent": 415,
+        "username": "RealGamer",
+        "timestamp": "2025-10-25T20:34:23"
+    },
+    {
+        "difficulty": "easy",
+        "score": 80,
+        "timeSpent": 393,
+        "username": "Leni",
+        "timestamp": "2025-10-26T19:27:15"
+    }
+]
