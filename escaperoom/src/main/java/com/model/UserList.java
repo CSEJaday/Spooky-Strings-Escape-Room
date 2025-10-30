@@ -18,7 +18,7 @@ public class UserList {
     }
 
     // constructor
-    private UserList()
+    UserList()
     {
         //users = new ArrayList<>();
         //users.add(new User("asmith", "12345", UUID.randomUUID()));
