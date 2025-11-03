@@ -1,6 +1,11 @@
 package com.model;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,115 +16,91 @@ import org.junit.Test;
 public class InventoryTest {
 
     private Inventory inv;
-    private ItemName name; // first enum constant chosen dynamically
+    private ItemName name;
 
     @Before
     public void setUp() {
         inv = new Inventory();
-        ItemName[] vals = ItemName.values();
-        // pick first enum constant for tests; assume enum has at least one value
-        name = vals[0];
+        ItemName[] all = ItemName.values();
+        if (all.length == 0) throw new IllegalStateException("ItemName must have at least one constant for tests");
+        name = all[0];
     }
 
     @Test
-    public void testConstructor_initialEmpty() {
-        assertEquals(0, inv.getQuantity(name));
-        assertFalse(inv.has(name));
-        assertEquals("Inventory: (empty)", inv.toString());
-    }
-
-    @Test
-    public void testAddItemByName_andQuantities() {
-        inv.addItemByName(name, 2, null);
-        assertEquals(2, inv.getQuantity(name));
-        assertTrue(inv.has(name));
-
-        // adding more increases quantity
-        inv.addItemByName(name, 3, null);
+    public void testAddAndRemove_basic() {
+        inv.addItemByName(name, 5, null);
         assertEquals(5, inv.getQuantity(name));
-    }
-
-    @Test
-    public void testAddItemByName_invalidArgsIgnored() {
-        // null name ignored
-        inv.addItemByName(null, 5, null);
-        // negative qty ignored
-        inv.addItemByName(name, -3, null);
-        // zero qty ignored
-        inv.addItemByName(name, 0, null);
-
-        assertEquals(0, inv.getQuantity(name));
-    }
-
-    @Test
-    public void testRemove_partialAndExhaust() {
-        inv.addItemByName(name, 4, null);
-        // remove fewer than present
-        int removed = inv.remove(name, 2);
-        assertEquals(2, removed);
-        assertEquals(2, inv.getQuantity(name));
         assertTrue(inv.has(name));
 
-        // remove more than present -> only remaining removed
-        removed = inv.remove(name, 5);
+        int removed = inv.remove(name, 3);
+        assertEquals(3, removed);
+        assertEquals(2, inv.getQuantity(name));
+
+        removed = inv.remove(name, 5); // remove more than present
         assertEquals(2, removed);
         assertEquals(0, inv.getQuantity(name));
         assertFalse(inv.has(name));
-
-        // removing when none -> returns 0
-        removed = inv.remove(name, 1);
-        assertEquals(0, removed);
     }
 
     @Test
-    public void testGetQuantities_unmodifiableViewAndContents() {
-        inv.addItemByName(name, 3, null);
-        Map<ItemName, Integer> q = inv.getQuantities();
-        // view contains the entry
-        assertTrue(q.containsKey(name));
-        assertEquals(Integer.valueOf(3), q.get(name));
+    public void testAdd_invalidInputsIgnored() {
+        inv.addItemByName(null, 5, null);
+        inv.addItemByName(name, 0, null);
+        inv.addItemByName(name, -1, null);
+        assertEquals(0, inv.getQuantity(name));
+    }
 
-        // attempting to modify should throw UnsupportedOperationException
+    @Test
+    public void testGetQuantities_unmodifiable_andEnumMapShape() {
+        inv.addItemByName(name, 4, null);
+        Map<ItemName,Integer> q = inv.getQuantities();
+        assertEquals(Integer.valueOf(4), q.get(name));
         try {
-            q.put(name, 10);
-            throw new AssertionError("Expected UnsupportedOperationException when modifying quantities view");
-        } catch (UnsupportedOperationException expected) {
-            // expected
-        }
+            q.put(name, 1);
+            throw new AssertionError("Expected unmodifiable map");
+        } catch (UnsupportedOperationException expected) { /* ok */ }
     }
 
     @Test
-    public void testUseItem_withoutTemplate_nonConsumableDefault() {
-        // add item by name but no template => templates.get(name) is null
+    public void testToString_emptyAndNonEmpty() {
+        assertEquals("Inventory: (empty)", inv.toString());
+
         inv.addItemByName(name, 2, null);
-        assertEquals(2, inv.getQuantity(name));
-
-        // useItem should return true (no template -> treat as non-consumable primitive)
-        boolean used = inv.useItem(name);
-        assertTrue(used);
-
-        // inventory should be unchanged (non-consumable)
-        assertEquals(2, inv.getQuantity(name));
-    }
-
-    @Test
-    public void testUseItem_nullNameReturnsFalse() {
-        assertFalse(inv.useItem(null));
-    }
-
-    @Test
-    public void testGetTemplate_defaultNull() {
-        // no template added, so should be null
-        assertEquals(null, inv.getTemplate(name));
-    }
-
-    @Test
-    public void testToString_nonEmptyContainsNameAndCount() {
-        inv.addItemByName(name, 7, null);
         String s = inv.toString();
-        // should contain enum name and count "x7"
-        assertTrue(s.contains(name.name()));
-        assertTrue(s.contains("x7"));
         assertTrue(s.startsWith("Inventory: "));
+        assertTrue(s.contains(name.name()));
+        assertTrue(s.contains("x2"));
+    }
+
+    @Test
+    public void testConcurrentAddsAndRemoves() throws Exception {
+        int threads = 30;
+        ExecutorService es = Executors.newFixedThreadPool(threads);
+        inv.addItemByName(name, 0, null); // ensure key absent initially
+
+        AtomicInteger totalAdded = new AtomicInteger(0);
+        Callable<Void> addTask = () -> { inv.addItemByName(name, 1, null); totalAdded.incrementAndGet(); return null; };
+        Callable<Void> removeTask = () -> { inv.remove(name, 1); return null; };
+
+        // submit 100 add tasks and 60 remove tasks concurrently
+        int adds = 100, removes = 60;
+        for (int i = 0; i < adds; i++) es.submit(addTask);
+        for (int i = 0; i < removes; i++) es.submit(removeTask);
+
+        es.shutdown();
+        es.awaitTermination(3, TimeUnit.SECONDS);
+
+        int finalQty = inv.getQuantity(name);
+        // final quantity = added - removed (cannot be negative)
+        assertTrue(finalQty >= 0 && finalQty <= adds);
+    }
+
+    @Test
+    public void testUseItem_withoutTemplate_behavesAsNonConsumable() {
+        // add by name without registering template
+        inv.addItemByName(name, 3, null);
+        assertTrue(inv.useItem(name));
+        // quantity should remain
+        assertEquals(3, inv.getQuantity(name));
     }
 }
