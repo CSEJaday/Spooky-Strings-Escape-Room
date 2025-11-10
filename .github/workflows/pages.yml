@@ -1,4 +1,4 @@
-name: Build and Deploy Jekyll site
+name: Build and Deploy Jekyll site (debug)
 
 on:
   push:
@@ -9,20 +9,28 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository into subfolder
         uses: actions/checkout@v4
+        with:
+          # ensure the inner folder appears in the workspace exactly as repo-dir
+          path: Spooky-Strings-Escape-Room
+
+      - name: Show workspace layout (debug)
+        run: |
+          echo "PWD: $(pwd)"
+          echo "=== ls -la ==="
+          ls -la
+          echo "=== find (depth 3) ==="
+          find . -maxdepth 3 -print
 
       - name: Build Jekyll site
         uses: ghcr.io/actions/jekyll-build-pages@v1
         with:
+          # this path is relative to /github/workspace; adjust if your DOCS folder is elsewhere
           source: 'Spooky-Strings-Escape-Room/DOCS'
           destination: './_site'
           token: ${{ secrets.GITHUB_TOKEN }}
