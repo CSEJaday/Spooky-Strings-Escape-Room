@@ -23,7 +23,7 @@ jobs:
       - name: Build Jekyll site
         uses: ghcr.io/actions/jekyll-build-pages@v1
         with:
-          source: 'docs'
+          source: 'Spooky-Strings-Escape-Room/DOCS'
           destination: './_site'
           token: ${{ secrets.GITHUB_TOKEN }}
 
