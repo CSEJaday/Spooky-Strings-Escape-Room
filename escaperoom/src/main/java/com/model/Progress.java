@@ -1,123 +1,148 @@
 package com.model;
-import java.util.ArrayList;
+
+import java.util.*;
+
 /**
- * 
- * @author
+ * Tracks a player's in-game progress, including:
+ * - Time spent playing
+ * - Score
+ * - Completed puzzles (by both ID and question text)
+ * - Hint usage
+ * - Last selected difficulty
+ * - Player inventory
  */
-public class Progress implements Comparable<Progress> {
-    private int currentLevel;
-    private ArrayList<String> completedPuzzles;
-    //private int totalScore;
-    private long timeSpent;
-    private String playerName;      //is this the same as username?
-    private int score;
+public class Progress {
 
-    public Progress() 
-    {
-        this.currentLevel = 1;
-        this.completedPuzzles = new ArrayList<>();
-        this.score = 0;
-        this.timeSpent = 0;
-        this.playerName = "Unknown"; //players username should be here
-        this.score = 0;
-    }//end constructor
+    private long timeSpent = 0L;// seconds
+    private int score = 0;
+    private int currentLevel = 1;
 
-    /*
-     * Adds a new puzzle name to the list of completed puzzles.
-     * @param puzzleName the name of the newly completed puzzle.
-     */
-    public void addCompletedPuzzle(String puzzleName) {
-        completedPuzzles.add(puzzleName);   //check to see if we have to verify that there is space in the ArrayList
+    // completed puzzles: store both id set and question text set for compatibility
+    private Set<Integer> completedPuzzleIds = new LinkedHashSet<>();
+    private Set<String> completedPuzzleQuestions = new LinkedHashSet<>();
 
-    }//end addCompletedPuzzle()
+    private Map<Integer, Integer> hintsUsed = new HashMap<>(); // id/globalIndex -> count
 
-    /* Increases the user's score by the provided amount. This will be used when a user completes a level and is 
-    awarded points 
-    @param points - the number of points to add to the current score.
-    */
-    public void increaseScore(int points) {
-        score = score + points;
-    }//end increaseScore()
+    private Difficulty lastDifficulty = Difficulty.ALL;
 
-    /*  Advances the level by one. To be used when the user completes a level and moves forward in the game
-    */
-    public void advanceLevel() {
-        currentLevel++;
+    private Inventory inventory;
 
-    }//end advanceLevel()
+     /** 
+      * Creates a new Progress instance with an empty inventory. 
+      */
+    public Progress() {
+        this.inventory = new Inventory();
+    }
 
-    public void addTime(long seconds) 
-    {
-        this.timeSpent += seconds;
-    }//end addTime()
-
-    /**
-     * Returns the current level of player progress.
-     * @return an int value representing the level of progress.
-     * 
+    /** 
+     * @return the current level number (minimum 1)
      */
     public int getCurrentLevel() {
         return currentLevel;
-    }//end getCurrentLevel()
-
-    /**
-     * Returns the list of completed puzzles
-     * @return an ArrayList of Strings containing the names of the completed puzzles
-     */
-    public ArrayList<String> getCompletedPuzzles() {
-        return completedPuzzles;
-    }//end getCompletedPuzzles()
-
-    /**
-     * REMOVE THIS FROM UML
-     */
-    //public int getTotalScore() {
-        //return score;
-    //}//end getTotalScore()
-
-    /** 
-     * Returns the total time spent working through puzzles
-     * @return a long with the total time spent working through puzzles
-     */
-    public long getTimeSpent() {
-        return timeSpent;
-    }//end getTimeSpent()
-
-    /**
-     * Returns the player name who owns this progress
-     * @return The name of the player who owns this progress instance
-     */
-    public String getPlayerName() {
-        return playerName;
-    }//end getPlayerName()
-
-    /**
-     * Returns the Score for this progress instance
-     * @return an int representing the number of points earned
-     */
-    public int getScore() {
-        return score;
-    }//end getScore()
-
-    /**
-     * Compares the score for this progress instance to that of the other User provided. Returns a 1 if this score is higher.
-     * Returns 0 if the scores are equal. Returns -1 if the other User has a higher score.
-     * @param other - the User object who's progress will be compared to this progress
-     * @return
-     */
-    public int compareTo(User other) {  //might want to pass in Progress and have the calling code get the progress from the User
-        int value = 0;
-        if (this.score > other.getProgress().getScore()){
-            value = 1;
-        } else if (this.score < other.getProgress().getScore())
-            value = -1;
-        return value;
-    }//end compareTo()
-
-    @Override
-    public int compareTo(Progress arg0) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
     }
     
-}//end Progress
+    /**
+     * Sets the current level; coerced to at least 1.
+     *
+     * @param currentLevel the level number to set
+     */
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = Math.max(1, currentLevel);
+    }
+
+    /** 
+     * @return total time spent in seconds 
+     */
+    public long getTimeSpent() { return timeSpent; }
+
+    /**
+     * Adds playtime to the total.
+     *
+     * @param seconds seconds to add (ignored if ≤ 0)
+     */
+    public void addTime(long seconds) { if (seconds > 0) this.timeSpent += seconds; }
+
+    /** 
+     * @return current player score 
+     */
+    public int getScore() { return score; }
+
+    /**
+     * Adjusts the player's score by a delta amount.
+     * Prevents the score from going below zero.
+     *
+     * @param delta score change amount
+     */
+    public void increaseScore(int delta) { this.score += delta; if (this.score < 0) this.score = 0; }
+
+
+
+    /** Marks a puzzle (by ID) as completed. */
+    public void addCompletedPuzzleId(int id) { if (id >= 0) completedPuzzleIds.add(id); }
+
+    /** Checks if a puzzle (by ID) has been completed. */
+    public boolean hasCompletedPuzzleId(int id) { return id >= 0 && completedPuzzleIds.contains(id); }
+
+     /** @return an unmodifiable set of completed puzzle IDs */
+    public Set<Integer> getCompletedPuzzleIds() { return Collections.unmodifiableSet(completedPuzzleIds); }
+
+
+
+     /** Adds a completed puzzle by its question text (legacy support). */
+    public void addCompletedPuzzle(String question) { if (question != null) completedPuzzleQuestions.add(question); }
+    
+    /** Checks if a puzzle has been completed based on its question text. */
+    public boolean hasCompletedPuzzleQuestion(String q) { return q != null && completedPuzzleQuestions.contains(q); }
+   
+    /** @return a list of completed puzzle question strings */
+    public List<String> getCompletedPuzzles() { return new ArrayList<>(completedPuzzleQuestions); }
+
+
+
+   /** @return an unmodifiable map of hints used (puzzle ID → count) */
+    public Map<Integer,Integer> getHintsUsed() { return Collections.unmodifiableMap(hintsUsed); }
+
+    /** @return the number of hints used for a given puzzle ID */
+    public int getHintsUsedFor(int id) { return hintsUsed.getOrDefault(id, 0); }
+
+    /** Increments the hint count for the given puzzle ID. */
+    public void incrementHintsUsedFor(int id) { hintsUsed.merge(id, 1, Integer::sum); }
+
+
+
+    /** Sets the last difficulty played (defaults to ALL if null). */
+    public void setLastDifficulty(Difficulty d) { if (d != null) this.lastDifficulty = d; }
+
+    /** @return the last recorded difficulty level */
+    public Difficulty getLastDifficultyAsEnum() { return lastDifficulty != null ? lastDifficulty : Difficulty.ALL; }
+
+
+
+    /** @return the current inventory, creating one if null */
+    public Inventory getInventory() {
+        if (this.inventory == null) this.inventory = new Inventory();
+        return this.inventory;
+    }
+
+    /**
+     * Replaces the player's inventory.
+     *
+     * @param inv new inventory object
+     */
+    public void setInventory(Inventory inv) { this.inventory = inv; }
+
+
+
+    /**
+     * Checks if a puzzle is marked completed either by its ID or question text.
+     *
+     * @param id       puzzle ID
+     * @param question puzzle question text
+     * @return true if completed by either identifier
+     */
+    public boolean hasCompletedByEither(int id, String question) {
+        return (id >= 0 && completedPuzzleIds.contains(id)) || (question != null && completedPuzzleQuestions.contains(question));
+    }
+}
+
+

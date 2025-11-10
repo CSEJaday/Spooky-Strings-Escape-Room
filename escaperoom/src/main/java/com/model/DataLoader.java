@@ -1,172 +1,318 @@
 package com.model;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-//import java.io.InvalidObjectException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.UUID;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.*;
+import java.util.*;
+
 /**
- * This class loads data from the respository (i.e. JSON file) and returns it to
- * be used in the Escape Room classes.
- * @author 
+ * Handles loading and saving user data, including progress, inventory,
+ * and completed puzzle information, from and to a JSON file.
+ *
+ * This class provides static methods for reading and writing user data in a format
+ * compatible with previously implemented save methods.
  */
-public class DataLoader extends DataConstants {
+public final class DataLoader {
 
-    public static ArrayList<User> getUsers() 
-    {
-        ArrayList<User> users = new ArrayList<>();
+    private static final String JSON_DIR = System.getProperty("user.dir") + "/JSON";
+    private static final String USERS_PATH = JSON_DIR + "/users.json";
 
-        JSONParser parser = new JSONParser();
-        try(FileReader reader = new FileReader(USER_DATA_FILE))
-        {
-            Object obj = parser.parse(reader);
-            JSONArray usersArray = (JSONArray) obj;
+    private DataLoader() {}
 
-            for (Object o: usersArray)
-            {
-                JSONObject userJSON = (JSONObject) o;
+    
+    /**
+     * Saves a list of users to a JSON file, including progress details such as
+     * time spent, score, completed puzzles, hints used, last difficulty, and inventory.
+     *
+     * @param users the list of {@link User} objects to save; if null, an empty list is used
+     */
+    @SuppressWarnings("unchecked")
+    public static void saveUsers(List<User> users) {
+        if (users == null) users = List.of();
 
-                String idStr = (String) userJSON.get(KEY_ID);
-                UUID id = idStr != null && !idStr.equals("null") ? UUID.fromString(idStr) : null;
-                String username = (String) userJSON.get(KEY_USERNAME);
-                String password = (String) userJSON.get(KEY_PASSWORD);
+        JSONArray arr = new JSONArray();
 
-                User user = new User(username, password, id);
+        for (User u : users) {
+            JSONObject obj = new JSONObject();
+            obj.put("username", safeString(u.getName()));
+            obj.put("password", safeString(u.getPassword()));
 
-                JSONArray charsJSON = (JSONArray) userJSON.get(KEY_CHARACTERS);
-                if (charsJSON != null)
-                {
-                    for (Object charObj : charsJSON)
-                    {
-                        JSONObject charJSON = (JSONObject) charObj;
-                        String charName = (String) charJSON.get("name");
-                        Long levelLong = (Long) charJSON.get("level");
-                        String avatar = (String) charJSON.get("avatar");
-                        int level = levelLong != null ? levelLong.intValue() : 0;
-                        Character character = new Character(charName, level, avatar);
-                        user.addCharacter(character);
+            // Progress
+            Progress p = u.getProgress();
+            if (p != null) {
+                JSONObject pj = new JSONObject();
+                pj.put("timeSpent", p.getTimeSpent());
+                pj.put("score", p.getScore());
+
+                // completed puzzle ids (if available)
+                JSONArray ids = new JSONArray();
+                try {
+                    for (Integer id : p.getCompletedPuzzleIds()) {
+                        if (id != null) ids.add(id);
                     }
+                } catch (Throwable ignore) { /* ignore if method not present or returns null */ }
+                pj.put("completedPuzzleIds", ids);
+
+                // completed puzzles by question (backwards compat)
+                JSONArray questions = new JSONArray();
+                try {
+                    for (String q : p.getCompletedPuzzles()) {
+                        if (q != null) questions.add(q);
+                    }
+                } catch (Throwable ignore) {}
+                pj.put("completedPuzzles", questions);
+
+                // hintsUsed map
+                JSONObject hintsObj = new JSONObject();
+                try {
+                    for (Map.Entry<Integer,Integer> e : p.getHintsUsed().entrySet()) {
+                        Integer key = e.getKey();
+                        Integer val = e.getValue();
+                        if (key != null && val != null) hintsObj.put(String.valueOf(key), val);
+                    }
+                } catch (Throwable ignore) {}
+                pj.put("hintsUsed", hintsObj);
+
+                // lastDifficulty
+                try {
+                    Difficulty d = p.getLastDifficultyAsEnum();
+                    pj.put("lastDifficulty", d == null ? "ALL" : d.name());
+                } catch (Throwable ignore) {
+                    pj.put("lastDifficulty", "ALL");
                 }
 
-                users.add(user);
+                // inventory: serialize quantities as map ITEM_NAME -> qty
+                JSONObject invObj = new JSONObject();
+                try {
+                    Inventory inv = p.getInventory();
+                    if (inv != null) {
+                        Map<ItemName,Integer> qty = inv.getQuantities();
+                        for (Map.Entry<ItemName,Integer> e : qty.entrySet()) {
+                            ItemName name = e.getKey();
+                            Integer qn = e.getValue();
+                            if (name != null && qn != null && qn > 0) {
+                                invObj.put(name.name(), qn);
+                            }
+                        }
+                    }
+                } catch (Throwable ignore) {}
+                pj.put("inventory", invObj);
 
+                obj.put("progress", pj);
+            } else {
+                // no progress -> insert an empty progress object for future-proofing
+                JSONObject pj = new JSONObject();
+                pj.put("timeSpent", 0);
+                pj.put("score", 0);
+                pj.put("completedPuzzleIds", new JSONArray());
+                pj.put("completedPuzzles", new JSONArray());
+                pj.put("hintsUsed", new JSONObject());
+                pj.put("lastDifficulty", "ALL");
+                pj.put("inventory", new JSONObject());
+                obj.put("progress", pj);
+            }
+
+            arr.add(obj);
+        }
+
+        // Ensure directory exists
+        try {
+            File dir = new File(JSON_DIR);
+            if (!dir.exists()) dir.mkdirs();
+        } catch (Throwable ignore) {}
+
+        // Write file
+        try (FileWriter fw = new FileWriter(USERS_PATH)) {
+            fw.write(arr.toJSONString());
+            fw.flush();
+        } catch (IOException e) {
+            System.err.println("Failed to write users.json: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads and reconstructs a list of users from the JSON data file.
+     * Includes their progress, completed puzzles, hints, difficulty, and inventory.
+     *
+     * @return a list of {@link User} objects loaded from the JSON file; may be empty if none found
+     */
+    public static ArrayList<User> getUsers() {
+        ArrayList<User> out = new ArrayList<>();
+
+        File f = new File(USERS_PATH);
+        if (!f.exists()) {
+            // Nothing saved yet -> return empty list
+            return out;
+        }
+
+        JSONParser parser = new JSONParser();
+        try (FileReader fr = new FileReader(f)) {
+            Object top = parser.parse(fr);
+            if (!(top instanceof JSONArray)) return out;
+            JSONArray arr = (JSONArray) top;
+            for (Object o : arr) {
+                if (!(o instanceof JSONObject)) continue;
+                JSONObject jo = (JSONObject) o;
+                String username = safeString((String) jo.getOrDefault("username", ""));
+                String password = safeString((String) jo.getOrDefault("password", ""));
+                // Try to read id if present (some older files won't have it)
+                UUID uuid = null;
+                try {
+                    Object idObj = jo.get("id");
+                    if (idObj != null) {
+                        String idStr = idObj.toString();
+                        uuid = UUID.fromString(idStr);
+                    }
+                } catch (Throwable ignore) {}
+
+                // Create user with provided constructor (this sets up default Progress)
+                User user = new User(username, password, uuid);
+
+                // Parse progress object if present
+                try {
+                    Object progObj = jo.get("progress");
+                    Progress prog = new Progress(); // fresh progress to populate
+                    if (progObj instanceof JSONObject) {
+                        JSONObject pj = (JSONObject) progObj;
+
+                        // timeSpent
+                        try {
+                            Object t = pj.get("timeSpent");
+                            if (t instanceof Number) prog.addTime(((Number) t).longValue());
+                            else if (t != null) prog.addTime(Long.parseLong(t.toString()));
+                        } catch (Throwable ignore) {}
+
+                        // score
+                        try {
+                            Object sc = pj.get("score");
+                            if (sc instanceof Number) prog.increaseScore(((Number) sc).intValue());
+                            else if (sc != null) prog.increaseScore(Integer.parseInt(sc.toString()));
+                        } catch (Throwable ignore) {}
+
+                        // completedPuzzleIds (array)
+                        try {
+                            Object idsObj = pj.get("completedPuzzleIds");
+                            if (idsObj instanceof JSONArray) {
+                                JSONArray idsArr = (JSONArray) idsObj;
+                                for (Object ido : idsArr) {
+                                    try {
+                                        int idVal = -1;
+                                        if (ido instanceof Number) idVal = ((Number) ido).intValue();
+                                        else if (ido != null) idVal = Integer.parseInt(ido.toString());
+                                        if (idVal >= 0) prog.addCompletedPuzzleId(idVal);
+                                    } catch (Throwable ignore) {}
+                                }
+                            }
+                        } catch (Throwable ignore) {}
+
+                        // completedPuzzles (strings) - backwards compat
+                        try {
+                            Object qObj = pj.get("completedPuzzles");
+                            if (qObj instanceof JSONArray) {
+                                JSONArray qArr = (JSONArray) qObj;
+                                for (Object qq : qArr) {
+                                    if (qq != null) prog.addCompletedPuzzle(qq.toString());
+                                }
+                            }
+                        } catch (Throwable ignore) {}
+
+                        // hintsUsed (object map)
+                        try {
+                            Object hu = pj.get("hintsUsed");
+                            if (hu instanceof JSONObject) {
+                                JSONObject huz = (JSONObject) hu;
+                                for (Object key : huz.keySet()) {
+                                    try {
+                                        String kstr = key.toString();
+                                        int kid = Integer.parseInt(kstr);
+                                        Object v = huz.get(key);
+                                        int count = 0;
+                                        if (v instanceof Number) count = ((Number) v).intValue();
+                                        else if (v != null) count = Integer.parseInt(v.toString());
+                                        // increment that many times (Progress API exposes increment)
+                                        for (int i = 0; i < count; i++) prog.incrementHintsUsedFor(kid);
+                                    } catch (Throwable ignore) {}
+                                }
+                            }
+                        } catch (Throwable ignore) {}
+
+                        // lastDifficulty
+                        try {
+                            Object ld = pj.get("lastDifficulty");
+                            if (ld != null) {
+                                Difficulty d = Difficulty.fromString(ld.toString());
+                                if (d != null) prog.setLastDifficulty(d);
+                            }
+                        } catch (Throwable ignore) {}
+
+                        // inventory: object map ITEM_NAME -> qty
+                        try {
+                            Object invObj = pj.get("inventory");
+                            if (invObj instanceof JSONObject) {
+                                JSONObject invJson = (JSONObject) invObj;
+                                Inventory inv = prog.getInventory();
+                                for (Object k : invJson.keySet()) {
+                                    try {
+                                        String name = k.toString();
+                                        int qty = 0;
+                                        Object v = invJson.get(k);
+                                        if (v instanceof Number) qty = ((Number) v).intValue();
+                                        else if (v != null) qty = Integer.parseInt(v.toString());
+                                        if (qty <= 0) continue;
+
+                                        // Map string to ItemName if possible
+                                        try {
+                                            ItemName iname = ItemName.valueOf(name.trim().toUpperCase());
+                                            // Create a simple template matching known items (sensible defaults)
+                                            Item template = switch (iname) {
+                                                case KEY -> new Item(ItemName.KEY, "A small iron key. Might open a lock.", true, true, "You used the key.");
+                                                case TORCH -> new Item(ItemName.TORCH, "A wooden torch to light dark places.", true, false, "You light the torch; shadows recede.");
+                                                case POTION -> new Item(ItemName.POTION, "A mysterious potion. Drink to heal.", true, true, "You drink the potion; you feel better.");
+                                                default -> new Item(iname, "An item: " + iname.name(), false, false, "");
+                                            };
+                                            // Use Inventory's convenience method to add by name with template if new
+                                            inv.addItemByName(iname, qty, template);
+                                        } catch (IllegalArgumentException iae) {
+                                            // unknown item name -> skip
+                                        }
+                                    } catch (Throwable ignore) {}
+                                }
+                            }
+                        } catch (Throwable ignore) {}
+                    }
+                    // Attach the reconstructed progress to the user
+                    user.setProgress(prog);
+                } catch (Throwable t) {
+                    // If anything went wrong populating progress, keep the default Progress created by User constructor
+                    // but print a debug note
+                    System.err.println("Warning: failed to fully parse progress for user " + username + " : " + t.getMessage());
+                }
+
+                out.add(user);
             }
         } catch (IOException | ParseException e) {
-            System.err.println(ERROR_LOADING_DATA + " " + e.getMessage());
+            System.err.println("Failed to read users.json: " + e.getMessage());
+            e.printStackTrace();
+            // return whatever we've parsed so far (maybe empty)
         }
 
-        return users;
+        return out;
     }
 
-    // created method to save the newly created users
-    // check with professor to see if this is correct
-    public static void saveUsers(ArrayList<User> users)
-    {
-        JSONArray usersArray = new JSONArray();
-        for (User user : users)
-        {
-            JSONObject userJSON = new JSONObject();
-            userJSON.put(KEY_ID, user.getId().toString());
-            userJSON.put(KEY_USERNAME, user.getUsername());
-            userJSON.put(KEY_PASSWORD, user.getPassword());
-
-            JSONArray charactersArray = new JSONArray();
-            for (Character character : user.getCharacters())
-            {
-                JSONObject charJSON = new JSONObject();
-                charJSON.put("name", character.getName());
-                charJSON.put("level", character.getLevel());
-                charJSON.put("avatar", character.getAvatar());
-                charactersArray.add(charJSON);
-            }
-            userJSON.put(KEY_CHARACTERS, charactersArray);
-            usersArray.add(userJSON);
-        }
-        try (FileWriter file = new FileWriter(USER_DATA_FILE))
-        {
-            file.write(usersArray.toJSONString());
-            file.flush();
-        } catch (IOException e) {
-            System.err.println("Error saving users!" + e.getMessage());
-            System.out.println("Choose option: \n 1 to sign in, \n 2 to create account");
-        }
+    /**
+     * Returns a non-null, trimmed string or an empty string if input is null.
+     *
+     * @param s the input string
+     * @return a safe non-null string
+     */
+    private static String safeString(String s) {
+        return s == null ? "" : s;
     }
-
-/* 
-// test to see if it works
-public static void main(String[] args) 
-{
-    Scanner key = new Scanner(System.in);
-    UserList userList = UserList.getInstance();
-
-    // Load users from data source
-    //userList.loadUsers(); 
-
-    System.out.println("Choose option 1 to sign in, 2 to create account");
-    String option = key.nextLine();
-
-    if (option.equals("1")) 
-    {
-        // Signing in
-        System.out.println("Enter username:");
-        String username = key.nextLine();
-
-        System.out.println("Enter password:");
-        String password = key.nextLine();
-
-        User user = userList.getUserByName(username);
-
-        if (user != null && user.getPassword().equals(password)) 
-        {
-            System.out.println("Sign-in successful! Welcome, " + user.getUsername() + "!");
-        } 
-        else 
-        {
-            System.out.println("Invalid username or password!");
-        }
-
-    } else if (option.equals("2")) 
-    {
-        // Creating an account
-        System.out.println("Enter new username:");
-        String newUsername = key.nextLine();
-
-        System.out.println("Enter new password:");
-        String newPassword = key.nextLine();
-
-        boolean successful = userList.createAccount(newUsername, newPassword);
-        if (successful) 
-        {
-            System.out.println("Account has been created!");
-        } 
-        else 
-        {
-            System.out.println("This username is already taken.");
-        }
-
-    } 
-    else 
-    {
-        System.out.println("Invalid option.");
-    }
-
-    // Display all users for testing
-    userList.loadUsers();
-    ArrayList<User> users = DataLoader.getUsers();  // Or userList.getAllUsers();
-    for (User u : users) {
-        System.out.println(u);
-    }
-
-    key.close();
-*/    }
+}
 
 
 
