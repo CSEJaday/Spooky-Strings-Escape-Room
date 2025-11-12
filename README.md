@@ -3,4 +3,4 @@ This program is a haunted house themed escape room simulator. It has many  rooms
 
 Implementation and Presentation Video: https://youtu.be/4_ajmZZCkPo
 
-GitHub Protoype Link: https://csejaday.github.io/Spooky-Strings-Escape-Room/DOCS/fullscreen.html
+Protoype Link: https://csejaday.github.io/Spooky-Strings-Escape-Room/DOCS/fullscreen.html
