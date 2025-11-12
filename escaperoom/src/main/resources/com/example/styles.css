@@ -1,7 +1,15 @@
 .label {
-    -fx-text-fill:#549df9;
+    -fx-text-fill:#441791;
 }
 
 .button {
-    -fx-text-fill:red;
+    -fx-background-color:rgb(205, 167, 233);
+    -fx-text-fill:rgb(97, 32, 209);
+}
+
+.root {
+    -fx-background-image: url("/images/homescreen.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
 }

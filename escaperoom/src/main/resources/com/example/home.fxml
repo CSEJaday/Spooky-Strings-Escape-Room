@@ -8,15 +8,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.HomeController">
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.HomeController" 
+   style="-fx-background-image: url('/images/homescreen.png'); -fx-background-size: cover; -fx-background-position: center center;">
    <children>
-      <Label text="Home Page"> 
+      <Label text="Spooky Strings"> 
          <font>
             <Font size="30.0" />
          </font>
       </Label>
-      <CheckBox mnemonicParsing="false" text="HI"/>
-      <Button fx:id="homeButton" text="Login" onAction="#switchToLogin"/>
+      <!-- <CheckBox mnemonicParsing="false" text="HI"/> -->
+      <Button fx:id="HomePageLoginButton" text="Login" onAction="#switchToLogin"/>
+      <Button fx:id="HomePageSignUpButton" text="Sign Up" onAction="#switchToSignUp"/>
+      <Button fx:id="HomePageLeaderboardButton" text="View Leaderboard" onAction="#switchToLeaderboard"/>
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
