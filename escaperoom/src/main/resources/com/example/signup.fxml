@@ -14,7 +14,8 @@
                 <Font size="20.0" />
             </font>
         </Label>
-        <Button fx:id="signUpPageHomeButton" text="Home" onAction="#switchToHome" />
+        <Button fx:id="signUpPageSignUpButton" text="Sign Up" onAction="#switchToDifficulty" />
+        <Button fx:id="signUpPageHomeButton" text="Back" onAction="#switchToHome" />
     </children>
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -20,9 +20,4 @@ public class HomeController {
         App.setRoot("leaderboard");
     }
 
-    @FXML
-    public void initialize() {
-        System.out.println(getClass().getResource("/images/HomeScreenv2.png"));
-    }
-
 }
