@@ -18,7 +18,7 @@
             <Font size="30.0" />
          </font>
       </Label>
-      <!-- <CheckBox mnemonicParsing="false" text="HI"/> -->
+      
       <Button fx:id="HomePageLoginButton" text="Login" onAction="#switchToLogin"/>
       <Button fx:id="HomePageSignUpButton" text="Sign Up" onAction="#switchToSignUp"/>
       <Button fx:id="HomePageLeaderboardButton" text="View Leaderboard" onAction="#switchToLeaderboard"/>

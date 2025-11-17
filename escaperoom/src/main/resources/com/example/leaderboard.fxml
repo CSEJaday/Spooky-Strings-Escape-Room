@@ -14,6 +14,7 @@
                 <Font size="20.0" />
             </font>
         </Label>
+
         <Button fx:id="leaderboardPageHomeButton" text="Back" onAction="#switchToHome" />
     </children>
     <padding>
