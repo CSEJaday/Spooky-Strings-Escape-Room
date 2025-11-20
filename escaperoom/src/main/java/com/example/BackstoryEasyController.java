@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import javafx.fxml.FXML;
 
-public class BackstoryController {
+public class BackstoryEasyController {
+    
     @FXML
     private void switchToHome() throws IOException {
         App.setRoot("home");

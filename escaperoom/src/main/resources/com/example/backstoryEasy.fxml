@@ -7,14 +7,14 @@
 <?import javafx.scene.text.Font?>
 <?import java.net.URL?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.BackstoryController">
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.BackstoryEasyController">
     <children>
-        <Label text="Backstory">
+        <Label text="Easy Backstory">
             <font>
                 <Font size="20.0" />
             </font>
         </Label>
-        <Button fx:id="backstoryPageHomeButton" text="Home" onAction="#switchToHome" />
+        <Button fx:id="easyBackstoryPageHomeButton" text="Home" onAction="#switchToHome" />
     </children>
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

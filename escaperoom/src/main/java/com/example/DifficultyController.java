@@ -8,22 +8,22 @@ public class DifficultyController {
 
     @FXML
     private void switchToBackstoryEasy() throws IOException {
-        App.setRoot("backstory");
+        App.setRoot("backstoryEasy");
     }
 
     @FXML
     private void switchToBackstoryMedium() throws IOException {
-        App.setRoot("backstory");
+        App.setRoot("backstoryMedium");
     }
 
     @FXML
     private void switchToBackstoryHard() throws IOException {
-        App.setRoot("backstory");
+        App.setRoot("backstoryHard");
     }
 
     @FXML
     private void switchToBackstoryNightmare() throws IOException {
-        App.setRoot("backstory");
+        App.setRoot("backstoryNightmare");
     }
 
     @FXML
