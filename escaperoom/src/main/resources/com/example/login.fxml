@@ -9,13 +9,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.LoginController">
+<VBox styleClass="login-background" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.LoginController">
     <children>
-        <Label text="Login Page">
+        <!-- <Label text="Login Page">
             <font>
                 <Font size="20.0" />
             </font>
-        </Label>
+        </Label> -->
 
         <!-- TextFields -->
         <TextField fx:id="usernameField" promptText="Enter Username:" />

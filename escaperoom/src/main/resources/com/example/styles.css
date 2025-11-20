@@ -7,17 +7,30 @@
     -fx-text-fill:rgb(97, 32, 209);
 }
 
-.root {
-    -fx-background-image:url(images/home.png);
-}
-
-.backstory {
-    -fx-background-image:url(images/UsernameScreen.png);
-}
-
 /*.root {
-    -fx-background-image: url("../images/HomeScreenv2.png");
+    -fx-background-image:url(images/home.png);
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
     -fx-background-position: center center;
 }*/
+
+.home-background {
+    -fx-background-image:url(images/home.png);
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+.login-background {
+    -fx-background-image:url(images/UsernameScreen.png);
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+.signUp-background {
+    -fx-background-image:url(images/SignUpScreen.png);
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
