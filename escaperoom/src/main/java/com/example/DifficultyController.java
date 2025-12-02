@@ -1,33 +1,33 @@
 package com.example;
 
 import java.io.IOException;
-
 import javafx.fxml.FXML;
 
 public class DifficultyController {
 
     @FXML
     private void switchToBackstoryEasy() throws IOException {
-        App.setRoot("backstoryEasy");
+        SceneManager.getInstance().showBackstoryEasy();
     }
 
     @FXML
     private void switchToBackstoryMedium() throws IOException {
-        App.setRoot("backstoryMedium");
+        SceneManager.getInstance().showBackstoryMedium();
     }
 
     @FXML
     private void switchToBackstoryHard() throws IOException {
-        App.setRoot("backstoryHard");
+        SceneManager.getInstance().showBackstoryHard();
     }
 
     @FXML
     private void switchToBackstoryNightmare() throws IOException {
-        App.setRoot("backstoryNightmare");
+        SceneManager.getInstance().showBackstoryNightmare();
     }
 
     @FXML
     private void switchToLogin() throws IOException {
-        App.setRoot("login");
+        SceneManager.getInstance().showLogin();
     }
 }
+

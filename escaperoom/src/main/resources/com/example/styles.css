@@ -1,36 +1,50 @@
-.label {
-    -fx-text-fill:#441791;
-}
-
-.button {
-    -fx-background-color:rgb(205, 167, 233);
-    -fx-text-fill:rgb(97, 32, 209);
-}
-
-/*.root {
-    -fx-background-image:url(images/home.png);
-    -fx-background-repeat: no-repeat;
-    -fx-background-size: cover;
-    -fx-background-position: center center;
-}*/
-
 .home-background {
-    -fx-background-image:url(images/home.png);
+    -fx-background-image: url(images/home.png);
+    -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
-    -fx-background-position: center center;
 }
 
-.login-background {
-    -fx-background-image:url(images/UsernameScreen.png);
-    -fx-background-repeat: no-repeat;
-    -fx-background-size: cover;
-    -fx-background-position: center center;
+/* panel */
+.panel-box {
+    -fx-background-color: rgba(250,250,250,0.98);
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 18, 0.2, 0, 6);
+    -fx-border-color: #9E9E9E;
+    -fx-border-width: 1;
 }
 
-.signUp-background {
-    -fx-background-image:url(images/SignUpScreen.png);
-    -fx-background-repeat: no-repeat;
-    -fx-background-size: cover;
-    -fx-background-position: center center;
+/* labels */
+.form-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111;
+    -fx-padding: 4 0 4 0;
+}
+
+/* separation line style (empty HBox used as rule) */
+.sep-line {
+    -fx-min-height: 6;
+    -fx-border-style: solid;
+    -fx-border-color: transparent transparent #777 transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-padding: 10 0 10 0;
+}
+
+/* textfields and passwordfields */
+.text-field, .password-field {
+    -fx-font-size: 14px;
+    -fx-padding: 8 10 8 10;
+}
+
+/* buttons */
+.button {
+    -fx-font-size: 14px;
+    -fx-padding: 6 14 6 14;
+    -fx-background-radius: 6;
+}
+
+/* optional: make the panel slightly narrower on small windows */
+@media screen and (max-width: 1000px) {
+    .panel-box { -fx-pref-width: 700; }
 }

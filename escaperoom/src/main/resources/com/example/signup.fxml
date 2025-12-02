@@ -1,40 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.HBox?>
-<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
 
-<VBox styleClass="signUp-background" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.SignUpController">
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.SignUpController"
+            prefWidth="1100" prefHeight="900">
+
     <children>
-        <!--  <Label text="Sign Up Page">
-            <font>
-                <Font size="20.0" />
-            </font>
-        </Label> -->
+        <ImageView pickOnBounds="true" preserveRatio="false"
+                   fitWidth="1100" fitHeight="900"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"
+                   AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+            <image>
+                <Image url="@images/UsernameScreen.png"/>
+            </image>
+        </ImageView>
 
-        <!-- TextFields -->
-        <TextField fx:id="usernameField" promptText="Choose Username:" />
-        <TextField fx:id="passwordField" promptText="Choose Password:" />
+        <GridPane fx:id="formGrid" hgap="16" vgap="46"
+                  AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="290.0"
+                  AnchorPane.topAnchor="90.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="60"/>
+                <ColumnConstraints percentWidth="40"/>
+            </columnConstraints>
 
-        <!-- Puts buttons on the same row -->
-        <HBox alignment="CENTER" spacing="10.0">
             <children>
-                <Button fx:id="signUpPageHomeButton" text="Back" onAction="#switchToHome" />
-                <Button fx:id="signUpPageSignUpButton" text="Sign Up" onAction="#switchToDifficulty" />
+                <TextField fx:id="usernameField" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                           prefHeight="50" prefWidth="420"
+                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 18px; -fx-text-fill: black;" />
+                <TextField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                           prefHeight="50" prefWidth="420"
+                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 18px; -fx-text-fill: black;" />
             </children>
+        </GridPane>
+
+        <HBox spacing="78"
+              AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="340.0"
+              AnchorPane.topAnchor="388.0" alignment="CENTER">
+            <Button fx:id="signUpPageHomeButton" onAction="#switchToHome"
+                    prefWidth="220" prefHeight="48"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;" />
+            <Button fx:id="signUpPageSignUpButton" onAction="#switchToDifficulty"
+                    prefWidth="220" prefHeight="48"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;" />
         </HBox>
     </children>
+</AnchorPane>
 
 
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-    <stylesheets>
-        <URL value="@styles.css" />
-   </stylesheets>
-</VBox>
+
+
+
+
+
+
