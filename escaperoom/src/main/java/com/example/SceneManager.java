@@ -252,6 +252,25 @@ public class SceneManager {
         stage.setScene(new Scene(root, WIDTH, HEIGHT));
         stage.show();
     }
+
+    public void showPuzzle(String roomId, int hotspotIndex, String previousRoomId) throws IOException {
+        // flexible loader you already have
+        FXMLLoader loader = loadFXMLLoaderFlexible("puzzle_view");
+        Object ctrl = loader.getController();
+        if (ctrl != null) {
+            try {
+                // call setContext(roomId, hotspotIndex, previousRoomId)
+                java.lang.reflect.Method m = ctrl.getClass()
+                        .getMethod("setContext", String.class, int.class, String.class);
+                m.invoke(ctrl, roomId, hotspotIndex, previousRoomId);
+            } catch (NoSuchMethodException ignored) {
+            } catch (Exception e) { e.printStackTrace(); }
+        }
+        Parent root = loader.getRoot();
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
+        stage.show();
+}
+
     
 }
 

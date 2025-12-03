@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.PuzzleController"
+            prefWidth="1092" prefHeight="680">
+    <children>
+        <!-- background image for this puzzle (fill) -->
+        <ImageView fx:id="backgroundImageView" pickOnBounds="true" preserveRatio="false"
+                   fitWidth="1092" fitHeight="680"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
+        <!-- overlay: add the controls positioned in anchorpane coordinates -->
+        <AnchorPane fx:id="overlay" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+
+            <!-- top-right settings + inventory -->
+            <Button fx:id="settingsButton" layoutX="1000" layoutY="8" prefWidth="48" prefHeight="48" text="" />
+            <Button fx:id="inventoryButton" layoutX="940" layoutY="8" prefWidth="48" prefHeight="48" text="" />
+
+            <!-- back button bottom center -->
+            <Button fx:id="backButton" layoutX="496" layoutY="620" prefWidth="100" prefHeight="44" text="←" />
+
+            <!-- hint button left column -->
+            <Button fx:id="hintButton" layoutX="60" layoutY="520" prefWidth="120" prefHeight="44" text="Hint?" />
+
+            <!-- question area (center) -->
+            <TextArea fx:id="questionText" layoutX="300" layoutY="100" prefWidth="492" prefHeight="200" wrapText="true" editable="false" />
+
+            <!-- answer field -->
+            <TextField fx:id="answerField" layoutX="300" layoutY="320" prefWidth="492" promptText="Type answer here..." />
+            <Button fx:id="submitButton" layoutX="520" layoutY="360" prefWidth="80" prefHeight="36" text="Submit" />
+
+        </AnchorPane>
+    </children>
+</AnchorPane>

@@ -211,13 +211,13 @@ public class RoomController implements Initializable {
         }, "-fx-background-color: rgba(0,0,0,0.0);");
 
         // bottom-center BACK button — go to DarkFoyer (NOT backstory)
-        addHotspotPercent(0.50 - (160.0/1092.0)/2.0, 0.91, 160.0/1092.0, 44.0/680.0, () -> {
+        addHotspotPercent(0.50 - (160.0/1092.0)/2.0, 0.89, 160.0/1092.0, 44.0/680.0, () -> {
             try {
                 SceneManager.getInstance().showRoom("DarkFoyer");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, "-fx-background-color: rgba(0,255,0,0.06); -fx-border-color: transparent;");
+        }, "-fx-background-color: transparent; -fx-border-color: transparent;");
 
         // bottom-right question/help icon (example)
         addHotspotPercent(0.934, 0.86, 50.0/1092.0, 80.0/680.0, () -> {
@@ -233,25 +233,31 @@ public class RoomController implements Initializable {
                 // left-most door:
                 addHotspotPercent(210.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("WitchesDen"),
-                        "-fx-background-color: rgba(0,255,0,0.06);");
+                        "-fx-background-color: transparent;");
                 // next door
                 addHotspotPercent(435.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("CursedRoom"),
-                        "-fx-background-color: rgba(0,255,0,0.06);");
+                        "-fx-background-color: transparent;");
                 // locked door
                 addHotspotPercent(680.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("LockedDoor"),
-                        "-fx-background-color: rgba(0,255,0,0.06);");
+                        "-fx-background-color: transparent;");
                 // farthest right -> HallOfDoorsPart1
                 addHotspotPercent(930.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("HallOfDoorsPart1"),
-                        "-fx-background-color: rgba(0,255,0,0.06);");
+                        "-fx-background-color: transparent;");
             }
             case "WitchesDen" -> {
                 // WitchesDen: add six magnifying glass hotspots. Use percent positions (tweak until perfect)
-                addHotspotPercent(0.07, 0.38, 0.05, 0.06, () -> System.out.println("Painting clicked"), "-fx-background-color: rgba(255,255,0,0.35);");
+                addHotspotPercent(0.07, 0.38, 0.05, 0.06, () -> {
+                    try { SceneManager.getInstance().showPuzzle("WitchesDen", 1, "WitchesDen"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "...style...");
                 addHotspotPercent(0.62, 0.55, 0.05, 0.06, () -> System.out.println("Cabinet clicked"), "-fx-background-color: rgba(255,255,0,0.35);");
-                addHotspotPercent(0.84, 0.28, 0.05, 0.06, () -> System.out.println("Skull clicked"), "-fx-background-color: rgba(255,255,0,0.35);");
+                addHotspotPercent(0.84, 0.28, 0.05, 0.06, () -> {
+                    try { SceneManager.getInstance().showPuzzle("WitchesDen", 0, "WitchesDen"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "...style...");
 
                 // settings/backpack/back already added above (percent), so no duplication necessary
             }
