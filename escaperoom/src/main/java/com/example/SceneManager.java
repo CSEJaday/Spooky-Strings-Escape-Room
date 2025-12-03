@@ -162,6 +162,97 @@ public class SceneManager {
             System.err.println("Opened room view without setting room id (controller access failed).");
         }
     }
+
+    public void showDarkFoyer() throws IOException {
+        Parent root = loadFXMLFlexible("darkfoyer");   // expects darkfoyer.fxml to exist
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
+        stage.show();
+    }
+
+    /**
+     * Generic helper to load an FXML via FXMLLoader and return the loader (so caller can access controller).
+     * Tries the same flexible candidate locations as loadFXMLFlexible and calls loader.load() so controller is created.
+     */
+    private FXMLLoader loadFXMLLoaderFlexible(String resourceName) throws IOException {
+        String[] candidates = new String[] {
+            "/fxml/" + resourceName + ".fxml",
+            "/com/example/" + resourceName + ".fxml"
+        };
+
+        URL found = null;
+        String foundPath = null;
+        for (String p : candidates) {
+            URL u = getClass().getResource(p);
+            if (u != null) {
+                found = u;
+                foundPath = p;
+                break;
+            }
+        }
+
+        if (found == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("FXML resource not found. Tried:\n");
+            for (String c : candidates) sb.append("  ").append(c).append("\n");
+            sb.append("Make sure the FXML files are in src/main/resources and spelled exactly.\n");
+            throw new IOException(sb.toString());
+        }
+
+        FXMLLoader loader = new FXMLLoader(found);
+        loader.load(); // load so controller and root are created
+        System.out.println("Loaded FXML (loader): " + foundPath + " -> URL: " + found);
+        return loader;
+    }
+
+    /** Show Help screen. Pass the current/previous room id so controller can return if needed. */
+    public void showHelp(String returnRoomId) throws IOException {
+        FXMLLoader loader = loadFXMLLoaderFlexible("help");
+        Object controller = loader.getController();
+        if (controller != null) {
+            try {
+                // call setReturnRoom(...) if controller implements it
+                controller.getClass().getMethod("setReturnRoom", String.class).invoke(controller, returnRoomId);
+            } catch (NoSuchMethodException ignored) {
+                // controller doesn't accept returnRoom: ignore
+            } catch (Exception e) {
+                System.err.println("Failed to set return room on help controller: " + e.getMessage());
+            }
+        }
+        Parent root = loader.getRoot();
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
+        stage.show();
+    }
+
+    /** Show Settings screen and pass the return room id so Settings->Back returns to previous room. */
+    public void showSettings(String returnRoomId) throws IOException {
+        FXMLLoader loader = loadFXMLLoaderFlexible("settings");
+        Object controller = loader.getController();
+        if (controller != null) {
+            try {
+                controller.getClass().getMethod("setReturnRoom", String.class).invoke(controller, returnRoomId);
+            } catch (NoSuchMethodException ignored) {}
+            catch (Exception e) { System.err.println("Failed to set return room on settings controller: " + e.getMessage()); }
+        }
+        Parent root = loader.getRoot();
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
+        stage.show();
+    }
+
+    /** Show Inventory screen and pass the return room id so Inventory->Back returns to previous room. */
+    public void showInventory(String returnRoomId) throws IOException {
+        FXMLLoader loader = loadFXMLLoaderFlexible("inventory");
+        Object controller = loader.getController();
+        if (controller != null) {
+            try {
+                controller.getClass().getMethod("setReturnRoom", String.class).invoke(controller, returnRoomId);
+            } catch (NoSuchMethodException ignored) {}
+            catch (Exception e) { System.err.println("Failed to set return room on inventory controller: " + e.getMessage()); }
+        }
+        Parent root = loader.getRoot();
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
+        stage.show();
+    }
+    
 }
 
 

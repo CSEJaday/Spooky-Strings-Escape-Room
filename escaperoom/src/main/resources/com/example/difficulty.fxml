@@ -51,13 +51,6 @@
                 prefWidth="160" prefHeight="34"
                 style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;" />
 
-        <!-- Back button (centered beneath the difficulty list) -->
-        <Button fx:id="backButton"
-                onAction="#switchToLogin"
-                layoutX="478" layoutY="453"
-                prefWidth="160" prefHeight="34"
-                style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;" />
-
     </children>
 </AnchorPane>
 

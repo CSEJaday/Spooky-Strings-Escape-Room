@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.WitchesDenController"
+            prefWidth="1092" prefHeight="680">
+
+    <!-- Background image: absolute classpath URL (note leading slash after @) -->
+    <children>
+        <ImageView fx:id="backgroundImageView"
+                   pickOnBounds="true" preserveRatio="false"
+                   fitWidth="1092" fitHeight="680"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"
+                   AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+            <image>
+                <Image url="@/com/example/images/WitchesDen Screen.png"/>
+            </image>
+        </ImageView>
+
+        <!-- Settings button (top-right) -->
+        <Button fx:id="settingsButton" onAction="#openSettings"
+                layoutX="1020" layoutY="12"
+                prefWidth="60" prefHeight="60"
+                style="-fx-background-color: #4CAF50; -fx-background-radius: 8; -fx-border-color: transparent; -fx-cursor: hand;"
+                AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="12.0"/>
+
+        <!-- Backpack button (below settings) -->
+        <Button fx:id="backpackButton" onAction="#openBackpack"
+                layoutX="1020" layoutY="88"
+                prefWidth="48" prefHeight="64"
+                style="-fx-background-color: #4CAF50; -fx-background-radius: 6; -fx-border-color: transparent; -fx-cursor: hand;"
+                AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="88.0"/>
+
+        <!-- Back arrow button (bottom middle) -->
+        <Button fx:id="backButton" onAction="#goBack"
+                prefWidth="64" prefHeight="48"
+                style="-fx-background-color: #4CAF50; -fx-background-radius: 8; -fx-border-color: transparent; -fx-cursor: hand;"
+                AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="514.0"/>
+
+        <!-- Hotspot 1 (left magnifier) -->
+        <Button fx:id="hotspotLeft" onAction="#hotspotLeftAction"
+                prefWidth="56" prefHeight="56"
+                style="-fx-background-color: #4CAF50; -fx-background-radius: 30; -fx-border-color: transparent; -fx-cursor: hand;"
+                AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="220.0"/>
+
+        <!-- Hotspot 2 (center cabinet magnifier) -->
+        <Button fx:id="hotspotCenter" onAction="#hotspotCenterAction"
+                prefWidth="56" prefHeight="56"
+                style="-fx-background-color: #4CAF50; -fx-background-radius: 30; -fx-border-color: transparent; -fx-cursor: hand;"
+                AnchorPane.leftAnchor="780.0" AnchorPane.topAnchor="300.0"/>
+
+        <!-- Hotspot 3 (top-right skull magnifier) -->
+        <Button fx:id="hotspotRight" onAction="#hotspotRightAction"
+                prefWidth="48" prefHeight="48"
+                style="-fx-background-color: #4CAF50; -fx-background-radius: 24; -fx-border-color: transparent; -fx-cursor: hand;"
+                AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="96.0"/>
+    </children>
+</AnchorPane>

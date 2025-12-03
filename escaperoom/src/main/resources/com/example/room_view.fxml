@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17"
+<AnchorPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.RoomController"
+            fx:id="rootPane"
             prefWidth="1092" prefHeight="680">
-    <ImageView fx:id="backgroundView"
-               preserveRatio="false"
-               fitWidth="1092"
-               fitHeight="680"
-               AnchorPane.topAnchor="0.0"
-               AnchorPane.leftAnchor="0.0"
-               AnchorPane.rightAnchor="0.0"
-               AnchorPane.bottomAnchor="0.0"/>
-    <Pane fx:id="overlayPane"
-          pickOnBounds="false"
-          AnchorPane.topAnchor="0.0"
-          AnchorPane.leftAnchor="0.0"
-          AnchorPane.rightAnchor="0.0"
-          AnchorPane.bottomAnchor="0.0"/>
+
+    <!-- Background image for the room -->
+    <children>
+        <ImageView fx:id="backgroundImageView"
+                   pickOnBounds="true" preserveRatio="false"
+                   fitWidth="1092" fitHeight="680"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"
+                   AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0" />
+        <!-- StackPane on top of the image where hotspots will be added -->
+        <StackPane fx:id="hotspotsLayer"
+                   pickOnBounds="false"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"
+                   AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0" />
+    </children>
 </AnchorPane>
+
 

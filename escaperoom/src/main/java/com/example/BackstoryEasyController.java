@@ -6,12 +6,13 @@ import javafx.fxml.FXML;
 public class BackstoryEasyController {
 
     @FXML
-    private void switchToHome() {
+    private void continueToDarkFoyer() {
         try {
-            SceneManager.getInstance().showHome();
+            SceneManager.getInstance().showRoom("DarkFoyer");   // <- use the generic room viewer
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 }
+
 
