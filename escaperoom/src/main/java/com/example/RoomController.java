@@ -249,18 +249,53 @@ public class RoomController implements Initializable {
             }
             case "WitchesDen" -> {
                 // WitchesDen: add six magnifying glass hotspots. Use percent positions (tweak until perfect)
-                addHotspotPercent(0.07, 0.38, 0.05, 0.06, () -> {
+                addHotspotPercent(0.07, 0.39, 0.05, 0.06, () -> {
                     try { SceneManager.getInstance().showPuzzle("WitchesDen", 1, "WitchesDen"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "...style...");
-                addHotspotPercent(0.62, 0.55, 0.05, 0.06, () -> System.out.println("Cabinet clicked"), "-fx-background-color: rgba(255,255,0,0.35);");
+                }, "-fx-background-color: transparent;");
+                // WitchesDen Cabinet
+                addHotspotPercent(0.62, 0.55, 0.05, 0.06, () -> {
+                    try { SceneManager.getInstance().showCabinet("WitchesDen"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "-fx-background-color: transparent; -fx-cursor: hand;");
                 addHotspotPercent(0.84, 0.28, 0.05, 0.06, () -> {
                     try { SceneManager.getInstance().showPuzzle("WitchesDen", 0, "WitchesDen"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "...style...");
+                }, "-fx-background-color: transparent;");
 
                 // settings/backpack/back already added above (percent), so no duplication necessary
             }
+            case "CursedRoom" -> {
+                // CursedRoom: example hotspots (modify percents to taste)
+                addHotspotPercent(0.10, 0.30, 0.06, 0.08, () -> {
+                    try { SceneManager.getInstance().showPuzzle("CursedRoom", 0, "CursedRoom"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "...style...");
+            
+                addHotspotPercent(0.35, 0.50, 0.06, 0.08, () -> {
+                    try { SceneManager.getInstance().showPuzzle("CursedRoom", 1, "CursedRoom"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "...style...");
+                // settings / backpack / back are added globally earlier, so nothing else needed
+            }
+            
+            case "HallOfDoors" -> {
+                // HallOfDoors: many doors - place a few hotspots
+                addHotspotPercent(0.18, 0.38, 0.06, 0.09, () -> {
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 2, "HallOfDoors"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "...style...");
+            
+                addHotspotPercent(0.40, 0.42, 0.06, 0.09, () -> {
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 3, "HallOfDoors"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "...style...");
+            
+                addHotspotPercent(0.62, 0.40, 0.06, 0.09, () -> {
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 4, "HallOfDoors"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "...style...");
+            }            
             default -> {
                 // fallback debug hotspot top-left
                 addHotspotPercent(0.02, 0.02, 24.0/1092.0, 24.0/680.0, () -> System.out.println("Debug hotspot"), "-fx-background-color: rgba(255,0,255,0.12);");

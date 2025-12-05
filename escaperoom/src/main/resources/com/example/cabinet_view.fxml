@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+
+<AnchorPane fx:id="root"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.CabinetController"
+            prefWidth="1092" prefHeight="680">
+
+    <!-- Background (image loaded by controller) -->
+    <ImageView fx:id="backgroundImage"
+               fitWidth="1092" fitHeight="680"
+               preserveRatio="false"
+               AnchorPane.topAnchor="0.0"
+               AnchorPane.leftAnchor="0.0"/>
+
+    <!-- SETTINGS (top-right) -->
+    <Button fx:id="settingsButton"
+            layoutX="999" layoutY="14"
+            prefWidth="81" prefHeight="80"
+            onAction="#onSettings"
+            style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+
+    <!-- INVENTORY (below settings) -->
+    <Button fx:id="inventoryButton"
+            layoutX="1010" layoutY="100"
+            prefWidth="60" prefHeight="96"
+            onAction="#onInventory"
+            style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+
+    <!-- BACK (bottom-center) -->
+    <Button fx:id="backButton"
+            layoutX="518" layoutY="610"
+            prefWidth="56" prefHeight="56"
+            onAction="#onBack"
+            style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+
+</AnchorPane>
+

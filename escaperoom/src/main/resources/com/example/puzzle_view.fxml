@@ -20,21 +20,21 @@
         <AnchorPane fx:id="overlay" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
 
             <!-- top-right settings + inventory -->
-            <Button fx:id="settingsButton" layoutX="1000" layoutY="8" prefWidth="48" prefHeight="48" text="" />
-            <Button fx:id="inventoryButton" layoutX="940" layoutY="8" prefWidth="48" prefHeight="48" text="" />
+            <Button fx:id="settingsButton" layoutX="999" layoutY="8" prefWidth="84" prefHeight="84" text="" style="-fx-background-color: transparent"/>
+            <Button fx:id="inventoryButton" layoutX="1011" layoutY="114" prefWidth="57" prefHeight="75" text="" style="-fx-background-color: transparent"/>
 
             <!-- back button bottom center -->
-            <Button fx:id="backButton" layoutX="496" layoutY="620" prefWidth="100" prefHeight="44" text="←" />
+            <Button fx:id="backButton" layoutX="496" layoutY="608" prefWidth="100" prefHeight="44" style="-fx-background-color: transparent"/>
 
             <!-- hint button left column -->
-            <Button fx:id="hintButton" layoutX="60" layoutY="520" prefWidth="120" prefHeight="44" text="Hint?" />
+            <Button fx:id="hintButton" layoutX="59" layoutY="470" prefWidth="195" prefHeight="44" text="Hint?" style="-fx-background-color: rgba(140, 166, 255); -fx-border-color: rgba(61,61,61); -fx-border-width: 0px; -fx-cursor: hand; -fx-font-size: 16px; -fx-text-fill: Black;"/>
 
             <!-- question area (center) -->
-            <TextArea fx:id="questionText" layoutX="300" layoutY="100" prefWidth="492" prefHeight="200" wrapText="true" editable="false" />
+            <TextArea fx:id="questionText" layoutX="22" layoutY="254" prefWidth="273" prefHeight="200" wrapText="true" editable="false" style="-fx-font-size: 16px; -fx-text-fill: Black;"/>
 
             <!-- answer field -->
-            <TextField fx:id="answerField" layoutX="300" layoutY="320" prefWidth="492" promptText="Type answer here..." />
-            <Button fx:id="submitButton" layoutX="520" layoutY="360" prefWidth="80" prefHeight="36" text="Submit" />
+            <TextField fx:id="answerField" layoutX="22" layoutY="530" prefWidth="273" prefHeight="65" promptText="Type answer here..." style="-fx-font-size: 16px;"/>
+            <Button fx:id="submitButton" layoutX="120" layoutY="610" prefWidth="80" prefHeight="36" text="Submit" style="-fx-background-color: rgba(214,214,214); -fx-border-color: rgba(61,61,61); -fx-cursor: hand; -fx-font-size: 16px; -fx-text-fill: Black;"/>
 
         </AnchorPane>
     </children>

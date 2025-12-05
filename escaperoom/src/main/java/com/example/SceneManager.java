@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 
 /**
@@ -269,8 +270,21 @@ public class SceneManager {
         Parent root = loader.getRoot();
         stage.setScene(new Scene(root, WIDTH, HEIGHT));
         stage.show();
-}
+    }
 
+    public void showCabinet(String previousRoomId) throws IOException {
+        FXMLLoader loader = loadFXMLLoaderFlexible("cabinet_view");
+        Object ctrl = loader.getController();
+        if (ctrl != null) {
+            try {
+                ctrl.getClass().getMethod("setContext", String.class)
+                    .invoke(ctrl, previousRoomId);
+            } catch (Exception ignored) {}
+        }
+        Parent root = loader.getRoot();
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
+        stage.show();
+    }    
     
 }
 

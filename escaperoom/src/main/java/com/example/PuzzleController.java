@@ -1,5 +1,10 @@
 package com.example;
 
+import com.model.DataLoader;
+import com.model.RoomLoader;
+import com.model.UserList;
+import com.model.User;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,18 +16,15 @@ import javafx.scene.layout.AnchorPane;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * FULL PuzzleController:
- * - Loads correct background (skull / painting)
- * - Selects the correct puzzle based on difficulty
- * - Provides hints from hints.txt
- * - Tracks hint usage in Progress (reflection-safe)
- * - Handles BACK / SETTINGS / INVENTORY navigation
- * - Handles answer submission
+ * Robust PuzzleController that avoids hard compile-time assumptions about model method names.
  */
 public class PuzzleController implements Initializable {
 
@@ -36,15 +38,24 @@ public class PuzzleController implements Initializable {
     private int hotspotIndex;
     private String previousRoomId;
 
+    // selectedPuzzle kept as Object to avoid compile-time dependency on com.model.Puzzle
     private Object selectedPuzzle;
-    private Map<Integer, List<String>> hintsMap = new HashMap<>();
-    private int hintIndex = 0;
+
+    // parsed hints from hints.txt: id -> ordered hints
+    private final Map<Integer, List<String>> hints = new HashMap<>();
+
+    // penalty map (seconds)
+    private static final Map<String, Integer> HINT_PENALTY_SCALED = new HashMap<>();
+    static {
+        HINT_PENALTY_SCALED.put("easy", 30);
+        HINT_PENALTY_SCALED.put("medium", 60);
+        HINT_PENALTY_SCALED.put("hard", 120);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if (backgroundImageView == null) System.err.println("PuzzleController.init: backgroundImageView is NULL");
-
-        loadHintsTxt();
+        if (backgroundImageView == null) System.err.println("PuzzleController.initialize(): backgroundImageView is null");
+        if (overlay == null) System.err.println("PuzzleController.initialize(): overlay is null");
 
         backButton.setOnAction(e -> {
             try { SceneManager.getInstance().showRoom(previousRoomId); }
@@ -61,313 +72,496 @@ public class PuzzleController implements Initializable {
             catch (Exception ex) { ex.printStackTrace(); }
         });
 
-        hintButton.setOnAction(e -> onHint());
+        hintButton.setOnAction(e -> {
+            try { onHintRequested(); } catch (Throwable t) { t.printStackTrace(); }
+        });
 
-        submitButton.setOnAction(e -> onSubmit());
+        submitButton.setOnAction(e -> {
+            try { onSubmit(); } catch (Throwable t) { t.printStackTrace(); }
+        });
+
+        loadHintsFromResources();
     }
 
-    /** Called reflectively from SceneManager */
+    /**
+     * Called by SceneManager after loader creates this controller.
+     */
     public void setContext(String roomId, int hotspotIndex, String previousRoomId) {
         this.roomId = roomId;
         this.hotspotIndex = hotspotIndex;
         this.previousRoomId = previousRoomId;
-        this.hintIndex = 0;
 
         Platform.runLater(() -> {
             loadBackgroundForHotspot();
-            pickPuzzle();
+            pickPuzzleForThisHotspot();
             renderPuzzle();
         });
     }
 
-    // ---------------------------------------------------------
-    //  LOAD HINTS.TXT
-    // ---------------------------------------------------------
-    private void loadHintsTxt() {
-        try {
-            InputStream is = getClass().getResourceAsStream("/com/example/hints.txt");
-            if (is == null) {
-                System.err.println("PuzzleController: NO hints.txt found.");
-                return;
-            }
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (!line.contains("|")) continue;
-                String[] parts = line.split("\\|", 2);
-                int id = Integer.parseInt(parts[0].trim());
-                List<String> hints = new ArrayList<>();
-                for (String piece : parts[1].split(",")) {
-                    if (!piece.trim().isEmpty()) hints.add(piece.trim());
+    private void loadHintsFromResources() {
+        String[] candidatePaths = new String[] {
+                "/JSON/hints.txt",
+                "/hints.txt",
+                "/com/model/hints.txt",
+                "/com/example/hints.txt"
+        };
+        boolean found = false;
+        for (String p : candidatePaths) {
+            try (InputStream is = getClass().getResourceAsStream(p)) {
+                if (is == null) continue;
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        line = line.trim();
+                        if (line.isEmpty()) continue;
+                        String[] parts = line.split("\\|", 2);
+                        if (parts.length < 2) continue;
+                        int idx;
+                        try { idx = Integer.parseInt(parts[0].trim()); } catch (NumberFormatException ex) { continue; }
+                        String[] hintParts = parts[1].split(",");
+                        List<String> list = Arrays.stream(hintParts)
+                                .map(String::trim)
+                                .filter(s -> !s.isEmpty())
+                                .collect(Collectors.toList());
+                        if (!list.isEmpty()) hints.put(idx, list);
+                    }
                 }
-                hintsMap.put(id, hints);
+                System.out.println("PuzzleController: loaded hints from " + p + " (entries=" + hints.size() + ")");
+                found = true;
+                break;
+            } catch (Exception ex) {
+                // try next
             }
-            br.close();
-        } catch (Exception e) {
-            System.err.println("Failed to load hints.txt: " + e.getMessage());
         }
+        if (!found) System.out.println("PuzzleController: NO hints.txt found.");
     }
 
-    // ---------------------------------------------------------
-    //  LOAD BACKGROUND IMAGE
-    // ---------------------------------------------------------
     private void loadBackgroundForHotspot() {
         String filename;
-        if ("WitchesDen".equals(roomId)) {
+        if ("WitchesDen".equals(roomId) || "Witches Den".equalsIgnoreCase(roomId) || "WitchesDen Screen".equalsIgnoreCase(roomId)) {
             filename = (hotspotIndex == 0) ? "WitchesDenSkull.png" : "WitchesDenPainting.png";
+        } else if ("CursedRoom".equals(roomId) || "Cursed Room".equalsIgnoreCase(roomId) || "CursedRoom Screen".equalsIgnoreCase(roomId)) {
+            filename = (hotspotIndex == 0) ? "CursedRoomKey.png" : "CursedRoomClock.png";
         } else {
             filename = roomId + "_" + hotspotIndex + ".png";
         }
-
-        String[] testPaths = {
+        String[] candidates = new String[] {
                 "/com/example/images/" + filename,
                 "/images/" + filename,
                 "/" + filename
         };
-
-        for (String test : testPaths) {
-            InputStream is = getClass().getResourceAsStream(test);
-            if (is != null) {
+        for (String path : candidates) {
+            try (InputStream is = getClass().getResourceAsStream(path)) {
+                if (is == null) continue;
                 Image img = new Image(is);
                 backgroundImageView.setImage(img);
                 backgroundImageView.setFitWidth(1092);
                 backgroundImageView.setFitHeight(680);
                 backgroundImageView.setPreserveRatio(false);
-                System.out.println("PuzzleController loaded background: " + test);
+                System.out.println("PuzzleController loaded background: " + path);
                 return;
-            }
+            } catch (Exception ex) { /* try next */ }
         }
-
-        System.err.println("PuzzleController: FAILED to load background: " + filename);
+        System.err.println("PuzzleController: background not found for " + filename);
     }
 
-    // ---------------------------------------------------------
-    //  PICK PUZZLE BASED ON DIFFICULTY
-    // ---------------------------------------------------------
-    private void pickPuzzle() {
+    /**
+     * Selects a puzzle for this room/hotspot and respects player's chosen difficulty.
+     * Uses safe reflective fallbacks for retrieving last difficulty from Progress.
+     */
+    private void pickPuzzleForThisHotspot() {
+        // compute difficulty first (mutable local)
+        String chosenDiff = "easy";
+
         try {
-            Class<?> rlClass = Class.forName("com.model.RoomLoader");
-            Object rl = rlClass.getDeclaredConstructor().newInstance();
-            Method loadRooms = rlClass.getMethod("loadRooms", String.class);
-            @SuppressWarnings("unchecked")
-            List<Object> rooms = (List<Object>) loadRooms.invoke(rl, "JSON/EscapeRoom.json");
+            RoomLoader rl = new RoomLoader();
+            List<?> rooms = rl.loadRooms("JSON/EscapeRoom.json");
+            if (rooms == null || rooms.isEmpty()) {
+                System.err.println("pickPuzzleForThisHotspot: no rooms loaded");
+                return;
+            }
 
-            if (rooms == null || rooms.isEmpty()) return;
-
-            Object targetRoom = null;
-            String match = roomId.replaceAll("\\s", "").toLowerCase();
-
+            // find the room by name (flexible matching)
+            Object foundRoom = null;
+            String rid = (roomId == null) ? "" : roomId.replaceAll("\\s", "").toLowerCase();
             for (Object r : rooms) {
-                Method getName = r.getClass().getMethod("getName");
-                String name = getName.invoke(r).toString().replaceAll("\\s","").toLowerCase();
-                if (name.contains(match) || match.contains(name)) {
-                    targetRoom = r;
-                    break;
-                }
+                try {
+                    Method getName = r.getClass().getMethod("getName");
+                    Object nameObj = getName.invoke(r);
+                    if (nameObj != null) {
+                        String nm = nameObj.toString();
+                        String key = nm.replaceAll("\\s","").toLowerCase();
+                        if (key.contains(rid) || rid.contains(key) || nm.equalsIgnoreCase(roomId)) { foundRoom = r; break; }
+                    }
+                } catch (NoSuchMethodException ignore) {}
             }
-            if (targetRoom == null) targetRoom = rooms.get(0);
+            if (foundRoom == null) foundRoom = rooms.get(0);
 
-            Method getPuzzles = targetRoom.getClass().getMethod("getPuzzles");
+            // get puzzles list reflectively
+            Object puzzlesObj = null;
+            try {
+                Method getPuzzles = foundRoom.getClass().getMethod("getPuzzles");
+                puzzlesObj = getPuzzles.invoke(foundRoom);
+            } catch (NoSuchMethodException nm) {
+                System.err.println("pickPuzzleForThisHotspot: foundRoom.getPuzzles() not found");
+            }
+            if (!(puzzlesObj instanceof List)) {
+                System.err.println("pickPuzzleForThisHotspot: room.getPuzzles() not a List");
+                return;
+            }
             @SuppressWarnings("unchecked")
-            List<Object> puzzles = (List<Object>) getPuzzles.invoke(targetRoom);
-            if (puzzles == null) return;
+            List<Object> puzzles = (List<Object>) puzzlesObj;
 
-            String difficulty = getUserDifficulty();
+            // determine player's chosen difficulty via UserList -> currentUser -> progress safely
+            try {
+                UserList ul = UserList.getInstance();
+                Object current = tryGetCurrentUserReflective(ul);
+                if (current != null) {
+                    Object prog = tryInvokeNoArg(current, "getProgress");
+                    if (prog != null) {
+                        Object enumObj = tryInvokeNoArg(prog, "getLastDifficultyAsEnum");
+                        if (enumObj != null) chosenDiff = enumObj.toString().toLowerCase();
+                        else {
+                            Object s = tryInvokeNoArg(prog, "getLastDifficulty");
+                            if (s != null) chosenDiff = s.toString().toLowerCase();
+                            else {
+                                try {
+                                    Field f = prog.getClass().getDeclaredField("lastDifficulty");
+                                    f.setAccessible(true);
+                                    Object val = f.get(prog);
+                                    if (val != null) chosenDiff = val.toString().toLowerCase();
+                                } catch (Throwable ignore) {}
+                            }
+                        }
+                    }
+                }
+            } catch (Throwable t) {
+                // keep default chosenDiff
+            }
 
-            List<Object> filtered = new ArrayList<>();
-            for (Object p : puzzles) {
-                Method getDiff = p.getClass().getMethod("getDifficulty");
-                Object d = getDiff.invoke(p);
-                if (d != null && d.toString().equalsIgnoreCase(difficulty)) {
-                    filtered.add(p);
+            // **Make a final copy for lambda capture**
+            final String chosen = (chosenDiff == null) ? "easy" : chosenDiff;
+
+            System.out.println("PuzzleController: chosen difficulty = " + chosen);
+
+            // filter puzzles by difficulty (safe reflection), use final 'chosen' inside lambda
+            List<Object> candidates = puzzles.stream().filter(p -> {
+                try {
+                    Object d = tryInvokeNoArg(p, "getDifficulty");
+                    if (d == null) return "easy".equals(chosen);
+                    String pd = d.toString().toLowerCase();
+                    return pd.equals(chosen);
+                } catch (Throwable t) {
+                    return true;
+                }
+            }).collect(Collectors.toList());
+
+            if (candidates.isEmpty()) candidates = puzzles;
+
+            int pick = (hotspotIndex <= 0) ? 0 : Math.min(hotspotIndex, Math.max(0, candidates.size() - 1));
+            selectedPuzzle = candidates.get(Math.min(pick, candidates.size()-1));
+
+            System.out.println("PuzzleController: selectedPuzzle -> id=" + safeGetId(selectedPuzzle));
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    /**
+     * Utility: try to invoke no-arg method reflectively; returns null on any problem.
+     */
+    private Object tryInvokeNoArg(Object target, String name) {
+        if (target == null) return null;
+        try {
+            Method m = target.getClass().getMethod(name);
+            return m.invoke(target);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private Integer safeGetId(Object p) {
+        if (p == null) return null;
+        try {
+            Method m = p.getClass().getMethod("getId");
+            Object o = m.invoke(p);
+            if (o == null) return null;
+            if (o instanceof Number) return ((Number) o).intValue();
+            return Integer.parseInt(o.toString());
+        } catch (Throwable t) {
+            try {
+                Field f = p.getClass().getDeclaredField("id");
+                f.setAccessible(true);
+                Object o = f.get(p);
+                if (o instanceof Number) return ((Number) o).intValue();
+                if (o != null) return Integer.parseInt(o.toString());
+            } catch (Throwable ignore) {}
+        }
+        return null;
+    }
+
+    private Object tryGetCurrentUserReflective(UserList ul) {
+        if (ul == null) return null;
+        try {
+            for (String mname : new String[] {"getCurrentUser", "getCurrent", "getLoggedInUser"}) {
+                try {
+                    Method m = ul.getClass().getMethod(mname);
+                    Object cu = m.invoke(ul);
+                    if (cu != null) return cu;
+                } catch (Throwable ignored) {}
+            }
+            try {
+                Method m = ul.getClass().getMethod("getAllUsers");
+                Object listObj = m.invoke(ul);
+                if (listObj instanceof List) {
+                    List<?> list = (List<?>) listObj;
+                    if (!list.isEmpty()) return list.get(0);
+                }
+            } catch (Throwable ignore) {}
+        } catch (Throwable t) { /* ignore */ }
+        return null;
+    }
+
+    private void renderPuzzle() {
+        if (selectedPuzzle == null) {
+            questionText.setText("No puzzle here.");
+            return;
+        }
+        try {
+            Object q = tryInvokeNoArg(selectedPuzzle, "getQuestion");
+            if (q == null) questionText.setText(selectedPuzzle.toString());
+            else questionText.setText(q.toString());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            questionText.setText(selectedPuzzle.toString());
+        }
+    }
+
+    /**
+     * Handle hint button. Uses hints map and updates Progress safely.
+     */
+    private void onHintRequested() {
+        if (selectedPuzzle == null) {
+            new Alert(Alert.AlertType.INFORMATION, "No puzzle selected.").showAndWait();
+            return;
+        }
+        Integer pid = safeGetId(selectedPuzzle);
+        if (pid == null) {
+            new Alert(Alert.AlertType.INFORMATION, "No hints available for this item.").showAndWait();
+            return;
+        }
+        List<String> local = hints.get(pid);
+        Object prog = getCurrentProgressReflective();
+        if (prog == null) {
+            new Alert(Alert.AlertType.ERROR, "No user progress found.").showAndWait();
+            return;
+        }
+
+        int used = 0;
+        try {
+            Method m = prog.getClass().getMethod("getHintsUsedFor", int.class);
+            Object r = m.invoke(prog, pid);
+            if (r instanceof Number) used = ((Number) r).intValue();
+        } catch (Throwable ignored) {
+            try {
+                Method gm = prog.getClass().getMethod("getHintsUsed");
+                Object mapObj = gm.invoke(prog);
+                if (mapObj instanceof Map) {
+                    Map<?,?> mm = (Map<?,?>) mapObj;
+                    if (mm.containsKey(pid)) {
+                        Object v = mm.get(pid);
+                        if (v instanceof Number) used = ((Number) v).intValue();
+                        else used = Integer.parseInt(v.toString());
+                    }
+                }
+            } catch (Throwable ignore2) {}
+        }
+
+        String nextHint = null;
+        if (local != null && used < local.size()) nextHint = local.get(used);
+
+        if (nextHint == null) {
+            new Alert(Alert.AlertType.INFORMATION, "No hints available.").showAndWait();
+            return;
+        }
+
+        Alert a = new Alert(Alert.AlertType.INFORMATION, nextHint, ButtonType.OK);
+        a.setHeaderText("Hint (" + (used+1) + (local != null ? ("/" + local.size()) : "") + ")");
+        a.showAndWait();
+
+        boolean incremented = false;
+        try {
+            Method inc = prog.getClass().getMethod("incrementHintsUsedFor", int.class);
+            inc.invoke(prog, pid);
+            incremented = true;
+        } catch (Throwable ignore) {}
+
+        if (!incremented) {
+            try {
+                Method getHintsUsed = prog.getClass().getMethod("getHintsUsed");
+                Object mapObj = getHintsUsed.invoke(prog);
+                if (mapObj instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Map<Object,Object> mm = (Map<Object,Object>) mapObj;
+                    Object cur = mm.get(pid);
+                    int curInt = 0;
+                    if (cur instanceof Number) curInt = ((Number) cur).intValue();
+                    else if (cur != null) curInt = Integer.parseInt(cur.toString());
+                    mm.put(pid, curInt + 1);
+                    incremented = true;
+                }
+            } catch (Throwable ignore) {}
+        }
+
+        String pd = "easy";
+        try {
+            Object d = tryInvokeNoArg(selectedPuzzle, "getDifficulty");
+            if (d != null) pd = d.toString().toLowerCase();
+        } catch (Throwable ignore) {}
+        int penalty = HINT_PENALTY_SCALED.getOrDefault(pd, 30);
+
+        boolean applied = false;
+        try {
+            Method addTime = prog.getClass().getMethod("addTime", long.class);
+            addTime.invoke(prog, (long) penalty);
+            applied = true;
+        } catch (Throwable ignore) {}
+
+        if (!applied) {
+            try {
+                Method getTS = prog.getClass().getMethod("getTimeSpent");
+                Object curObj = getTS.invoke(prog);
+                long cur = 0;
+                if (curObj instanceof Number) cur = ((Number)curObj).longValue();
+                else if (curObj != null) cur = Long.parseLong(curObj.toString());
+                try {
+                    Method setTS = prog.getClass().getMethod("setTimeSpent", long.class);
+                    setTS.invoke(prog, cur + penalty);
+                    applied = true;
+                } catch (Throwable ignore2) {
+                    try {
+                        Field f = prog.getClass().getDeclaredField("timeSpent");
+                        f.setAccessible(true);
+                        f.setLong(prog, cur + penalty);
+                        applied = true;
+                    } catch (Throwable ignore3) {}
+                }
+            } catch (Throwable ignore) {}
+        }
+
+        // persist users safely
+        try {
+            UserList ul = UserList.getInstance();
+            try {
+                Method allUsers = ul.getClass().getMethod("getAllUsers");
+                Object list = allUsers.invoke(ul);
+                if (list instanceof List) DataLoader.saveUsers((List) list);
+                else DataLoader.saveUsers(UserList.getInstance().getAllUsers());
+            } catch (Throwable t2) {
+                try { DataLoader.saveUsers(UserList.getInstance().getAllUsers()); } catch (Throwable ignore) { ignore.printStackTrace(); }
+            }
+        } catch (Throwable t) {
+            try { DataLoader.saveUsers(UserList.getInstance().getAllUsers()); } catch (Throwable ex) { ex.printStackTrace(); }
+        }
+    }
+
+    /**
+     * Attempt to validate the answer.
+     */
+    private void onSubmit() {
+        if (selectedPuzzle == null) return;
+        String userAnswer = (answerField.getText() == null) ? "" : answerField.getText().trim();
+        boolean correct = false;
+
+        try {
+            Method check = selectedPuzzle.getClass().getMethod("checkAnswer", String.class);
+            Object r = check.invoke(selectedPuzzle, userAnswer);
+            if (r instanceof Boolean) correct = (Boolean) r;
+        } catch (Throwable ignored) {
+            String canonical = null;
+            String[] candidateNames = new String[] {"getAnswer", "getCorrectAnswer", "getSolution", "answer", "correctAnswer", "solution"};
+            for (String name : candidateNames) {
+                if (canonical != null) break;
+                try {
+                    Method m = selectedPuzzle.getClass().getMethod(name);
+                    Object v = m.invoke(selectedPuzzle);
+                    if (v != null) canonical = v.toString().trim();
+                } catch (NoSuchMethodException ns) {
+                    try {
+                        Field f = selectedPuzzle.getClass().getDeclaredField(name);
+                        f.setAccessible(true);
+                        Object v = f.get(selectedPuzzle);
+                        if (v != null) canonical = v.toString().trim();
+                    } catch (Throwable ignoreField) {}
+                } catch (Throwable ignore) {}
+            }
+            if (canonical != null) correct = canonical.equalsIgnoreCase(userAnswer.trim());
+            else correct = false;
+        }
+
+        if (correct) {
+            new Alert(Alert.AlertType.INFORMATION, "Correct!", ButtonType.OK).showAndWait();
+            Object prog = getCurrentProgressReflective();
+            if (prog != null) {
+                try {
+                    Method addQ = prog.getClass().getMethod("addCompletedPuzzle", String.class);
+                    Object q = tryInvokeNoArg(selectedPuzzle, "getQuestion");
+                    String qStr = (q == null) ? selectedPuzzle.toString() : q.toString();
+                    addQ.invoke(prog, qStr);
+                } catch (Throwable ignored) {}
+                try {
+                    Method addId = prog.getClass().getMethod("addCompletedPuzzleId", int.class);
+                    Integer id = safeGetId(selectedPuzzle);
+                    if (id != null) addId.invoke(prog, id);
+                } catch (Throwable ignored) {}
+
+                int pts = 10;
+                try {
+                    Object d = tryInvokeNoArg(selectedPuzzle, "getDifficulty");
+                    if (d != null) {
+                        String pd = d.toString().toLowerCase();
+                        if ("medium".equals(pd)) pts = 20;
+                        else if ("hard".equals(pd)) pts = 30;
+                    }
+                } catch (Throwable ignore) {}
+                try {
+                    Method inc = prog.getClass().getMethod("increaseScore", int.class);
+                    inc.invoke(prog, pts);
+                } catch (Throwable ignored) {}
+
+                try {
+                    UserList ul = UserList.getInstance();
+                    Method allUsers = ul.getClass().getMethod("getAllUsers");
+                    Object list = allUsers.invoke(ul);
+                    if (list instanceof List) DataLoader.saveUsers((List) list);
+                } catch (Throwable e) {
+                    try { DataLoader.saveUsers(UserList.getInstance().getAllUsers()); } catch (Throwable ex) { ex.printStackTrace(); }
                 }
             }
-            if (filtered.isEmpty()) filtered = puzzles;
 
-            selectedPuzzle = filtered.get(Math.min(hotspotIndex, filtered.size() - 1));
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            try { SceneManager.getInstance().showRoom(previousRoomId); } catch (Exception e) { e.printStackTrace(); }
+        } else {
+            new Alert(Alert.AlertType.ERROR, "Incorrect. Try again.", ButtonType.OK).showAndWait();
         }
     }
 
-    private String getUserDifficulty() {
+    // ---------- utilities ----------
+    private Object getCurrentProgressReflective() {
         try {
-            Class<?> ulClass = Class.forName("com.model.UserList");
-            Object ul = ulClass.getMethod("getInstance").invoke(null);
-
-            Object user = null;
-            for (String method : new String[]{"getCurrentUser", "getCurrent", "getLoggedInUser"}) {
-                try {
-                    user = ulClass.getMethod(method).invoke(ul);
-                    if (user != null) break;
-                } catch (Exception ignored) {}
-            }
-            if (user == null) return "easy";
-
-            Method getProg = user.getClass().getMethod("getProgress");
-            Object prog = getProg.invoke(user);
-
-            Method getDiff = prog.getClass().getMethod("getLastDifficultyAsEnum");
-            Object diffEnum = getDiff.invoke(prog);
-
-            return diffEnum == null ? "easy" : diffEnum.toString().toLowerCase();
-
-        } catch (Exception e) {
-            return "easy";
-        }
-    }
-
-    // ---------------------------------------------------------
-    //  RENDER PUZZLE
-    // ---------------------------------------------------------
-    private void renderPuzzle() {
-        try {
-            Method getQ = selectedPuzzle.getClass().getMethod("getQuestion");
-            questionText.setText(getQ.invoke(selectedPuzzle).toString());
-        } catch (Exception e) {
-            questionText.setText("Puzzle failed to load question.");
-        }
-    }
-
-    // ---------------------------------------------------------
-    //  HINT BUTTON
-    // ---------------------------------------------------------
-    private void onHint() {
-        try {
-            int id = getPuzzleId();
-            List<String> hints = hintsMap.get(id);
-
-            if (hints == null || hints.isEmpty()) {
-                new Alert(Alert.AlertType.INFORMATION, "No hints available.", ButtonType.OK).showAndWait();
-                return;
-            }
-
-            // show next hint
-            String hint = hints.get(Math.min(hintIndex, hints.size() - 1));
-            new Alert(Alert.AlertType.INFORMATION, hint, ButtonType.OK).showAndWait();
-
-            hintIndex++;
-
-            updateHintUsageInProgress(id);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private int getPuzzleId() throws Exception {
-        Method getId = selectedPuzzle.getClass().getMethod("getId");
-        Object idObj = getId.invoke(selectedPuzzle);
-        return (idObj instanceof Number) ? ((Number) idObj).intValue() : Integer.parseInt(idObj.toString());
-    }
-
-    private void updateHintUsageInProgress(int puzzleId) {
-        try {
-            Class<?> ulClass = Class.forName("com.model.UserList");
-            Object ul = ulClass.getMethod("getInstance").invoke(null);
-
-            Object user = null;
-            for (String m : new String[]{"getCurrentUser", "getCurrent", "getLoggedInUser"}) {
-                try {
-                    user = ulClass.getMethod(m).invoke(ul);
-                    if (user != null) break;
-                } catch (Exception ignored) {}
-            }
-            if (user == null) return;
-
-            Method getProg = user.getClass().getMethod("getProgress");
-            Object progress = getProg.invoke(user);
-
-            tryIncrementHintsUsed(progress, puzzleId);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // SAFELY TRY MULTIPLE METHOD SIGNATURES
-    private void tryIncrementHintsUsed(Object progressObj, int id) {
-        String[] names = {
-                "incrementHintsUsedFor",
-                "incrementHintsUsed",
-                "incrementHintCountFor",
-                "useHintFor"
-        };
-
-        for (String n : names) {
+            UserList ul = UserList.getInstance();
+            Object cur = tryGetCurrentUserReflective(ul);
+            if (cur == null) return null;
+            Object prog = tryInvokeNoArg(cur, "getProgress");
+            if (prog != null) return prog;
             try {
-                Method m = progressObj.getClass().getMethod(n, int.class);
-                m.invoke(progressObj, id);
-                return;
-            } catch (Exception ignored) {}
+                Field f = cur.getClass().getDeclaredField("progress");
+                f.setAccessible(true);
+                return f.get(cur);
+            } catch (Throwable ignore) {}
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
-
-        // fallback: nothing found
-        System.err.println("No increment-hint method found on Progress.");
-    }
-
-    // ---------------------------------------------------------
-    //  SUBMIT ANSWER
-    // ---------------------------------------------------------
-    private void onSubmit() {
-        try {
-            String userAnswer = answerField.getText().trim();
-            boolean correct = false;
-
-            // try checkAnswer()
-            try {
-                Method check = selectedPuzzle.getClass().getMethod("checkAnswer", String.class);
-                correct = (boolean) check.invoke(selectedPuzzle, userAnswer);
-            } catch (Exception ignored) {}
-
-            // try getAnswer() fallback
-            if (!correct) {
-                try {
-                    Method getA = selectedPuzzle.getClass().getMethod("getAnswer");
-                    String right = getA.invoke(selectedPuzzle).toString().trim().toLowerCase();
-                    correct = right.equals(userAnswer.toLowerCase());
-                } catch (Exception ignored) {}
-            }
-
-            if (!correct) {
-                new Alert(Alert.AlertType.ERROR, "Incorrect. Try again.", ButtonType.OK).showAndWait();
-                return;
-            }
-
-            new Alert(Alert.AlertType.INFORMATION, "Correct!", ButtonType.OK).showAndWait();
-            markPuzzleCompleted();
-
-            SceneManager.getInstance().showRoom(previousRoomId);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void markPuzzleCompleted() {
-        try {
-            Class<?> ulClass = Class.forName("com.model.UserList");
-            Object ul = ulClass.getMethod("getInstance").invoke(null);
-            Object user = ulClass.getMethod("getCurrentUser").invoke(ul);
-
-            Method getProg = user.getClass().getMethod("getProgress");
-            Object prog = getProg.invoke(user);
-
-            Method getQ = selectedPuzzle.getClass().getMethod("getQuestion");
-            Method getId = selectedPuzzle.getClass().getMethod("getId");
-
-            prog.getClass().getMethod("addCompletedPuzzle", String.class)
-                    .invoke(prog, getQ.invoke(selectedPuzzle).toString());
-
-            prog.getClass().getMethod("addCompletedPuzzleId", int.class)
-                    .invoke(prog, ((Number) getId.invoke(selectedPuzzle)).intValue());
-
-        } catch (Exception ignored) {}
+        return null;
     }
 }
-
-
-
 
