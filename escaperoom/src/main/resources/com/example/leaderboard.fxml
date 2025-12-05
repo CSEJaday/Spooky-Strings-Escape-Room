@@ -20,18 +20,18 @@
                AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0">
         <image>
             <!-- Make sure this image exists in resources/com/example/images/ -->
-            <Image url="@images/LeaderboardRevamp Screen.png"/>
+            <Image url="@images/LeaderboardRevamp.png"/>
         </image>
     </ImageView>
 
     <!-- Centered white panel (covers background title and provides a single title) -->
-    <StackPane AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="221.5" AnchorPane.rightAnchor="218.98" AnchorPane.bottomAnchor="100.0">
+    <StackPane AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="240" AnchorPane.rightAnchor="240" AnchorPane.bottomAnchor="300.0">
         <!-- white panel with subtle rounding -->
         <VBox fx:id="panel" spacing="12.0" alignment="TOP_CENTER"
               style="-fx-background-color: transparent; -fx-background-radius: 6; -fx-padding: 20;">
             <!-- Single title centered -->
             <Label fx:id="label" text="Leaderboard"
-                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111; -fx-background-color: White" />
+                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111; -fx-background-color: transparent" />
 
             <!-- the list of entries; will be populated by controller -->
             <ListView fx:id="entriesList" prefHeight="360.0" prefWidth="720.0"
@@ -40,9 +40,9 @@
     </StackPane>
 
     <!-- Bottom center back button (we use an HBox anchored left+right to center) -->
-    <HBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="165.0" alignment="CENTER">
+    <HBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="253.0" alignment="CENTER">
         <children>
-            <Button fx:id="backBtn" text="Back" onAction="#onBack" style="-fx-background-color: rgba(214,214,214); -fx-cursor: hand; -fx-font-size: 14px; -fx-text-fill: Black;"/>
+            <Button fx:id="backBtn" text="Back" onAction="#onBack" prefWidth="152" prefHeight="32" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 14px; -fx-text-fill: transparent;"/>
         </children>
     </HBox>
 

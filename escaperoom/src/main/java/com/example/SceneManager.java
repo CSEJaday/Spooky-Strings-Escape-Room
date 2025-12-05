@@ -284,7 +284,15 @@ public class SceneManager {
         Parent root = loader.getRoot();
         stage.setScene(new Scene(root, WIDTH, HEIGHT));
         stage.show();
-    }    
+    } 
+    
+    /** Show Win screen. */
+    public void showWin() throws IOException {
+        Parent root = loadFXMLFlexible("win_view");
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
+        stage.show();
+    }
+
     
 }
 

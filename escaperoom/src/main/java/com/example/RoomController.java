@@ -294,10 +294,12 @@ public class RoomController implements Initializable {
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent; -fx-cursor: hand;");
 
+                // Go to "Win Screen"
                 addHotspotPercent(0.80, 0.50, 0.11, 0.08, () -> {
-                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 2, "AlchemyLab"); }
+                    try { SceneManager.getInstance().showWin(); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "-fx-background-color: green;");
+                }, "-fx-background-color: transparent;");
+
             }
 
             default -> {

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<AnchorPane fx:id="root"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.WinController"
+            prefWidth="1092" prefHeight="680">
+
+    <!-- Background: points to your resource in /com/example/images/ -->
+    <ImageView fx:id="backgroundImage"
+               pickOnBounds="true"
+               preserveRatio="false"
+               fitWidth="1092" fitHeight="680"
+               AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0">
+        <image>
+            <!-- keep this path if your image file is at src/main/resources/com/example/images/Win Screen.png -->
+            <Image url="@images/Win Screen.png"/>
+        </image>
+    </ImageView>
+
+    <!-- Transparent button over "View Leaderboard" artwork -->
+    <!-- Adjust layoutX/layoutY/pref sizes if you need to nudge the hotzones -->
+    <Button fx:id="viewLeaderboardBtn"
+            layoutX="381.0" layoutY="469.5"
+            prefWidth="330.0" prefHeight="61.0"
+            onAction="#onViewLeaderboard"
+            style="-fx-background-color: transparent; -fx-border-color: transparent;">
+        <tooltip>
+            <Tooltip text="View Leaderboard"/>
+        </tooltip>
+    </Button>
+
+    <!-- Transparent button over "Continue" artwork -->
+    <Button fx:id="continueBtn"
+            layoutX="381.0" layoutY="562.0"
+            prefWidth="330.0" prefHeight="60.0"
+            onAction="#onContinue"
+            style="-fx-background-color: transparent; -fx-border-color: transparent;">
+        <tooltip>
+            <Tooltip text="Continue"/>
+        </tooltip>
+    </Button>
+
+</AnchorPane>
