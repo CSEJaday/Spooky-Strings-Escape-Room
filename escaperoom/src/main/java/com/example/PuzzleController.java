@@ -382,17 +382,31 @@ public class PuzzleController implements Initializable {
         }
 
         String nextHint = null;
-        if (local != null && used < local.size()) nextHint = local.get(used);
+        int displayIndex = 0;
+        int totalHints = 0;
+
+        // NEW: loop through local hints by modulo instead of stopping when used >= size
+        if (local != null && !local.isEmpty()) {
+            totalHints = local.size();
+            // pick hint by wrapping around
+            int idx = (totalHints == 0) ? 0 : (used % totalHints);
+            nextHint = local.get(idx);
+            displayIndex = idx + 1; // human 1-based
+        }
 
         if (nextHint == null) {
+            // No local hints available — fall back to "no hints" message
             new Alert(Alert.AlertType.INFORMATION, "No hints available.").showAndWait();
             return;
         }
 
+        // Show the hint dialog (display which number in the cycle)
+        String header = "Hint (" + (displayIndex) + (totalHints > 0 ? ("/" + totalHints) : "") + ")";
         Alert a = new Alert(Alert.AlertType.INFORMATION, nextHint, ButtonType.OK);
-        a.setHeaderText("Hint (" + (used+1) + (local != null ? ("/" + local.size()) : "") + ")");
+        a.setHeaderText(header);
         a.showAndWait();
 
+        // increment hints used: prefer incrementHintsUsedFor(int)
         boolean incremented = false;
         try {
             Method inc = prog.getClass().getMethod("incrementHintsUsedFor", int.class);
@@ -417,6 +431,7 @@ public class PuzzleController implements Initializable {
             } catch (Throwable ignore) {}
         }
 
+        // apply time penalty
         String pd = "easy";
         try {
             Object d = tryInvokeNoArg(selectedPuzzle, "getDifficulty");
