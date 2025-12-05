@@ -261,13 +261,13 @@ public class RoomController implements Initializable {
             }
 
             case "HallOfDoors" -> {
-                addHotspotPercent(0.06, 0.41, 0.06, 0.09, () -> {
-                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 2, "HallOfDoors"); }
+                addHotspotPercent(0.24, 0.37, 0.06, 0.09, () -> {
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 1, "HallOfDoors"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "-fx-background-color: transparent;;");
+                }, "-fx-background-color: transparent;");
 
-                addHotspotPercent(0.48, 0.40, 0.06, 0.09, () -> {
-                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 3, "HallOfDoors"); }
+                addHotspotPercent(0.64, 0.49, 0.06, 0.09, () -> {
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 0, "HallOfDoors"); }
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent;");
 
@@ -279,12 +279,12 @@ public class RoomController implements Initializable {
 
             case "AlchemyLab" -> {
                 addHotspotPercent(0.36, 0.51, 0.06, 0.06, () -> {
-                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 0, "AlchemyLab"); }
+                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 1, "AlchemyLab"); }
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent;");
 
                 addHotspotPercent(0.735, 0.815, 0.06, 0.06, () -> {
-                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 1, "AlchemyLab"); }
+                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 0, "AlchemyLab"); }
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent;");
 

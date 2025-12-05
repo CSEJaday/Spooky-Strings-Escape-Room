@@ -27,14 +27,14 @@
             <Button fx:id="backButton" layoutX="496" layoutY="608" prefWidth="100" prefHeight="44" style="-fx-background-color: transparent"/>
 
             <!-- hint button left column -->
-            <Button fx:id="hintButton" layoutX="59" layoutY="470" prefWidth="195" prefHeight="44" text="Hint?" style="-fx-background-color: rgba(140, 166, 255); -fx-border-color: rgba(61,61,61); -fx-border-width: 0px; -fx-cursor: hand; -fx-font-size: 16px; -fx-text-fill: Black;"/>
+            <Button fx:id="hintButton" layoutX="59" layoutY="370" prefWidth="195" prefHeight="44" text="Hint?" style="-fx-background-color: rgba(140, 166, 255); -fx-border-color: rgba(61,61,61); -fx-border-width: 0px; -fx-cursor: hand; -fx-font-size: 16px; -fx-text-fill: Black;"/>
 
             <!-- question area (center) -->
-            <TextArea fx:id="questionText" layoutX="22" layoutY="254" prefWidth="273" prefHeight="200" wrapText="true" editable="false" style="-fx-font-size: 16px; -fx-text-fill: Black;"/>
+            <TextArea fx:id="questionText" layoutX="22" layoutY="154" prefWidth="273" prefHeight="200" wrapText="true" editable="false" style="-fx-font-size: 16px; -fx-text-fill: Black;"/>
 
             <!-- answer field -->
-            <TextField fx:id="answerField" layoutX="22" layoutY="530" prefWidth="273" prefHeight="65" promptText="Type answer here..." style="-fx-font-size: 16px;"/>
-            <Button fx:id="submitButton" layoutX="120" layoutY="610" prefWidth="80" prefHeight="36" text="Submit" style="-fx-background-color: rgba(214,214,214); -fx-border-color: rgba(61,61,61); -fx-cursor: hand; -fx-font-size: 16px; -fx-text-fill: Black;"/>
+            <TextField fx:id="answerField" layoutX="22" layoutY="430" prefWidth="273" prefHeight="65" promptText="Type answer here..." style="-fx-font-size: 16px;"/>
+            <Button fx:id="submitButton" layoutX="120" layoutY="510" prefWidth="80" prefHeight="36" text="Submit" style="-fx-background-color: rgba(214,214,214); -fx-border-color: rgba(61,61,61); -fx-cursor: hand; -fx-font-size: 16px; -fx-text-fill: Black;"/>
 
         </AnchorPane>
     </children>

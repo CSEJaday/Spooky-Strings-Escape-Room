@@ -139,9 +139,13 @@ public class PuzzleController implements Initializable {
     private void loadBackgroundForHotspot() {
         String filename;
         if ("WitchesDen".equals(roomId) || "Witches Den".equalsIgnoreCase(roomId) || "WitchesDen Screen".equalsIgnoreCase(roomId)) {
-            filename = (hotspotIndex == 0) ? "WitchesDenSkull.png" : "WitchesDenPainting.png";
+            filename = (hotspotIndex == 0) ? "WitchesDenSkullRevamp.png" : "WitchesDenPaintingRevamp.png";
         } else if ("CursedRoom".equals(roomId) || "Cursed Room".equalsIgnoreCase(roomId) || "CursedRoom Screen".equalsIgnoreCase(roomId)) {
-            filename = (hotspotIndex == 0) ? "CursedRoomKey.png" : "CursedRoomClock.png";
+            filename = (hotspotIndex == 0) ? "CursedRoomKeyRevamp.png" : "CursedRoomClockRevamp.png";
+        } else if ("HallOfDoors".equals(roomId) || "Hall Of Doors".equalsIgnoreCase(roomId) || "HallOfDoors Screen".equalsIgnoreCase(roomId)) {
+            filename = (hotspotIndex == 0) ? "HallOfDoorsGhostRevamp.png" : "HallOfDoorsPictureRevamp.png";
+        } else if ("AlchemyLab".equals(roomId) || "Alchemy Lab".equalsIgnoreCase(roomId) || "AlchemyLab Screen".equalsIgnoreCase(roomId)) {
+            filename = (hotspotIndex == 0) ? "AlchemyLabCandleRevamp.png" : "AlchemyLabPotionRevamp.png";
         } else {
             filename = roomId + "_" + hotspotIndex + ".png";
         }
