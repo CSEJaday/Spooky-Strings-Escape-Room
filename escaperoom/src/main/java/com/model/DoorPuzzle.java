@@ -20,7 +20,7 @@ public class DoorPuzzle extends Puzzle {
      * @param numDoors number of door choices; values below 1 are set to 1
      */
     public DoorPuzzle(int numDoors) {
-        super("Choose a door (1-" + Math.max(1, numDoors) + ")", Difficulty.MEDIUM);
+        super("Choose a number (1-" + Math.max(1, numDoors) + "). Answer carefully..", Difficulty.MEDIUM);
         this.numDoors = Math.max(1, numDoors);
     }
 
@@ -33,7 +33,7 @@ public class DoorPuzzle extends Puzzle {
      * @param difficulty difficulty setting for the puzzle
      */
     public DoorPuzzle(int numDoors, int correctDoor, int attemptsAllowed, Difficulty difficulty) {
-        super("Choose a door (1-" + Math.max(1, numDoors) + ")", difficulty);
+        super("Choose a number (1-" + Math.max(1, numDoors) + "). Answer carefully..", difficulty);
         this.numDoors = Math.max(1, numDoors);
         setCorrectDoor(correctDoor);
         this.attemptsAllowed = Math.max(0, attemptsAllowed);

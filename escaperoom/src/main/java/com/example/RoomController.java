@@ -9,11 +9,12 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -21,6 +22,9 @@ import java.util.ResourceBundle;
  * - loads "<roomId> Screen.png" from resources
  * - creates overlayPane whose size/bounds follow the backgroundImageView so hotspots always align
  * - provides pixel and percentage hotspot helpers
+ *
+ * This version normalizes backend room ids (strips "PartN", "Screen", collapses separators)
+ * and switches on a canonical key so filenames and case variants don't break hotspot selection.
  */
 public class RoomController implements Initializable {
 
@@ -50,9 +54,6 @@ public class RoomController implements Initializable {
             if (newB == null || overlayPane == null) return;
             // position overlayPane to coincide with image bounds (in parent coordinates)
             Platform.runLater(() -> alignOverlayToImage(newB));
-            // reposition any percent-based hotspots (they will be re-laid out by addHotspotPercent which stores no state;
-            // here we rely on each addHotspotPercent already using backgroundImageView bounds at creation and on image
-            // bounds changes we can iterate children and call layout helper — we do that inside alignOverlayToImage)
         };
         backgroundImageView.boundsInParentProperty().addListener(boundsListener);
         hotspotsLayer.boundsInParentProperty().addListener((o,oldv,newv) -> {
@@ -83,77 +84,64 @@ public class RoomController implements Initializable {
         });
     }
 
-    /**
-     * Robust background loader: tries multiple filename variants so small naming differences
-     * (spaces, underscores, hyphens, lowercase) won't break things.
-     *
-     * Example roomId values: "DarkFoyer", "Dark Foyer", "WitchesDen"
-     * Example filenames tried: "DarkFoyer Screen.png", "Dark Foyer Screen.png",
-     *                         "Dark_Foyer Screen.png", "Dark-Foyer Screen.png",
-     *                         "darkfoyer Screen.png", etc.
-     */
     private void loadBackgroundFor(String roomId) {
         if (backgroundImageView == null) return;
-        // base filename suffix used in your project
-        final String suffix = " Screen.png";
 
-        // helper: make "DarkFoyer" -> "Dark Foyer" by inserting spaces before uppercase letters (except first)
-        String withSpaces = roomId.replaceAll("(?<=.)(?=[A-Z])", " ");
+        // --- 1. Normalize the roomId: remove Part#, strip "Screen", collapse spaces ---
+        String base = roomId == null ? "" : roomId;
+        base = base.replaceAll("(?i)screen", "");         // remove "Screen"
+        base = base.replaceAll("(?i)part\\d+", "");       // remove Part1 Part2 etc
+        base = base.replaceAll("[_\\-]", " ");            // underscores/hyphens become spaces
+        base = base.trim();
 
-        // helper lowercased
-        String lower = roomId.toLowerCase();
+        // camelCase → spaced words (HallOfDoors → Hall Of Doors)
+        base = base.replaceAll("([a-z])([A-Z])", "$1 $2").trim();
 
-        // build candidate names (most-likely first)
-        String[] namesToTry = new String[] {
-                roomId + suffix,                     // DarkFoyer Screen.png
-                withSpaces + suffix,                 // Dark Foyer Screen.png
-                roomId.replace(" ", "_") + suffix,   // DarkFoyer_Screen.png or Dark_Foyer Screen.png
-                withSpaces.replace(" ", "_") + suffix,
-                roomId.replace(" ", "-") + suffix,
-                withSpaces.replace(" ", "-") + suffix,
-                lower + suffix,                      // darkfoyer Screen.png
-                lower.replace(" ", "_") + suffix,
-                lower.replace(" ", "-") + suffix
+        // Title-case version (best guess)
+        String titleBase = Arrays.stream(base.split("\\s+"))
+                .filter(s -> !s.isBlank())
+                .map(s -> s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase())
+                .reduce((a,b) -> a + " " + b)
+                .orElse(base);
+
+        // --- 2. Assemble candidate filenames in preferred order ---
+        String[] names = new String[] {
+            roomId + " Screen.png",
+            titleBase + " Screen.png",                // Hall Of Doors Screen.png
+            titleBase.replace(" ", "") + " Screen.png", // HallOfDoors Screen.png
+            base.toLowerCase().replace(" ","") + " screen.png", // hallofdoors screen.png
+            base.replace(" ", "_") + " Screen.png",   // Hall_Of_Doors Screen.png
         };
 
-        String[] candidates = new String[namesToTry.length * 3];
-        int idx = 0;
-        // try common resource folders you already used
-        for (String name : namesToTry) {
-            candidates[idx++] = "/com/example/images/" + name;
-            candidates[idx++] = "/images/" + name;
-            candidates[idx++] = "/" + name;
-        }
+        // --- 3. Try each filename in both resource folders ---
+        for (String filename : names) {
+            String[] paths = new String[] {
+                "/com/example/images/" + filename,
+                "/images/" + filename,
+                "/" + filename
+            };
 
-        InputStream is = null;
-        boolean found = false;
-        String foundPath = null;
-        for (String p : candidates) {
-            if (p == null) continue;
-            is = getClass().getResourceAsStream(p);
-            if (is != null) {
-                found = true;
-                foundPath = p;
-                try {
-                    Image img = new Image(is);
-                    backgroundImageView.setImage(img);
-                    // keep the fixed size you want
-                    backgroundImageView.setFitWidth(1092);
-                    backgroundImageView.setFitHeight(680);
-                    backgroundImageView.setPreserveRatio(false);
-                } finally {
-                    try { is.close(); } catch (Exception ignored) {}
-                }
-                System.out.println("RoomController: loaded background from " + p);
-                break;
+            for (String p : paths) {
+                try (InputStream is = getClass().getResourceAsStream(p)) {
+                    if (is != null) {
+                        Image img = new Image(is);
+                        backgroundImageView.setImage(img);
+                        backgroundImageView.setFitWidth(1092);
+                        backgroundImageView.setFitHeight(680);
+                        backgroundImageView.setPreserveRatio(false);
+
+                        System.out.println("RoomController: loaded background from " + p);
+                        return;
+                    }
+                } catch (Exception ignored) {}
             }
         }
 
-        if (!found) {
-            backgroundImageView.setImage(null);
-            System.err.println("RoomController: background image not found for '" + roomId + "' (tried these candidates):");
-            for (String p : candidates) System.err.println("  " + p);
-            System.err.println("Make sure the image file is placed in src/main/resources/com/example/images and spelled exactly.");
+        // --- 4. If nothing found: log all attempted names ---
+        System.err.println("RoomController: background image NOT found for '" + roomId + "'");
+        System.err.println("Tried:");
+        for (String n : names) {
+            System.err.println("  /com/example/images/" + n);
         }
     }
 
@@ -226,34 +214,31 @@ public class RoomController implements Initializable {
             } catch (Exception e) { e.printStackTrace(); }
         }, "-fx-background-color: rgba(255,255,255,0.0);");
 
-        // Room specific hotspots
-        switch (roomId) {
+        // Normalize key so we match "HallOfDoors", even if backend passed "HallOfDoorsPart1"
+        String key = normalizeRoomKey(roomId);
+        boolean matched = true;
+
+        switch (key) {
             case "DarkFoyer" -> {
-                // Four doors left->right: these coordinates are tuned for 1092x680; change percentages if needed
-                // left-most door:
                 addHotspotPercent(210.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("WitchesDen"),
                         "-fx-background-color: transparent;");
-                // next door
                 addHotspotPercent(435.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("CursedRoom"),
                         "-fx-background-color: transparent;");
-                // locked door
                 addHotspotPercent(680.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("LockedDoor"),
                         "-fx-background-color: transparent;");
-                // farthest right -> HallOfDoorsPart1
                 addHotspotPercent(930.0/1092.0, 180.0/680.0, 160.0/1092.0, 380.0/680.0,
                         () -> safeShowRoom("HallOfDoorsPart1"),
                         "-fx-background-color: transparent;");
             }
             case "WitchesDen" -> {
-                // WitchesDen: add six magnifying glass hotspots. Use percent positions (tweak until perfect)
                 addHotspotPercent(0.07, 0.39, 0.05, 0.06, () -> {
                     try { SceneManager.getInstance().showPuzzle("WitchesDen", 1, "WitchesDen"); }
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent;");
-                // WitchesDen Cabinet
+                // cabinet
                 addHotspotPercent(0.62, 0.55, 0.05, 0.06, () -> {
                     try { SceneManager.getInstance().showCabinet("WitchesDen"); }
                     catch (Exception e) { e.printStackTrace(); }
@@ -262,47 +247,55 @@ public class RoomController implements Initializable {
                     try { SceneManager.getInstance().showPuzzle("WitchesDen", 0, "WitchesDen"); }
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent;");
-
-                // settings/backpack/back already added above (percent), so no duplication necessary
             }
             case "CursedRoom" -> {
-                // CursedRoom: example hotspots (modify percents to taste)
-                addHotspotPercent(0.10, 0.30, 0.06, 0.08, () -> {
+                addHotspotPercent(0.30, 0.40, 0.06, 0.08, () -> {
                     try { SceneManager.getInstance().showPuzzle("CursedRoom", 0, "CursedRoom"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "...style...");
-            
-                addHotspotPercent(0.35, 0.50, 0.06, 0.08, () -> {
+                }, "-fx-background-color: tansparent;");
+
+                addHotspotPercent(0.72, 0.78, 0.06, 0.08, () -> {
                     try { SceneManager.getInstance().showPuzzle("CursedRoom", 1, "CursedRoom"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "...style...");
-                // settings / backpack / back are added globally earlier, so nothing else needed
+                }, "-fx-background-color: transparent;");
             }
-            
             case "HallOfDoors" -> {
-                // HallOfDoors: many doors - place a few hotspots
-                addHotspotPercent(0.18, 0.38, 0.06, 0.09, () -> {
+                addHotspotPercent(0.06, 0.41, 0.06, 0.09, () -> {
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 0, "HallOfDoors"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "-fx-background-color: green;");
+
+                addHotspotPercent(0.48, 0.40, 0.06, 0.09, () -> {
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 1, "HallOfDoors"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "-fx-background-color: transparent;");
+
+                addHotspotPercent(0.88, 0.42, 0.06, 0.09, () -> {
                     try { SceneManager.getInstance().showPuzzle("HallOfDoors", 2, "HallOfDoors"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "...style...");
-            
-                addHotspotPercent(0.40, 0.42, 0.06, 0.09, () -> {
-                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 3, "HallOfDoors"); }
-                    catch (Exception e) { e.printStackTrace(); }
-                }, "...style...");
-            
-                addHotspotPercent(0.62, 0.40, 0.06, 0.09, () -> {
-                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 4, "HallOfDoors"); }
-                    catch (Exception e) { e.printStackTrace(); }
-                }, "...style...");
-            }            
+                }, "-fx-background-color: transparent;");
+            }
             default -> {
-                // fallback debug hotspot top-left
-                addHotspotPercent(0.02, 0.02, 24.0/1092.0, 24.0/680.0, () -> System.out.println("Debug hotspot"), "-fx-background-color: rgba(255,0,255,0.12);");
+                // No specific hotspots for this normalized key — do not add the purple debug hotspot.
+                matched = false;
             }
         }
 
-        System.out.println("buildHotspots called for room: " + roomId);
+        // If you *do* want a visible debugging hotspot when there's no match, uncomment the next block:
+        /*
+        if (!matched) {
+            addHotspotPercent(0.02, 0.02, 24.0/1092.0, 24.0/680.0,
+                    () -> System.out.println("Debug hotspot (no room-specific hotspots)"),
+                    "-fx-background-color: rgba(255,0,255,0.12);");
+        }
+        */
+
+        // ensure overlay stays on top
+        Platform.runLater(() -> {
+            try { overlayPane.toFront(); } catch (Throwable ignored) {}
+        });
+
+        System.out.println("buildHotspots called for room: " + roomId + " (normalized -> " + key + ")");
     }
 
     /** Convenience wrapper that calls SceneManager.showRoom and prints exceptions */
@@ -386,7 +379,35 @@ public class RoomController implements Initializable {
         final double px, py, pw, ph;
         HotspotPercent(double px, double py, double pw, double ph) { this.px = px; this.py = py; this.pw = pw; this.ph = ph; }
     }
+
+    /**
+     * Normalize a backend room id into a canonical key used for matching hotspot sets.
+     * Examples:
+     *   "HallOfDoorsPart1" -> "HallOfDoors"
+     *   "HallOfDoors Part1" -> "HallOfDoors"
+     *   "hallofdoors" -> "HallOfDoors"
+     */
+    private String normalizeRoomKey(String rawRoomId) {
+        if (rawRoomId == null) return "";
+        String s = rawRoomId;
+        // remove "screen" and "part#" (case-insensitive)
+        s = s.replaceAll("(?i)screen", "");
+        s = s.replaceAll("(?i)part\\d+", "");
+        // collapse separators to single space
+        s = s.replaceAll("[_\\-]+", " ").trim();
+        // preserve camelcase by inserting spaces then remove spaces for compact key
+        s = s.replaceAll("([a-z])([A-Z])", "$1 $2").trim();
+        // build TitleCase words then join without spaces to produce keys like "HallOfDoors"
+        String key = Arrays.stream(s.split("\\s+"))
+                .filter(w -> !w.isBlank())
+                .map(w -> w.substring(0,1).toUpperCase() + (w.length()>1 ? w.substring(1).toLowerCase(): ""))
+                .reduce((a,b) -> a + b)
+                .orElse(s);
+        return key;
+    }
 }
+
+
 
 
 
