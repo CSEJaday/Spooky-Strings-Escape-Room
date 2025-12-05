@@ -11,6 +11,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Generic cabinet controller used for multiple cabinet-like screens.
+ * SceneManager.showCabinet(previousRoomId) calls setContext(previousRoomId)
+ * which instructs this controller which background image to load.
+ */
 public class CabinetController implements Initializable {
 
     @FXML private ImageView backgroundImage;
@@ -18,35 +23,69 @@ public class CabinetController implements Initializable {
     @FXML private Button inventoryButton;
     @FXML private Button backButton;
 
-    private String previousRoomId = "WitchesDen"; // default fallback
+    private String previousRoomId;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loadBackgroundImage();
+        if (backgroundImage == null) System.err.println("CabinetController: backgroundImage == null");
+        if (settingsButton == null) System.err.println("CabinetController: settingsButton == null");
+        // Buttons will be wired to handlers in FXML.
     }
 
     /**
-     * SceneManager will call this right after loading FXML.
+     * Called by SceneManager to provide context (the room we came from).
+     * The controller uses that to choose which background image to load.
      */
     public void setContext(String previousRoomId) {
         this.previousRoomId = previousRoomId;
+        loadBackgroundFor(previousRoomId);
     }
 
-    private void loadBackgroundImage() {
-        String path = "/com/example/images/WitchesDenCabinet.png";
+    private void loadBackgroundFor(String roomId) {
+        String imageName = imageNameFor(roomId);
+        // Try a set of likely paths (mirrors RoomController style)
+        String[] candidates = new String[] {
+            "/com/example/images/" + imageName,
+            "/images/" + imageName,
+            "/" + imageName
+        };
 
-        try (InputStream is = getClass().getResourceAsStream(path)) {
-            if (is == null) {
-                System.err.println("CabinetController: Image not found: " + path);
-                return;
+        boolean loaded = false;
+        for (String p : candidates) {
+            try (InputStream is = getClass().getResourceAsStream(p)) {
+                if (is == null) continue;
+                Image img = new Image(is);
+                backgroundImage.setImage(img);
+                backgroundImage.setFitWidth(1092);
+                backgroundImage.setFitHeight(680);
+                backgroundImage.setPreserveRatio(false);
+                System.out.println("CabinetController: loaded background from " + p);
+                loaded = true;
+                break;
+            } catch (Exception ex) {
+                // try next
             }
-            backgroundImage.setImage(new Image(is));
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+
+        if (!loaded) {
+            System.err.println("CabinetController: failed to load image for room '" + roomId + "'. Tried:");
+            for (String p : candidates) System.err.println("  " + p);
         }
     }
 
-    // ----------------- BUTTON HANDLERS -----------------
+    /**
+     * Map previousRoomId (or other keys) to an image filename.
+     * Extend this mapping if you have more room-specific cabinet/shelf art.
+     */
+    private String imageNameFor(String roomId) {
+        if (roomId == null) return "WitchesDenCabinet.png";
+        switch (roomId) {
+            case "WitchesDen": return "WitchesDenCabinet.png";
+            case "AlchemyLab": return "AlchemyLabBookShelf.png";
+            // add more mappings here if needed
+            default: return "WitchesDenCabinet.png";
+        }
+    }
 
     @FXML
     private void onSettings() {
@@ -54,7 +93,7 @@ public class CabinetController implements Initializable {
             SceneManager.getInstance().showSettings(previousRoomId);
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Could not open Settings.").showAndWait();
+            new Alert(Alert.AlertType.ERROR, "Unable to open settings.").showAndWait();
         }
     }
 
@@ -64,7 +103,7 @@ public class CabinetController implements Initializable {
             SceneManager.getInstance().showInventory(previousRoomId);
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Could not open Inventory.").showAndWait();
+            new Alert(Alert.AlertType.ERROR, "Unable to open inventory.").showAndWait();
         }
     }
 
@@ -74,10 +113,11 @@ public class CabinetController implements Initializable {
             SceneManager.getInstance().showRoom(previousRoomId);
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Could not return.").showAndWait();
+            new Alert(Alert.AlertType.ERROR, "Unable to go back.").showAndWait();
         }
     }
 }
+
 
 
 

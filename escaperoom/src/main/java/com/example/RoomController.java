@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
  * - creates overlayPane whose size/bounds follow the backgroundImageView so hotspots always align
  * - provides pixel and percentage hotspot helpers
  *
- * This version normalizes backend room ids (strips "PartN", "Screen", collapses separators)
+ * This version normalizes incoming room ids (strips "PartN", "Screen", collapses separators)
  * and switches on a canonical key so filenames and case variants don't break hotspot selection.
  */
 public class RoomController implements Initializable {
@@ -214,7 +214,7 @@ public class RoomController implements Initializable {
             } catch (Exception e) { e.printStackTrace(); }
         }, "-fx-background-color: rgba(255,255,255,0.0);");
 
-        // Normalize key so we match "HallOfDoors", even if backend passed "HallOfDoorsPart1"
+        // Normalize key so we match logical room names (HallOfDoorsPart1 -> HallOfDoors)
         String key = normalizeRoomKey(roomId);
         boolean matched = true;
 
@@ -252,43 +252,59 @@ public class RoomController implements Initializable {
                 addHotspotPercent(0.30, 0.40, 0.06, 0.08, () -> {
                     try { SceneManager.getInstance().showPuzzle("CursedRoom", 0, "CursedRoom"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "-fx-background-color: tansparent;");
+                }, "-fx-background-color: transparent;");
 
                 addHotspotPercent(0.72, 0.78, 0.06, 0.08, () -> {
                     try { SceneManager.getInstance().showPuzzle("CursedRoom", 1, "CursedRoom"); }
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent;");
             }
+
             case "HallOfDoors" -> {
                 addHotspotPercent(0.06, 0.41, 0.06, 0.09, () -> {
-                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 0, "HallOfDoors"); }
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 2, "HallOfDoors"); }
                     catch (Exception e) { e.printStackTrace(); }
-                }, "-fx-background-color: green;");
+                }, "-fx-background-color: transparent;;");
 
                 addHotspotPercent(0.48, 0.40, 0.06, 0.09, () -> {
-                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 1, "HallOfDoors"); }
+                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 3, "HallOfDoors"); }
                     catch (Exception e) { e.printStackTrace(); }
                 }, "-fx-background-color: transparent;");
 
                 addHotspotPercent(0.88, 0.42, 0.06, 0.09, () -> {
-                    try { SceneManager.getInstance().showPuzzle("HallOfDoors", 2, "HallOfDoors"); }
-                    catch (Exception e) { e.printStackTrace(); }
+                    // open Alchemy Lab room (use safeShowRoom to avoid checked exceptions bubble)
+                    safeShowRoom("AlchemyLab");
                 }, "-fx-background-color: transparent;");
             }
+
+            case "AlchemyLab" -> {
+                addHotspotPercent(0.36, 0.51, 0.06, 0.06, () -> {
+                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 0, "AlchemyLab"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "-fx-background-color: transparent;");
+
+                addHotspotPercent(0.735, 0.815, 0.06, 0.06, () -> {
+                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 1, "AlchemyLab"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "-fx-background-color: transparent;");
+
+                // bookshelf
+                addHotspotPercent(0.51, 0.175, 0.06, 0.08, () -> {
+                    try { SceneManager.getInstance().showCabinet("AlchemyLab"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "-fx-background-color: transparent; -fx-cursor: hand;");
+
+                addHotspotPercent(0.80, 0.50, 0.11, 0.08, () -> {
+                    try { SceneManager.getInstance().showPuzzle("AlchemyLab", 2, "AlchemyLab"); }
+                    catch (Exception e) { e.printStackTrace(); }
+                }, "-fx-background-color: green;");
+            }
+
             default -> {
-                // No specific hotspots for this normalized key — do not add the purple debug hotspot.
+                // fallback: intentionally do not add purple debug hotspot when a normalized key exists but we didn't match
                 matched = false;
             }
         }
-
-        // If you *do* want a visible debugging hotspot when there's no match, uncomment the next block:
-        /*
-        if (!matched) {
-            addHotspotPercent(0.02, 0.02, 24.0/1092.0, 24.0/680.0,
-                    () -> System.out.println("Debug hotspot (no room-specific hotspots)"),
-                    "-fx-background-color: rgba(255,0,255,0.12);");
-        }
-        */
 
         // ensure overlay stays on top
         Platform.runLater(() -> {
@@ -400,12 +416,13 @@ public class RoomController implements Initializable {
         // build TitleCase words then join without spaces to produce keys like "HallOfDoors"
         String key = Arrays.stream(s.split("\\s+"))
                 .filter(w -> !w.isBlank())
-                .map(w -> w.substring(0,1).toUpperCase() + (w.length()>1 ? w.substring(1).toLowerCase(): ""))
+                .map(w -> w.substring(0,1).toUpperCase() + (w.length()>1 ? w.substring(1).toLowerCase() : ""))
                 .reduce((a,b) -> a + b)
                 .orElse(s);
         return key;
     }
 }
+
 
 
 

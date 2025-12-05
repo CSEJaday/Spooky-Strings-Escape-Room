@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
 
 <AnchorPane fx:id="root"
             xmlns="http://javafx.com/javafx/21"
@@ -10,33 +10,47 @@
             fx:controller="com.example.CabinetController"
             prefWidth="1092" prefHeight="680">
 
-    <!-- Background (image loaded by controller) -->
+    <!-- Background image is set by the controller at runtime -->
     <ImageView fx:id="backgroundImage"
-               fitWidth="1092" fitHeight="680"
+               pickOnBounds="true"
                preserveRatio="false"
-               AnchorPane.topAnchor="0.0"
-               AnchorPane.leftAnchor="0.0"/>
+               fitWidth="1092" fitHeight="680"
+               AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0"/>
 
-    <!-- SETTINGS (top-right) -->
+    <!-- transparent settings button (top-right) -->
     <Button fx:id="settingsButton"
-            layoutX="999" layoutY="14"
-            prefWidth="81" prefHeight="80"
+            layoutX="1010.0" layoutY="20.0"
+            prefWidth="56" prefHeight="56"
             onAction="#onSettings"
-            style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+            style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;">
+        <tooltip>
+            <Tooltip text="Settings"/>
+        </tooltip>
+    </Button>
 
-    <!-- INVENTORY (below settings) -->
+    <!-- transparent inventory/backpack button (below settings) -->
     <Button fx:id="inventoryButton"
-            layoutX="1010" layoutY="100"
-            prefWidth="60" prefHeight="96"
+            layoutX="1010.0" layoutY="100.0"
+            prefWidth="48" prefHeight="48"
             onAction="#onInventory"
-            style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+            style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;">
+        <tooltip>
+            <Tooltip text="Inventory"/>
+        </tooltip>
+    </Button>
 
-    <!-- BACK (bottom-center) -->
+    <!-- transparent back button (bottom middle) -->
     <Button fx:id="backButton"
-            layoutX="518" layoutY="610"
+            layoutX="520.0" layoutY="610.0"
             prefWidth="56" prefHeight="56"
             onAction="#onBack"
-            style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+            style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-cursor: hand;">
+        <tooltip>
+            <Tooltip text="Back"/>
+        </tooltip>
+    </Button>
 
 </AnchorPane>
+
+
 
