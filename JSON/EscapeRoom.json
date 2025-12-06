@@ -94,8 +94,7 @@
         "correctDoor": 4,
         "attempts": 0,
         "isSolved": false,
-        "reward": "",
-        "locked": true
+        "reward": ""
       },
       {
         "type": "door",
@@ -117,8 +116,7 @@
         "correctDoor": 11,
         "attempts": 0,
         "isSolved": false,
-        "reward": "",
-        "locked": true
+        "reward": ""
       },
       {
         "type": "door",
@@ -140,8 +138,7 @@
         "correctDoor": 25,
         "attempts": 0,
         "isSolved": false,
-        "reward": "",
-        "locked": true
+        "reward": ""
       }
     ]
   },
